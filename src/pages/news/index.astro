@@ -10,7 +10,10 @@ const items = Object.values(entries)
   .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
 ---
 <html lang="sq">
-  <head><BaseHead title="Lajme | Ilir Tafa" description="Lajmet e fundit nga Ilir Tafa." /></head>
+  <head>
+      <base href={import.meta.env.BASE_URL} />
+    
+    <BaseHead title="Lajme | Ilir Tafa" description="Lajmet e fundit nga Ilir Tafa." /></head>
   <body class="bg-[#0b1116] text-white">
     <Header />
     <main class="mx-auto px-4 md:px-6 py-10 space-y-6" style="margin-top: 3%;">

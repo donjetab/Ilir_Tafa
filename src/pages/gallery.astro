@@ -38,7 +38,10 @@ const items = galleries.flatMap((g) =>
 const pageTitle = "Galeri";
 ---
 <html lang="sq">
-  <head><BaseHead title={pageTitle + " | Ilir Tafa"} description="Fotografi" /></head>
+  <head><BaseHead title={pageTitle + " | Ilir Tafa"} description="Fotografi" />
+      <base href={import.meta.env.BASE_URL} />
+  
+  </head>
   <body class="bg-[#0e141a] text-white">
     <Header />
     <div class="h-15 md:h-15"></div>

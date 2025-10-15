@@ -5,7 +5,7 @@ const path = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 const is = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
 
 const links = [
-  { href: "/", label: "Ballina", exact: true },
+  { href: "index", label: "Ballina", exact: true },
   { href: "about", label: "Biografia" },
   { href: "works", label: "Veprat" },
   { href: "news", label: "Lajme" },

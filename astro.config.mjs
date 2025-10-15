@@ -9,7 +9,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://donjetab.github.io',
-  base: '/my-repo',
+  base: '/Ilir_Tafa/',
   integrations: [mdx(), sitemap()],
 
   vite: {

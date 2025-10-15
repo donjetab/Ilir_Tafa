@@ -71,7 +71,7 @@ const pageTitle = "Veprimtaria Artistike";
           ) : (
             <a
               class="card"
-              href={`/works/${it.slug}/`}
+              href={`works/${it.slug}/`}
               data-type={it.type}
               data-title={(it.title + ' ' + (it.role ?? '')).toLowerCase()}
               data-year={String(it.year)}

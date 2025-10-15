@@ -42,7 +42,7 @@ const GAP = 40;
         <div id="cards" class="relative z-10 flex"
              style="gap:var(--gap); padding:0 var(--gap); background-color:#a29667;">
           {list.map((w) => (
-            <a href={`/works/${w.slug}/`} class="block" aria-label={`${w.title} (${w.year})`}>
+            <a href={`works/${w.slug}/`} class="block" aria-label={`${w.title} (${w.year})`}>
               <article class="h-[155px] shrink-0 grid place-items-center text-center bg-[#1c2733] text-white rounded border-4 border-[#d4b16a]"
                       style="width:var(--frame);">
                 <div>

@@ -12,7 +12,7 @@ interface Item {
 const { item } = Astro.props as { item: Item };
 
 const isExternal = item.type === "external";
-const href = isExternal ? item.sourceUrl! : `/news/${item.slug}`;
+const href = isExternal ? item.sourceUrl! : `news/${item.slug}`;
 
 
 ---

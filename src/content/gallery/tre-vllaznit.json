@@ -1,0 +1,54 @@
+{
+  "workSlug": "tre-vllaznit",
+  "title": "Tre Vllaznit",
+  "photos": [
+    {
+      "image": "1.jpg",
+      "alt": "Në xhirime – pamje nga seti",
+      "caption": "Pamje nga xhirimet e serialit Tre Vllaznit.",
+      "tags": ["Tre Vllaznit", "On set"]
+    },
+    {
+      "image": "2.jpg",
+      "alt": "Ekipi gjatë xhirimeve",
+      "caption": "Moment gjatë realizimit të skenave në set.",
+      "tags": ["Tre Vllaznit", "On set"]
+    },
+    {
+      "image": "3.jpg",
+      "alt": "Pas skene",
+      "caption": "Momente prapa skenave gjatë përgatitjeve.",
+      "tags": ["Tre Vllaznit", "Behind the scenes"]
+    },
+    {
+      "image": "4.jpg",
+      "alt": "Pas skene",
+      "caption": "",
+      "tags": ["Tre Vllaznit", "Behind the scenes"]
+    },
+    {
+      "image": "5.jpg",
+      "alt": "Ilir Tafa",
+      "caption": "Ilir Tafa mes xhirimeve.",
+      "tags": ["Tre Vllaznit", "Behind the scenes"]
+    },
+    {
+      "image": "6.jpg",
+      "alt": "Bajram & Besim Bytyqi",
+      "caption": "Pamje e aktorëve",
+      "tags": ["Tre Vllaznit", "Behind the scenes"]
+    },
+    {
+      "image": "7.jpg",
+      "alt": "Bajram & Blin Bytyqi",
+      "caption": "Pamje e aktorëve",
+      "tags": ["Tre Vllaznit", "Behind the scenes"]
+    },
+    {
+      "image": "8.jpg",
+      "alt": "Në xhirime – Ilir Tafa",
+      "caption": "Ilir Tafa mes xhirimeve.",
+      "tags": ["Tre Vllaznit", "On set"]
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+---
+import film from "../../assets/filmstrip.png";
+import { getCollection } from "astro:content";
+
+const entries = await getCollection("works");
+
+const works = entries
+  .filter((e) => e.data?.draft !== true)
+  .map((e) => ({
+    slug: e.data.slug ?? e.id,
+    year: Number(e.data.year) || 0,
+    title: e.data.title ?? "",
+    type: e.data.type ?? "",
+  }))
+  .sort((a, b) => b.year - a.year);
+
+const list = [...works, ...works, ...works]; // still triple for looping
+const FRAME = 250;
+const GAP = 40;
+---
+
+
+
+<section class="relative w-full h-screen overflow-hidden bg-[#0e141a] ">
+  <!-- Centered stack: title + film + button -->
+  <div class="absolute inset-0 flex flex-col items-center justify-center gap-30">
+    <!-- Title closer to filmstrip -->
+    <h2 class="z-20 text-3xl md:text-5xl font-semibold tracking-wide px-4 py-2 title">
+      Filmografia
+    </h2>
+
+    <!-- Film stripe -->
+    <div class="relative w-full h-[220px]"
+         style={`--frame:${FRAME}px; --gap:${GAP}px; --tile: calc(var(--frame) + var(--gap));`}>
+      <div id="marquee" class="absolute inset-0 flex items-center will-change-transform">
+        <div id="film" class="absolute inset-0"
+             style={`background-image:url(${film.src});
+                     background-repeat:repeat-x;
+                     background-size: var(--tile) 100%;
+                     background-position: 0 center;`} aria-hidden="true"></div>
+
+        <div id="cards" class="relative z-10 flex"
+             style="gap:var(--gap); padding:0 var(--gap); background-color:#a29667;">
+          {list.map((w) => (
+            <a href={`/works/${w.slug}/`} class="block" aria-label={`${w.title} (${w.year})`}>
+              <article class="h-[155px] shrink-0 grid place-items-center text-center bg-[#1c2733] text-white rounded border-4 border-[#d4b16a]"
+                      style="width:var(--frame);">
+                <div>
+                  <p class="text-sm opacity-70">{w.year}</p>
+                  <h3 class="text-lg">{w.title}</h3>
+                  <p class="text-xs italic opacity-70">{w.type}</p>
+                </div>
+              </article>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <a href="/filmografia" class="btn-gold">Detaje</a>
+  </div>
+</section>
+
+
+
+<script is:inline>
+    const viewport = document.getElementById('marquee'); // for hover only
+    const cards = document.getElementById('cards');
+    const filmBg = document.getElementById('film');
+
+    const ease = 0.12;
+    let offset = 0;
+    let speed = 60;     // px/sec
+    let target = 55;    // px/sec
+    let last = performance.now();
+
+    viewport.addEventListener('mouseenter', () => target = 40);   // slow on hover
+    viewport.addEventListener('mouseleave', () => target = 100);  // fast when leaving
+
+    function tick(now) {
+      const dt = (now - last) / 1000;
+      last = now;
+
+      speed += (target - speed) * ease; // ease toward target
+      offset += speed * dt;             // move by px/sec
+
+      const loopWidth = cards.scrollWidth / 3;
+      if (offset >= loopWidth) offset -= loopWidth;
+
+      cards.style.transform = `translateX(${-offset}px)`;
+      filmBg.style.backgroundPosition = `${-offset}px center`;
+
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+</script>

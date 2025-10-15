@@ -1,0 +1,176 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+type Post = {
+  type?: "internal" | "external";
+  slug?: string;
+  title: string;
+  excerpt?: string;
+  date?: string;
+  cover?: string;
+  contentHtml?: string;
+  sourceName?: string;
+  dek?: string;
+  author?: string;
+  videoUrl?: string;
+  showVideoOnly?: boolean;
+};
+
+export async function getStaticPaths() {
+  const posts = await import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
+  return Object.entries(posts)
+    .map(([file, p]) => {
+      const post = p as Post;
+      if (post.type !== "internal") return null;
+      const fileSlug = file.split("/").pop()?.replace(".json", "");
+      const slug = post.slug ?? fileSlug!;
+      return { params: { slug }, props: { post, __file: file } };
+    })
+    .filter(Boolean) as { params: { slug: string }, props: { post: Post, __file: string } }[];
+}
+
+const { slug } = Astro.params;
+
+const entries = await import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
+const all = Object.entries(entries).map(([file, data]) => {
+  const p = data as Post;
+  const fileSlug = file.split("/").pop()?.replace(".json", "");
+  return { ...p, __file: file, __slug: p.slug ?? fileSlug };
+}) as (Post & { __file: string; __slug?: string })[];
+
+const item = all.find(x => x.type === "internal" && x.__slug === slug);
+if (!item) return Astro.redirect("/news");
+
+const internal = all
+  .filter(x => x.type === "internal")
+  .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+
+const idx = internal.findIndex(x => x.__slug === slug);
+const prev = idx > 0 ? internal[idx - 1] : null;
+const next = idx >= 0 && idx < internal.length - 1 ? internal[idx + 1] : null;
+
+const urlFor = (x: any) => `/news/${x.__slug}`;
+const pageTitle = item.title ?? "News";
+const pageDesc = item.excerpt ?? "";
+---
+<html lang="sq">
+  <head>
+    <BaseHead title={pageTitle} description={pageDesc} />
+  </head>
+  <body class="bg-[#0b1116] text-white">
+    <Header />
+    <Header />
+
+    <!-- Back to News -->
+    <div class="w-full flex justify-center px-6 mt-6">
+      <div class="w-full max-w-3xl">
+        <a
+          href="/news"
+          class="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="w-5 h-5">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Kthehu te lajmet
+        </a>
+      </div>
+    </div>
+
+
+    <main class="w-full px-0 py-10 min-h-[90vh]">
+            <!-- Title + meta -->
+      <header class="w-full flex justify-center px-6">
+        <div class="w-full max-w-3xl">
+          <h1 class="text-3xl md:text-4xl font-semibold tracking-tight" style="font-size: 2rem">{pageTitle}</h1>
+          <div class="mt-3 flex items-center justify-between text-s text-white/60">
+            <div class="flex items-center gap-3" style="margin-bottom: 5%;">
+              {item.date ? <time datetime={item.date}>{new Date(item.date).toLocaleDateString("sq-AL")}</time> : null}
+              {item.sourceName && <span>· {item.sourceName}</span>}
+              {item.author && <span>· {item.author}</span>}
+            </div>
+            <div class="flex items-center gap-3">
+              <a href="#" class="hover:text-white" aria-label="Share">↗</a>
+              <a href="#" class="hover:text-white" aria-label="Bookmark">★</a>
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- Hero media -->
+      {item.showVideoOnly && item.videoUrl ? (
+        <!-- Video instead of picture -->
+        <div class="mt-6 w-full flex justify-center">
+          <div class="w-full max-w-3xl aspect-video overflow-hidden rounded-xl border border-white/10 shadow-md">
+            <iframe
+              src={item.videoUrl}
+              title="Video"
+              allowfullscreen
+              class="w-full h-full"
+            ></iframe>
+          </div>
+        </div>
+      ) : item.cover ? (
+        <figure class="mt-6 w-full flex justify-center">
+          <div class="w-full max-w-3xl h-[380px] md:h-[450px] overflow-hidden rounded-xl border border-white/10 shadow-md">
+            <img
+              src={item.cover}
+              alt={pageTitle}
+              class="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+              loading="lazy"
+            />
+          </div>
+        </figure>
+      ) : null}
+
+      <!-- Standfirst -->
+      {item.dek && (
+        <div class="w-full flex justify-center px-6">
+          <p class="w-full max-w-3xl mt-6 text-lg font-medium text-white/90">
+            {item.dek}
+          </p>
+        </div>
+      )}
+
+      <!-- Body -->
+      <section class="w-full flex justify-center px-6">
+        <div class="w-full max-w-3xl">
+          {item.contentHtml
+            ? (
+              <article
+                class="mt-6 prose prose-invert text-white/80 leading-relaxed text-lg"
+                set:html={item.contentHtml}
+              ></article>
+            )
+            : (
+              <article class="mt-6 text-white/70"></article>
+            )
+          }
+        </div>
+      </section>
+      <!-- Prev/Next -->
+      <!-- <div class="w-full flex justify-center px-6">
+        <div class="w-full max-w-3xl pt-10 mt-10 border-top border-white/10 flex items-center justify-between">
+          {prev
+            ? <a href={urlFor(prev)} class="min-w-0 max-w-[48%] hover:underline">
+                <div class="text-xs text-white/60">Previous</div>
+                <div class="truncate">{prev.title}</div>
+              </a>
+            : <span />
+          }
+          {next
+            ? <a href={urlFor(next)} class="min-w-0 max-w-[48%] text-right hover:underline">
+                <div class="text-xs text-white/60">Next</div>
+                <div class="truncate">{next.title}</div>
+              </a>
+            : <span />
+          }
+        </div>
+      </div> -->
+    </main>
+
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/homepage/Hero.astro";
+import HomeAbout from "../components/homepage/HomeAbout.astro";
+import Filmstrip from "../components/homepage/Filmstrip.astro";
+import HomeAwards from "../components/homepage/HomeAwards.astro";
+import HomeGallery from "../components/homepage//HomeGallery.astro";
+import HomeNews from "../components/homepage/HomeNews.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+---
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <Hero />
+  <HomeAbout />
+  <Filmstrip />
+  <HomeAwards />
+  <HomeGallery />
+  <HomeNews />
+</BaseLayout>

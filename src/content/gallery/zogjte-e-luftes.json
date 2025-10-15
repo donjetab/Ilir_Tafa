@@ -1,0 +1,30 @@
+{
+  "workSlug": "zogjte-e-luftes",
+  "title": "Zogjtë e Luftës",
+  "photos": [
+    {
+      "image": "1.jpg",
+      "alt": "Pamje nga xhirimet e serialit Zogjtë e Luftës",
+      "caption": "Moment gjatë xhirimeve në skenë të serialit Zogjtë e Luftës.",
+      "tags": ["Zogjtë e Luftës", "On set"]
+    },
+    {
+      "image": "2.jpg",
+      "alt": "Pamje prapa skenave të serialit Zogjtë e Luftës",
+      "caption": "Moment prapa skenave gjatë përgatitjeve të serialit Zogjtë e Luftës.",
+      "tags": ["Zogjtë e Luftës", "Behind the scenes"]
+    },
+    {
+      "image": "3.jpg",
+      "alt": "Pamje nga xhirimet e serialit Zogjtë e Luftës",
+      "caption": "Moment gjatë xhirimeve në skenë të serialit Zogjtë e Luftës.",
+      "tags": ["Zogjtë e Luftës", "On set"]
+    },
+    {
+      "image": "4.jpg",
+      "alt": "Pamje nga xhirimet e serialit Zogjtë e Luftës",
+      "caption": "Moment gjatë xhirimeve në skenë të serialit Zogjtë e Luftës.",
+      "tags": ["Zogjtë e Luftës", "On set"]
+    }
+  ]
+}

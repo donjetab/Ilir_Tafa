@@ -1,0 +1,65 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import GalleryGrid from "../components/GalleryGrid.astro";
+import { getCollection } from "astro:content";
+
+// Load all gallery JSON files
+const galleries = await getCollection("gallery");
+
+// Import all images from /assets/gallery
+const imageMap = import.meta.glob("../assets/gallery/**/*.{jpg,png,jpeg,webp}", {
+  eager: true,
+  import: "default",
+}) as Record<string, ImageMetadata>;
+
+// Helper to match each image name to the imported metadata
+function resolveImage(file: string) {
+  const entry = Object.entries(imageMap).find(([path]) => path.endsWith("/" + file));
+  return entry ? entry[1] : null;
+}
+
+// Flatten all photos into a single array for GalleryGrid
+const items = galleries.flatMap((g) =>
+  g.data.photos.map((p) => {
+    const src = resolveImage(`${g.id}/${p.image}`) || resolveImage(p.image);
+    return src && {
+      id: `${g.id}-${p.image}`,
+      src,
+      alt: p.alt,
+      caption: p.caption,
+      tags: p.tags,
+      workSlug: g.data.workSlug,
+    };
+  }).filter(Boolean)
+);
+
+const pageTitle = "Galeri";
+---
+<html lang="sq">
+  <head><BaseHead title={pageTitle + " | Ilir Tafa"} description="Fotografi" /></head>
+  <body class="bg-[#0e141a] text-white">
+    <Header />
+    <div class="h-15 md:h-15"></div>
+    <section class="w-full">
+      <div class="mx-auto max-w-[100%] px-6 py-16 text-center">
+        <h1 class="galleryTitle md:text-7xl font-bold mb-6">Galeri</h1>
+        <p class="text-lg text-white/70 mb-12">
+          Foto të përzgjedhura nga veprat dhe portretet personale
+        </p>
+        <GalleryGrid items={items} />
+      </div>
+    </section>
+    <Footer />
+  </body>
+</html>
+
+
+<style>
+  .galleryTitle{
+    font-size: 2.5rem;
+    line-height: 1.1;
+    color: #f3f4f6;
+    padding-bottom: 10px;
+  }

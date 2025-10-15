@@ -1,0 +1,93 @@
+---
+import logo from "../assets/logo nobg.png";
+
+const path = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
+const is = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+
+const links = [
+  { href: "/", label: "Ballina", exact: true },
+  { href: "/about", label: "Biografia" },
+  { href: "/works", label: "Veprat" },
+  { href: "/news", label: "Lajme" },
+  { href: "/gallery", label: "Galeri" },
+];
+---
+
+<header id="navbar" class="fixed inset-x-0 top-0 z-50 transition-colors duration-300" style="padding: 10px 50px !important;">
+  <nav class="w-full flex h-20 items-center justify-between px-6 md:px-12">
+    <img src={logo.src} alt="Logo" class="w-24 h-auto" />
+
+    <!-- Desktop -->
+    <div class="hidden md:flex items-center gap-6">
+      {links.map((l) => (
+        <a
+          href={l.href}
+          aria-current={(l.exact ? l.href === path : is(l.href)) ? "page" : undefined}
+          class:list={[
+            "px-4 py-3 text-[17px] font-medium tracking-wide transition-colors text-white hover:text-[#d4b16a]",
+            (l.exact ? l.href === path : is(l.href))
+              ? "font-semibold text-[#d4b16a] underline underline-offset-4"
+              : "opacity-90",
+          ]}
+        >
+          {l.label}
+        </a>
+      ))}
+
+      <!-- Language toggle -->
+      <button
+        type="button"
+        class="ml-4 px-3 py-2 border border-[#d4b16a] rounded-md text-sm font-medium text-[#d4b16a]
+               hover:bg-[#d4b16a] hover:text-black transition-colors"
+      >
+        🇦🇱 AL
+      </button>
+    </div>
+
+    <!-- Mobile -->
+    <details class="md:hidden relative">
+      <summary class="list-none cursor-pointer px-2 py-1 rounded border border-white/15 text-white">Menu</summary>
+      <div class="absolute right-0 mt-2 w-48 rounded-lg border border-white/10 bg-black/90 p-1">
+        {links.map((l) => (
+          <a
+            href={l.href}
+            aria-current={(l.exact ? l.href === path : is(l.href)) ? "page" : undefined}
+            class:list={[
+              "block px-3 py-2 text-sm rounded hover:bg-white/10 text-white",
+              (l.exact ? l.href === path : is(l.href))
+                ? "font-semibold underline underline-offset-4"
+                : "opacity-90",
+            ]}
+          >
+            {l.label}
+          </a>
+        ))}
+        <button
+          type="button"
+          class="block w-full text-left mt-1 px-3 py-2 text-sm border border-[#d4b16a] rounded-md text-[#d4b16a]
+                 hover:bg-[#d4b16a] hover:text-black transition-colors"
+        >
+          🇦🇱 AL
+        </button>
+      </div>
+    </details>
+  </nav>
+</header>
+
+<div class="h-20"></div>
+
+<script is:inline>
+  const apply = () => {
+    const nb = document.getElementById('navbar');
+    if (!nb) return;
+    const scrolled = window.scrollY > 50;
+    nb.classList.toggle('bg-[#0e141a]/90', scrolled);
+    nb.classList.toggle('backdrop-blur-md', scrolled);
+  };
+
+  // initial + on scroll + after client-side navigations
+  apply();
+  addEventListener('scroll', apply, { passive: true });
+  addEventListener('astro:page-load', apply);
+  addEventListener('astro:after-swap', apply);
+</script>

@@ -1,0 +1,43 @@
+---
+interface Item {
+  img: ImageMetadata | string;
+  title?: string;
+  text: string;
+}
+interface Props { items: Item[] }
+const { items } = Astro.props;
+const src = (x: any) => typeof x === "string" ? x : x.src;
+---
+
+<section class="flex justify-center px-10 py-12 md:py-20">
+  <div class="w-[70%] max-w-[70%] !space-y-24">
+    {items.map((it, i) => (
+      <div
+        class={`grid md:grid-cols-2 items-center gap-12 ${
+          i % 2 !== 0 ? "md:[&>*:first-child]:order-2" : ""
+        }`}
+      >
+        <!-- Image -->
+        <div class={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}>
+          <img
+            src={src(it.img)}
+            alt={it.title || ""}
+            class="w-[75%] h-[25%] max-w-sm aspect-[6/5] object-cover rounded-xl bg-[#18222c] shadow-lg"
+          />
+        </div>
+
+        <!-- Text -->
+        <div class="text-[#1c2733]">
+          {it.title && (
+            <h2 class="!text-2xl md:text-3xl font-semibold !text-[#545a73] !mb-5" style="font-weight: 700;">
+              {it.title}
+            </h2>
+          )}
+          <p class="text-[15px] leading-7">
+            {it.text}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

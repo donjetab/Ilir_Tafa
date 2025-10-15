@@ -1,0 +1,135 @@
+---
+// src/components/EpisodesGrid.astro
+interface Ep { n?: number; url: string; title?: string; }
+interface Props { episodes: Ep[]; perPage?: number; label?: string; }
+const { episodes = [], perPage = 24, label = "Episodes" } = Astro.props;
+
+const singular = label.toLowerCase().includes("film") ? "Pjesa" : "Episodi";
+const chipAbbr = label.toLowerCase().includes("film") ? "Pj" : "Ep";
+
+function getYouTubeId(input: string): string | null {
+  try {
+    // raw ID
+    if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+    // full URL
+    const u = new URL(input);
+    if (u.hostname.includes("youtube.com")) {
+      // watch?v=ID
+      const v = u.searchParams.get("v");
+      if (v && /^[a-zA-Z0-9_-]{11}$/.test(v)) return v;
+      // share youtu.be or /embed/ handled below
+    }
+    if (u.hostname === "youtu.be") {
+      const id = u.pathname.slice(1);
+      if (/^[a-zA-Z0-9_-]{11}$/.test(id)) return id;
+    }
+    // /embed/ID
+    const m = input.match(/\/embed\/([a-zA-Z0-9_-]{11})/);
+    if (m) return m[1];
+  } catch {}
+  return null;
+}
+
+const normalized = episodes
+  .map((e, i) => {
+    const id = getYouTubeId(e.url);
+    return id ? { n: e.n ?? i + 1, id, url: e.url, title: e.title ?? `Episode ${e.n ?? i + 1}` } : null;
+  })
+  .filter(Boolean) as { n: number; id: string; url: string; title: string }[];
+---
+
+<section class="eps">
+  <div class="eps__head">
+    <h2 class="eps__title">{label} <span class="eps__count">({normalized.length})</span></h2>
+    <input id="eps-search" class="eps__search" type="search"
+           placeholder="Kërko…" aria-label={`Kërko ${label.toLowerCase()}`} />
+  </div>
+
+  <div id="eps-grid" class="grid" data-per-page={String(perPage)}>
+    {normalized.map((ep) => (
+      <a class="card" href={ep.url} target="_blank" rel="noopener"
+         data-ep={String(ep.n)} data-title={ep.title.toLowerCase()}>
+        <img
+          class="thumb"
+          src={`https://i.ytimg.com/vi/${ep.id}/hqdefault.jpg`}
+          alt={`${singular} ${ep.n}`}
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="overlay">
+          <span class="chip">{chipAbbr} {ep.n}</span>
+          <span class="t">{ep.title}</span>
+        </div>
+      </a>
+    ))}
+  </div>
+  {normalized.length > perPage && <button id="eps-more" class="more" type="button">Më Shumë</button>}
+</section>
+
+<style>
+  .eps { margin-top: 2rem; }
+  .eps__head { display:flex; gap:1rem; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .eps__title { color:#e7ecef; font-size:1.4rem; margin:0; }
+  .eps__count { color:#9aa4ad; font-weight:400; }
+  .eps__search { background:#0f141a; border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:.55rem .75rem; color:#dbe3e8; min-width:220px; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+  @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:800px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:520px){ .grid{grid-template-columns:1fr;} }
+
+.card {
+  position:relative;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  overflow:hidden;
+  background:#0f141a;
+  /* remove: display:none; */
+}
+  .thumb { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:#111821; transition:transform .2s ease; }
+  .overlay { position:absolute; inset:auto 0 0 0; padding:.6rem .7rem; display:flex; gap:.5rem; align-items:center; background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 60%, rgba(0,0,0,.75) 100%); }
+  .chip { width: 3.5rem; text-align:center; font-size:.8rem; color:#111; background:var(--gold, #f5d779); padding:.25rem .5rem; border-radius:999px; }
+  .t { color:#e7ecef; font-size:.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card:hover .thumb { transform:scale(1.02); }
+  .more { margin:1rem auto 0; display:block; padding:.7rem 1rem; border-radius:999px; background:transparent; color:var(--gold, #f5d779); border:1px solid rgba(245,215,121,.5); cursor:pointer; }
+  .more:hover { background:rgba(245,215,121,.1); }
+</style>
+
+<script is:inline>
+  // Simple pagination + search
+  const grid = document.getElementById('eps-grid');
+  if (grid) {
+    const perPage = Number(grid.dataset.perPage || 24);
+    const cards = Array.from(grid.querySelectorAll('.card'));
+    let shown = 0;
+
+    function render() {
+      cards.forEach((c, i) => c.style.display = i < shown ? '' : 'none');
+      btn?.classList.toggle('hidden', shown >= cards.length);
+    }
+    function showMore() { shown = Math.min(cards.length, shown + perPage); render(); }
+
+    const btn = document.getElementById('eps-more');
+    shown = Math.min(perPage, cards.length);
+    render();
+    btn?.addEventListener('click', showMore);
+
+    const q = document.getElementById('eps-search');
+    q?.addEventListener('input', () => {
+      const term = q.value.trim().toLowerCase();
+      cards.forEach(c => {
+        const t = c.dataset.title || '';
+        const n = c.dataset.ep || '';
+        c.style.display = (t.includes(term) || n.includes(term)) ? '' : 'none';
+      });
+    });
+
+    // Keyboard: 1..9 jump to page blocks
+    window.addEventListener('keydown', (e) => {
+      if (e.key >= '1' && e.key <= '9') {
+        const page = Number(e.key);
+        shown = Math.min(cards.length, page * perPage);
+        render();
+      }
+    });
+  }
+</script>

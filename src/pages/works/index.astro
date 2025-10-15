@@ -1,0 +1,121 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+const entries = await getCollection("works"); // ← include drafts so they show in grid
+const items = entries
+  .map((e) => ({
+    slug: e.data.slug ?? e.id,
+    title: e.data.title,
+    year: Number(e.data.year),
+    type: e.data.type,
+    role: e.data.role ?? "",
+    poster: e.data.poster ?? null,
+    draft: !!e.data.draft, // ← used to decide link vs div
+  }))
+  .sort((a, b) => b.year - a.year);
+
+const pageTitle = "Veprimtaria Artistike";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+   <BaseHead title={pageTitle + " | Ilir Tafa"} description="Filma, Seri, dhe Shfaqje Teatrale" /> 
+   <style> :root { --gold: #f5d779; } 
+   html, body { height: 100%; } 
+   body { background: #0b1116; margin: 0; } 
+   main { min-height: 70vh; width: 70%; max-width: calc(100% - 2rem); margin: 0 auto; padding-bottom: 5rem; /* space before footer */ } 
+   .head { padding: 3rem 0 1rem; text-align: left; position: relative; z-index: 5; } .title { font-size: 3.2rem; margin: 0; color: #e7ecef; line-height: 1; } .sub { color: #9aa4ad; margin: .4rem 0 0; } /* Filter buttons */ .filter { display: flex; gap: .5rem; margin-top: 1rem; flex-wrap: wrap; position: relative; z-index: 5; } .chip { background: transparent; border: 1px solid rgba(255,215,0,.25); color: var(--gold); padding: .4rem .9rem; border-radius: 999px; cursor: pointer; font-size: .9rem; transition: all .15s ease; width: auto; } 
+   .chip.active { background: rgba(255,215,0,.12); border-color: var(--gold); } .chip:hover { background: rgba(255,215,0,.08); } /* Grid */ .grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(3, 1fr); margin-top: 2rem; } @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } } @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } } /* Cards */ .card { background: #0f141a; border: 1px solid rgba(255,255,255,.06); border-radius: 14px; overflow: hidden; text-decoration: none; color: inherit; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; display: block; } .card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0,0,0,.35); border-color: rgba(245,215,121,.35); } 
+   .poster { width: 100%; aspect-ratio: 16/20; object-fit: cover; display: block; background: #111821; } .meta { padding: .9rem; } .row { display: flex; justify-content: space-between; align-items: center; gap: .75rem; } .badge { font-size: .75rem; letter-spacing: .02em; padding: .25rem .5rem; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; text-transform: uppercase; color: #c9c9c9; } .title2 { margin: .35rem 0 0; color: #e7ecef; font-weight: 600; font-size: 1.08rem; } .role { margin: .15rem 0 0; color: #9aa4ad; font-size: .92rem; } 
+   </style> </head>
+  <body>
+    <Header />
+    <main>
+      <header class="head">
+        <h1 class="title">{pageTitle}</h1>
+        <div class="filter">
+          <button type="button" class="chip active" data-type="all">All</button>
+          <button type="button" class="chip" data-type="film">Film</button>
+          <button type="button" class="chip" data-type="tv">TV</button>
+          <button type="button" class="chip" data-type="theatre">Theatre</button>
+        </div>
+      </header>
+
+      <section class="grid" id="grid">
+        {items.map((it) => (
+          it.draft ? (
+            <div
+              class="card"
+              data-type={it.type}
+              data-title={(it.title + ' ' + (it.role ?? '')).toLowerCase()}
+              data-year={String(it.year)}
+            >
+              {it.poster
+                ? (typeof it.poster === 'string'
+                    ? <img class="poster" src={it.poster} alt={it.title} loading="lazy" />
+                    : <Image class="poster" src={it.poster} alt={it.title} width={720} height={405} loading="lazy" />)
+                : <div class="poster" style="background: rgba(255,255,255,.04);"></div>}
+              <div class="meta">
+                <div class="row">
+                  <span class="badge">{it.type}</span>
+                  <span class="badge">{it.year}</span>
+                </div>
+                <h3 class="title2">{it.title}</h3>
+                {it.role && <p class="role">{it.role}</p>}
+              </div>
+            </div>
+          ) : (
+            <a
+              class="card"
+              href={`/works/${it.slug}/`}
+              data-type={it.type}
+              data-title={(it.title + ' ' + (it.role ?? '')).toLowerCase()}
+              data-year={String(it.year)}
+            >
+              {it.poster
+                ? (typeof it.poster === 'string'
+                    ? <img class="poster" src={it.poster} alt={it.title} loading="lazy" />
+                    : <Image class="poster" src={it.poster} alt={it.title} width={720} height={405} loading="lazy" />)
+                : <div class="poster" style="background: rgba(255,255,255,.04);"></div>}
+              <div class="meta">
+                <div class="row">
+                  <span class="badge">{it.type}</span>
+                  <span class="badge">{it.year}</span>
+                </div>
+                <h3 class="title2">{it.title}</h3>
+                {it.role && <p class="role">{it.role}</p>}
+              </div>
+            </a>
+          )
+        ))}
+      </section>
+
+    </main>
+    <Footer />
+    <script is:inline> 
+    window.addEventListener('DOMContentLoaded', () => { 
+      const chips = Array.from(document.querySelectorAll('.chip')); 
+      const cards = Array.from(document.querySelectorAll('.card')); 
+      
+      if (!chips.length || !cards.length) return; 
+      function apply(type) { 
+        cards.forEach(card => { 
+          card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none'; 
+        }); 
+      } 
+      chips.forEach(chip => { 
+        chip.addEventListener('click', () => { 
+          chips.forEach(c => c.classList.remove('active')); 
+          chip.classList.add('active'); 
+          apply(chip.dataset.type); 
+        });
+      }); 
+      
+      apply('all'); }); 
+    </script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "workSlug": "shtepia-ime",
+  "title": "Shtëpia Ime",
+  "photos": [
+    {
+      "image": "1.jpg",
+      "alt": "Pamje prapa skenave të serialit Shtëpia Ime",
+      "caption": "Moment prapa skenave gjatë xhirimeve të serialit Shtëpia Ime.",
+      "tags": ["Shtëpia Ime", "Behind the scenes"]
+    },
+    {
+      "image": "2.jpg",
+      "alt": "Pamje prapa skenave të serialit Shtëpia Ime",
+      "caption": "Moment prapa skenave gjatë xhirimeve të serialit Shtëpia Ime.",
+      "tags": ["Shtëpia Ime", "Behind the scenes"]
+    },
+    {
+      "image": "3.jpg",
+      "alt": "Pamje prapa skenave të serialit Shtëpia Ime",
+      "caption": "Moment prapa skenave gjatë xhirimeve të serialit Shtëpia Ime.",
+      "tags": ["Shtëpia Ime", "Behind the scenes"]
+    }
+  ]
+}

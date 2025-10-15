@@ -1,0 +1,157 @@
+---
+/** Props:
+ * items: Array<{
+ *   id: string;               // unique
+ *   src: ImageMetadata;       // imported image
+ *   alt?: string;
+ *   caption?: string;
+ *   tags?: string[];          // ["Tre Vllaznit","Backstage"]
+ *   workSlug?: string;        // optional
+ * }>
+ */
+import type { ImageMetadata } from "astro";
+
+interface Item {
+  id: string;
+  src: ImageMetadata;
+  alt?: string;
+  caption?: string;
+  tags?: string[];
+  workSlug?: string;
+}
+
+const { items = [] as Item[] } = Astro.props;
+---
+<!-- Centering wrapper -->
+<div class="w-full flex justify-center">
+  <!-- Columns box with explicit widths -->
+  <div
+    id="gallery-grid"
+    class="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:_balance]"
+    class:list={{}}  
+    style="
+      width: 100%;            /* 1 col ~320px + 24px gap */
+      margin: 3% 5%; 
+    "
+  >
+    {
+      items.map((it: Item, i: number) => {
+        return (
+          <button
+            type="button"
+            class="mb-6 w-full break-inside-avoid relative group focus:outline-none cursor-pointer"
+            data-index={i}
+            aria-label={`Open ${it.alt ?? 'image'}`}
+          >
+            <img
+              src={it.src.src}
+              width={it.src.width}
+              height={it.src.height}
+              alt={it.alt ?? ''}
+              loading="lazy"
+              class="w-full h-auto rounded-xl object-cover shadow-md transition hover:opacity-90"
+            />
+            {(it.caption || (it.tags && it.tags.length > 0)) && (
+              <div class="absolute inset-x-2 bottom-2 rounded-md bg-black/55 text-white p-2 opacity-0 group-hover:opacity-100 transition">
+                {it.caption && <p class="text-sm leading-snug">{it.caption}</p>}
+                {it.tags && it.tags.length > 0 && (
+                  <div class="mt-1 flex flex-wrap gap-1">
+                    {it.tags.map((t) => (
+                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-white/15">{t}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </button>
+        );
+      })
+    }
+  </div>
+</div>
+
+
+<!-- Lightbox -->
+<div
+  id="lightbox"
+  class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/90">
+  <button id="lb-close" class="absolute top-4 right-4 text-white text-3xl" aria-label="Close">×</button>
+  <button id="lb-prev"  class="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 text-white text-2xl" aria-label="Previous">❮</button>
+  <button id="lb-next"  class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 text-white text-2xl" aria-label="Next">❯</button>
+
+  <figure class="max-w-[92vw] max-h-[86vh] flex flex-col items-center justify-center">
+    <img id="lb-img" alt="" class="mx-auto max-h-[70vh] w-auto object-contain rounded-lg shadow-2xl" />
+    <figcaption id="lb-cap" class="mt-3 text-center text-white/90 text-sm"></figcaption>
+  </figure>
+</div>
+
+<script is:inline>
+  // Ensure DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.getElementById('gallery-grid');
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    const lbCap = document.getElementById('lb-cap');
+    const btnClose = document.getElementById('lb-close');
+    const btnPrev  = document.getElementById('lb-prev');
+    const btnNext  = document.getElementById('lb-next');
+
+    // Build state from rendered buttons
+    const buttons = Array.from(grid?.querySelectorAll('button[data-index]') ?? []);
+    const state = {
+      items: buttons.map((btn) => {
+        const img = btn.querySelector('img');
+        const capEl = btn.querySelector('div > p');
+        const tagEls = btn.querySelectorAll('div span');
+        return {
+          src: img?.getAttribute('src') ?? '',
+          alt: img?.getAttribute('alt') ?? '',
+          caption: capEl?.textContent ?? '',
+          tags: Array.from(tagEls).map((s) => s.textContent ?? ''),
+        };
+      }),
+      i: 0,
+    };
+
+    function show(i) {
+      if (!state.items.length) return;
+      state.i = (i + state.items.length) % state.items.length;
+      const item = state.items[state.i];
+      lbImg?.setAttribute('src', item.src);
+      lbImg?.setAttribute('alt', item.alt || '');
+      const cap = [item.caption, ...(item.tags?.length ? ['#' + item.tags.join('  #')] : [])]
+        .filter(Boolean).join(' · ');
+      if (lbCap) lbCap.textContent = cap;
+    }
+    function open(i) {
+      show(i);
+      lb?.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb?.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    // Delegated click open
+    grid?.addEventListener('click', (e) => {
+      const target = e.target instanceof Element ? e.target : null;
+      const btn = target ? target.closest('button[data-index]') : null;
+      if (!btn) return;
+      const idx = Number(btn.getAttribute('data-index') ?? '0');
+      open(idx);
+    });
+
+    // Controls
+    btnClose?.addEventListener('click', close);
+    lb?.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    btnPrev?.addEventListener('click', () => show(state.i - 1));
+    btnNext?.addEventListener('click', () => show(state.i + 1));
+    document.addEventListener('keydown', (e) => {
+      if (lb?.classList.contains('hidden')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(state.i - 1);
+      if (e.key === 'ArrowRight') show(state.i + 1);
+    });
+  });
+</script>

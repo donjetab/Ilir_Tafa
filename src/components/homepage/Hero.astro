@@ -1,0 +1,68 @@
+---
+import Header from "../Header.astro";
+// import heroImg from "../assets/blog-placeholder-3.jpg";
+import heroImg from "../../assets/hero.png";
+import heroMobileImg from "../../assets/backup.png";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  image?: ImageMetadata;
+}
+
+const {
+  title = "Ilir Tafa",
+  subtitle = "Aktori më i njohur i teatrit dhe filmit nga Kosova",
+  ctaLabel = "veprimtaria",
+  ctaHref = "/works",
+  image = heroImg,
+} = Astro.props;
+---
+
+<section class="relative w-full h-screen overflow-hidden">
+  <!-- Background -->
+   <picture class="absolute inset-0 -z-10">
+    <source media="(min-width:1024px)" srcset={heroImg.src} />
+    <img src={heroMobileImg.src} alt="Ilir Tafa" class="heroImg absolute inset-0 w-full h-full object-cover object-center" />
+  </picture>
+  <!-- Header -->
+  <div class="absolute top-0 left-0 w-full z-20">
+    <Header />
+  </div>
+
+  <!-- Split content -->
+  <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 h-full">
+    <!-- Left side (empty / image space) -->
+    <div></div>
+
+    <!-- Right side (centered text) -->
+    <div class="flex items-center justify-center text-center px-6 md:px-[100px]">
+      <div>
+        <h1 class="heroTitle">
+          {title}
+        </h1>
+        <p class="heroParagraph mt-2 text-white/90">{subtitle}</p>
+        <a href={ctaHref} class="btn-gold">{ctaLabel}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<style>
+  .heroImg{
+    height: 100%;
+  }
+  .heroTitle{
+      /* font-family: "Playfair Display", serif; */
+      color: var(--gold);
+      font-size: 130px;
+  }
+  .heroParagraph{
+    font-size: 25px;
+    margin-top: -20px;
+  }
+</style>

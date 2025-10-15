@@ -1,0 +1,38 @@
+---
+import bretkosa from "../../assets/gallery/Bretkosa/PITF-2024.jpg";
+import zabaCast from "../../assets/Gallery/ilir-tafa/Kasta e aktorëve të filmit ZABA Sarajevo Film Festival.jpg";
+import IlirTafa from "../../assets/gallery/Ilir-Tafa/IlirTafa-1.jpg";
+import teroristaInterview from "../../assets/gallery/Ilir-Tafa/terorista-interview-4.jpg";
+import tonightImAlone from "../../assets/Gallery/sonte-jam-vetem/5.jpg";
+import kms from "../../assets/gallery/killing-me-softly/1.jpg";
+import lznj from "../../assets/Gallery/lud-zbunjen-normalan/1.jpg";
+import set from "../../assets/Gallery/kodi-i-jetes/12.jpg";
+
+const layout = [
+  { img: bretkosa, span: "col-span-4 row-span-2" },
+  { img: zabaCast, span: "col-span-5 row-span-1" },
+  { img: IlirTafa, span: "col-span-3 row-span-1" },
+  { img: tonightImAlone, span: "col-span-3 row-span-1" },
+  { img: teroristaInterview, span: "col-span-5 row-span-1" },
+  { img: kms, span: "col-span-5 row-span-1" },
+  { img: lznj, span: "col-span-4 row-span-1" },
+  { img: set, span: "col-span-3 row-span-1" },
+];
+---
+
+<section class="w-full h-screen bg-[#0e141a] text-white flex flex-col items-center justify-center py-12">
+  
+  <h2 class="text-3xl md:text-5xl font-semibold title mb-10" style="margin-bottom: 2%;"><a href="/gallery">GALERIA</a></h2>
+
+  <div class="w-full max-w-6xl h-[70vh] grid gap-3 lg:grid-cols-12 lg:grid-rows-3">
+    {layout.map((l) => (
+      <div class={`${l.span} relative w-full h-full min-h-0 flex items-stretch justify-stretch overflow-hidden rounded-lg bg-black`}>
+        <img
+          src={l.img.src}
+          alt=""
+          class=" inset-0 w-full h-full object-cover object-center"
+        />
+      </div>
+    ))}
+  </div>
+</section>

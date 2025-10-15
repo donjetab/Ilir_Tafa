@@ -1,0 +1,66 @@
+{
+  "workSlug": "bts",
+  "title": "Behind the Scenes",
+  "photos": [
+    {
+      "image": "1.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "2.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "3.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "4.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "5.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "6.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "7.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "8.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "9.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    },
+    {
+      "image": "10.jpg",
+      "alt": "Pamje prapa skenave gjatë punës filmike",
+      "caption": "Moment prapa skenave gjatë xhirimeve.",
+      "tags": ["Behind the scenes"]
+    }
+  ]
+}

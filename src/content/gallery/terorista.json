@@ -1,0 +1,30 @@
+{
+  "workSlug": "terorista",
+  "title": "Terorista",
+  "photos": [
+    {
+      "image": "1.jpg",
+      "alt": "Pamje nga xhirimet e filmit Terorista",
+      "caption": "Moment gjatë xhirimeve të filmit Terorista.",
+      "tags": ["Terorista", "On set"]
+    },
+    {
+      "image": "2.jpg",
+      "alt": "Pamje nga xhirimet e filmit Terorista",
+      "caption": "Moment gjatë xhirimeve të filmit Terorista.",
+      "tags": ["Terorista", "On set"]
+    },
+    {
+      "image": "3.jpg",
+      "alt": "Pamje nga xhirimet e filmit Terorista",
+      "caption": "Moment gjatë xhirimeve të filmit Terorista.",
+      "tags": ["Terorista", "On set"]
+    },
+    {
+      "image": "interview.jpg",
+      "alt": "Pamje nga intervista për filmin Terorista",
+      "caption": "Interesimi i mediave për filmin Terorista.",
+      "tags": ["Terorista", "Interview"]
+    }
+  ]
+}

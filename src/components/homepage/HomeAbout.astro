@@ -1,0 +1,41 @@
+---
+import type { ImageMetadata } from "astro";
+import aboutImg from "../../assets/portrait.jpg";
+
+interface Props {
+  title?: string;
+  text?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  image?: ImageMetadata;
+}
+const {
+  title = "Për Ilir Tafa",
+  text = "Ilir Tafa (i lindur më 1974 në Lipjan) është një nga aktorët më të njohur kosovarë, i afirmuar si në Kosovë ashtu edhe në rajon, sidomos në Bosnje e Kroaci. Ai ka interpretuar në filma, seriale dhe shfaqje teatrore, ndër të cilat veçohen Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit dhe seriali boshnjak Lud, Zbunjen, Normalan, që i dha famë të gjerë rajonale.",
+  ctaLabel = "BIOGRAFIA",
+  ctaHref = "/about",
+  image = aboutImg,
+} = Astro.props;
+---
+
+<section class="w-full">
+  <div class="min-h-screen grid place-content-center grid-cols-1 md:grid-cols-2 gap-10 px-6 md:px-[100px] place-items-center">
+   
+  <!-- Left: image -->
+  <div class="place-self-center">
+    <div class="inline-block rounded-lg bg-black/20 p-3 ring-4 ring-[#d4b16a]">
+        <img src={image.src} class="block md:w-[500px] h-auto object-cover rounded-lg" />
+    </div>
+  </div>
+
+  <!-- Right: content -->
+  <div class="place-self-center">
+    <div class="max-w-3xl gap-10 flex flex-col">
+        <h2 class="font-serif md:text-4xl text-white pb-8 title">{title}</h2>
+        <p class="text-lg text-white/85 leading-relaxed mb-8">{text}</p>
+        <a href={ctaHref} class="btn-gold self-start w-fit">{ctaLabel}</a>
+    </div>
+  </div>
+</div>
+
+</section>

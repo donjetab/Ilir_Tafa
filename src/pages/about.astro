@@ -1,0 +1,97 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import AboutHero from "../components/about/AboutHero.astro";
+import AboutSplit from "../components/about/AboutSplit.astro";
+import AboutQuote from "../components/about/AboutQuote.astro";
+
+// import imazhet reale
+import hero from "../assets/gallery/Ilir-tafa/IlirTafa-1.jpg";
+import a1 from "../assets/gallery/Ilir-tafa/IT-2.2.jpg";
+import a2 from "../assets/gallery/Ilir-tafa/IlirTafa-Lnd.jpg";
+import a3 from "../assets/gallery/tre-vllaznit/1.jpg";
+import a4 from "../assets/gallery/Ilir-tafa/PITF-2024.jpg";
+import a5 from "../assets/gallery/Ilir-tafa/PITF-2024-1.jpg";
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+
+const intro = `
+Ilir Tafa (i lindur më 1974 në Lipjan) është një nga aktorët më të njohur kosovarë, i afirmuar si në Kosovë ashtu edhe në rajon, sidomos në Bosnje e Kroaci. Ai ka interpretuar në filma, seriale dhe shfaqje teatrore, ndër të cilat veçohen Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit dhe seriali boshnjak Lud, Zbunjen, Normalan, që i dha famë të gjerë rajonale.
+Për talentin e tij, Ilir Tafa është vlerësuar me disa çmime të rëndësishme, përfshirë titullin “Aktori më i Mirë” në Festivalin e Filmit në Gjilan, Festivalin e Komedisë Shqiptare në Preshevë, Festivalin Ballkanik të Teatrit në Prishtinë dhe Festivalin e Teatrove Shqiptare në Dibër të Maqedonisë.
+Përveç karrierës artistike, ai mban gradën më të lartë universitare në aktrim dhe vepron si pedagog në Prishtinë.
+`;
+
+const items = [
+  {
+    img: a1,
+    title: "Jeta e Hershme dhe Arsimimi",
+    text: `Ilir Tafa u lind në Lipjan, Kosovë, (me 6 Maj, 1974) në vitin 1974. Që herët ai tregoi pasion për artin dramatik, duke ndjekur studimet në Fakultetin e Arteve të Universitetit të Prishtinës, ku u specializua për aktrim gjatë viteve 1995–1998. Më vonë ai përfundoi studimet postdiplomike, duke fituar gradën më të lartë universitare në fushën e aktrimit (Master i Arteve) në vitin 2008. Si akademik, Tafa ka vijuar karrierën në arsim të lartë: ai mban titullin Magjistër i Aktrimit dhe ka shërbyer si ligjërues i lëndëve praktike të aktrimit, si Diksioni dhe Interpretimi, në Kolegjin AAB në Prishtinë.
+Në aspektin administrativ, Ilir Tafa është një nga figurat themeluese të Kolegjit AAB, institucioni i parë privat universitar në Kosovë, ku ai ka shërbyer si Kryetar i Këshillit Drejtues që nga themelimi i kolegjit.
+`
+  },
+  {
+    img: a2,
+    title: "Karriera teatrale",
+    text: `Veprimtaria e tij artistike filloi në skenën teatrore kosovare. Në fillimet e karrierës, ai interpretoi në shfaqjet Alo 038 (1995) dhe Studio 2 (1995). Një nga sukseset e hershme ishte monodrama Sonte jam vetëm (2009).
+Në vitin 2012 ai luajti rolin kryesor në komedinë Killing Me Softly në Teatrin Dodona , ndërsa në vitin 2018 u shfaq në komedinë dramatike Bretkosa në Teatrin “Faruk Begolli” të Kolegjit AAB, me regji nga Burbuqe Berisha. 
+Sipas kritikëve, Bretkosa ndërthur momente komike dhe tragjike për të pasqyruar vështirësitë psikologjike dhe sociale të post-luftës dhe komunikimin e vështirë mes njerëzve në shoqëri.
+`
+  },
+  {
+    img: a3,
+    title: "Karriera në film dhe televizion",
+    text: `Në vitet 1990 dhe 2000, Tafa u paraqit në filmat kosovarë Atje ku nuk lind dielli (1996)  dhe Shtëpia e tmerrit (2000), si edhe në serialet Kamera me yjet (2001), Kandidati për president (2002), Kaçurrelët (2007) dhe Zogjtë e luftës (2008).
+Nga 2010 deri më 2016, ai u bë i njohur në rajon për rolin e Mentor Kosovës në sitcomin boshnjak Lud, Zbunjen, Normalan. Ky rol i dha mundësinë të fliste shqip në ekran dhe të sillte elemente të kulturës kosovare, duke fituar popullaritet në Bosnjë-Hercegovinë, Kroaci dhe Serbi.
+Në vitin 2016, Tafa luajti një rol kryesor në filmin Terorista, i xhiruar në Sarajevë dhe Budapest, përkrah aktores boshnjake Vanesa Gllodjo.
+Në vitin 2017 ai mori pjesë në Festivalin e Filmit në Sarajevë me dy projekte: Invisible dhe Žaba (Bretkosa).
+Ai u shfaq edhe në filmin The Life of Flowers (2016), ku interpreton rolin Nick, dhe në filmin kosovar Kodi i jetës (2012) si Cile. 
+Në vitin 2018, ai u bashkua me serialin historik-komik Konak kod Hilmije, ku interpretoi rolin e Agim Rugobës.
+Në vitin 2022, Tafa mori rolin e Bajram Bytyqit në serialin kosovar Tre Vllaznit.
+`
+  },
+  {
+    img: a4,
+    title: "Kontributi ndërkombëtar dhe diplomacia kulturore",
+    text: `Sipas një analize akademike të vitit 2022 me titull “Cultural Diplomacy of Kosovo after the Declaration of Independence”, Kosova përballej me sfida serioze për promovimin e identitetit të saj ndërkombëtar, pasi kanalet diplomatike zyrtare ishin të kufizuara. Studimi përmend Ilir Tafën si shembull të diplomacisë kulturore, përmes rolit të tij si Mentor Kosova në serialin Lud, Zbunjen, Normalan: personazhi i tij fliste shqip, prezantonte muzikë kosovare dhe diskutonte tema të tolerancës shoqërore. Përmes transmetimit të serialit në Bosnje-Hercegovinë, Kroaci, Serbi, Maqedoni të Veriut dhe Mal të Zi, Tafa kontribuoi që Kosova të “komunikonte me audienca në vende me të cilat nuk kishte marrëdhënie zyrtare”.`
+  },
+  {
+    img: a5,
+    title: "Çmime dhe mirënjohje",
+    text: `Ilir Tafa është nderuar me disa çmime për interpretimet e tij, përfshirë:
+•	“Aktori më i mirë” në Festivalin e Filmit të Kosovës, Gjilan (2002)
+•	“Aktori më i mirë” në Festivalin e Komedisë Shqiptare, Preshevë (2009)
+•	“Aktori më i mirë” në Festivalin Ballkanik të Teatrit, Prishtinë (2010)
+•	“Aktori më i mirë” në Festivalin e Teatrove Shqiptare, Dibër, Maqedoni (2010)
+`
+  }
+];
+
+
+---
+<!doctype html>
+<html lang="sq" class="scroll-smooth">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body class="!bg-[#acacac] !text-[#0c0c0c] font-sans antialiased">
+    <main id="main" class="min-h-screen">
+        <Header />
+        <AboutHero hero={hero} name="Ilir Tafa" intro={intro} />
+        <AboutSplit items={items} />
+        <AboutQuote quote="“Ta ndërtosh një teatër si ‘Faruk Begolli’ është si të ndërtosh një kishë a xhami, bile më vështirë… Ky njeri, Ilir Tafa, është patriot i ditëve të sotit.”" author="Enver Petrovci - Fjalimi përurimor, Teatri “Faruk Begolli”, Prishtinë" />
+    </main>
+    <Footer />
+  </body>
+</html>
+ 
+
+<style>
+  :global(header) {
+    background-color: #1c2733 !important;
+  }
+</style>

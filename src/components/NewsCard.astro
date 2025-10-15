@@ -1,0 +1,69 @@
+---
+interface Item {
+  slug: string;
+  type: "internal" | "external";
+  title: string;
+  date?: string | null;
+  cover?: string | null;
+  excerpt?: string | null;
+  sourceUrl?: string | null;
+  sourceName?: string | null;
+}
+const { item } = Astro.props as { item: Item };
+
+const isExternal = item.type === "external";
+const href = isExternal ? item.sourceUrl! : `/news/${item.slug}`;
+
+
+---
+<article
+  class="group grid grid-cols-[200px_1fr] md:grid-cols-[220px_1fr] gap-4 p-4 rounded-xl bg-[#10161d] hover:bg-[#0f141a] border border-white/5"
+>
+  <!-- Thumbnail -->
+  <a
+    href={href}
+    target={isExternal ? "_blank" : undefined}
+    rel={isExternal ? "noopener nofollow" : undefined}
+    class="block aspect-[16/9] w-[220px] overflow-hidden rounded-lg"
+  >
+    {item.cover ? (
+      <img
+        src={item.cover}
+        alt={item.title}
+        class="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+      />
+    ) : (
+      <div class="h-full w-full bg-white/5" />
+    )}
+  </a>
+
+  <!-- Info -->
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center gap-2 text-xs text-white/60">
+      <span
+        class="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5"
+      >
+        {isExternal ? "External" : "On site"}
+      </span>
+      {item.sourceName && <span>· {item.sourceName}</span>}
+      {item.date && (
+        <time datetime={item.date}>
+          {new Date(item.date).toLocaleDateString("sq-AL")}
+        </time>
+      )}
+    </div>
+
+    <a
+      href={href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener nofollow" : undefined}
+      class="text-lg md:text-xl font-semibold leading-snug hover:underline"
+    >
+      {item.title}
+    </a>
+
+    {item.excerpt && (
+      <p class="text-sm text-white/70 line-clamp-2">{item.excerpt}</p>
+    )}
+  </div>
+</article>

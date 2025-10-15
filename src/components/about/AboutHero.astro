@@ -1,0 +1,21 @@
+---
+interface Props {
+  hero: ImageMetadata | string;
+  name: string;
+  intro: string;
+}
+const { hero, name, intro } = Astro.props;
+---
+<section class="flex flex-col items-center justify-center min-h-screen px-10 py-12 md:py-16">
+  <div class="w-[70%] max-w-[100%]">
+    <img
+      src={typeof hero === 'string' ? hero : hero.src}
+      alt={name}
+      class="w-full aspect-[16/6] object-cover rounded-xl mb-10"
+    />
+    <div class="text-left" style="margin-top: 40px;">
+      <h1 class="font-serif !text-7xl !mb-5 md:text-6xl !text-[#545a73]" style="font-weight: 700;">{name}</h1>
+      <p class="mt-4 text-sm md:text-base leading-7 text-[#1c2733]">{intro}</p>
+    </div>
+  </div>
+</section>

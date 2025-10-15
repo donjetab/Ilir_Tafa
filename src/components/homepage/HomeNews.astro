@@ -1,0 +1,75 @@
+---
+// load files
+const entries = await import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
+
+type NewsPost = {
+  type?: "internal" | "external";
+  date?: string;
+  slug: string;
+  cover?: string;
+  title?: string;
+  excerpt?: string;
+  sourceUrl?: string;
+};
+
+// normalize + add slug from filename
+const posts: NewsPost[] = Object.entries(entries).map(([file, p]: [string, any]) => {
+  const fileSlug = file.split("/").pop()?.replace(".json", "") ?? "";
+  return {
+    slug: p?.slug ?? fileSlug,
+    type: p?.type,
+    sourceUrl: p?.sourceUrl,
+    date: p?.date ?? "",
+    cover: p?.cover ?? "",
+    title: p?.title ?? "",
+    excerpt: p?.excerpt ?? "",
+  };
+});
+
+
+// pick by slug
+const wanted = new Set(["bretkosat-teatri-prizren", "abasadori-kulturor-i-evropes"]);
+const items = posts.filter(p => wanted.has(p.slug));
+
+// fallback if none found
+const safeItems = items.length ? items : posts.slice(0, 2);
+---
+<section class="w-full h-screen bg-[#0e141a] text-white flex flex-col items-center justify-center text-center gap-20">
+  <h2 class="text-3xl md:text-5xl font-semibold title -mt-10">LAJMET E FUNDIT</h2>
+  <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-12 px-12 text-left">
+  {safeItems.map((n) => (
+    <a
+      href={n.sourceUrl || `/lajmet/${n.slug}`}
+      target={n.type === "external" ? "_blank" : "_self"}
+      rel={n.type === "external" ? "noopener noreferrer" : undefined}
+      class="flex items-center justify-center gap-6 w-full group"
+    >
+      <!-- Image -->
+      <div class="w-48 h-48 lg:w-56 lg:h-56 rounded-[28px] overflow-hidden flex-shrink-0 bg-[#1c2733]">
+        <img
+          src={n.cover}
+          alt={n.title}
+          class="w-full h-full object-cover object-center"
+          style="aspect-ratio: 1/1; display: block;"
+        />
+      </div>
+
+
+      <!-- Text -->
+      <div class="max-w-md">
+        <h3 class="text-xl md:text-2xl font-medium mb-2 group-hover:text-[#d4af37] transition-colors" style="font-size: 1.3rem; font-weight: 500;">
+          {n.title}
+        </h3>
+
+        <!-- paragraph (shown even for external links) -->
+        <p class="text-sm md:text-base leading-relaxed text-[#d4dbe1]" style="margin-top: 10px;">
+          {n.excerpt}
+        </p>
+
+      </div>
+    </a>
+  ))}
+</div>
+
+  <a href="/news" class="btn-gold mt-4">MË SHUMË</a>
+</section>

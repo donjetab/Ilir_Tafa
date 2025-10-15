@@ -1,0 +1,103 @@
+---
+import type { ImageMetadata } from "astro";
+interface Item { src: ImageMetadata; alt?: string; caption?: string; }
+const { items = [] as Item[] } = Astro.props;
+---
+{items.length > 0 && (
+  <section class="mt-10 section-gap" data-gallery>
+    <h2 class="gallery_title mb-4 text-2xl md:text-3xl font-semibold">Galeria</h2>
+
+    <div class="relative">
+      <button data-role="prev" type="button" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/60 p-2 text-white lightboxButton">❮</button>
+      <button data-role="next" type="button" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/60 p-2 text-white lightboxButton">❯</button>
+
+      <div class="g-track flex overflow-x-auto scroll-smooth gap-4 pb-2" style="scroll-snap-type:x mandatory;">
+        {items.map((it: Item, i: number) => (
+          <figure
+            class="g-card snap-start shrink-0 rounded-xl overflow-hidden bg-[#111821] border border-white/10 cursor-zoom-in"
+            data-index={i}
+            data-fullsrc={it.src.src}
+            data-alt={it.alt ?? ""}
+            data-caption={it.caption ?? ""}>
+            <img src={it.src.src} width={it.src.width} height={it.src.height} alt={it.alt ?? ""} loading="lazy" class="w-full h-full object-cover block" />
+            {it.caption && <figcaption class="px-3 py-2 text-sm text-white/80">{it.caption}</figcaption>}
+          </figure>
+        ))}
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="g-modal fixed inset-0 z-[60] hidden items-center justify-center bg-black/80 p-4">
+      <button data-role="close" class="absolute top-4 right-4 text-white text-2xl lightboxButton" aria-label="Mbyll">✕</button>
+      <button data-role="mprev" class="absolute left-4 top-1/2 -translate-y-1/2 text-white lightboxButton">❮</button>
+      <button data-role="mnext" class="absolute right-4 top-1/2 -translate-y-1/2 text-white lightboxButton">❯</button>
+      <figure class="max-w-5xl w-full">
+        <img class="g-image w-full h-auto rounded-xl border border-white/20" alt="" />
+        <figcaption class="g-caption mt-3 text-center text-white/90"></figcaption>
+      </figure>
+    </div>
+  </section>
+)}
+
+
+<script is:inline>
+(() => {
+  const root  = document.querySelector('section[data-gallery]');
+  if (!root) return;
+  const track = root.querySelector('.g-track');
+  const prev  = root.querySelector('[data-role="prev"]');
+  const next  = root.querySelector('[data-role="next"]');
+  if (!track) return;
+
+  function cardW(){ const c = track.querySelector('.g-card'); return c ? c.getBoundingClientRect().width + 16 : 320; }
+  function slide(d){ track.scrollBy({ left: d*cardW(), behavior:'smooth' }); }
+  prev?.addEventListener('click', () => slide(-1));
+  next?.addEventListener('click', () => slide(1));
+
+  let down=false, sx=0, sl=0, moved=false, startTarget=null;
+  track.addEventListener('pointerdown', e=>{
+    down=true; moved=false; sx=e.clientX; sl=track.scrollLeft; startTarget = e.target;
+    track.setPointerCapture(e.pointerId);
+    track.style.cursor='grabbing';
+  });
+  track.addEventListener('pointermove', e=>{
+    if(!down) return;
+    const dx = e.clientX - sx;
+    if (Math.abs(dx) > 4) moved = true;
+    track.scrollLeft = sl - dx;
+  });
+  function end(e){
+    if(!down) return;
+    down=false; track.style.cursor='';
+    // tap => open
+    if (!moved && typeof window.__openLightbox === 'function') {
+      window.__openLightbox(startTarget);
+    }
+  }
+  track.addEventListener('pointerup', end);
+  track.addEventListener('pointercancel', end);
+  track.addEventListener('mouseleave', end);
+})();
+</script>
+
+
+<style>
+  .lightboxButton{
+    font-size: 2.5rem !important;
+  }
+  .gallery_title { color:#e7ecef; font-size:1.4rem; margin-bottom: 1.5rem; }
+
+  .g-track { scrollbar-width: none; touch-action: pan-x; cursor: grab; }
+.g-track::-webkit-scrollbar { display: none; }
+
+
+/* 1 / 2 / 3 / 4 per view based on container width */
+.g-card { width: 100%; aspect-ratio: 16/10; scroll-snap-align: start; overflow: hidden; }
+@media (min-width: 640px)  { .g-card { width: 50%; } }        /* ~2 */
+@media (min-width: 1024px) { .g-card { width: 33.333%; } }    /* ~3 */
+@media (min-width: 1280px) { .g-card { width: 25%; } }        /* ~4 */
+
+/* optional: keep images contained */
+.g-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+</style>

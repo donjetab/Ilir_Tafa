@@ -7,11 +7,11 @@ interface Props {
 const { hero, name, intro } = Astro.props;
 ---
 <section class="flex flex-col items-center justify-center min-h-screen px-10 py-12 md:py-16">
-  <div class="w-[70%] max-w-[100%]">
+  <div class="aboutBody w-[70%] max-w-[100%]">
     <img
       src={typeof hero === 'string' ? hero : hero.src}
       alt={name}
-      class="w-full aspect-[16/6] object-cover rounded-xl mb-10"
+      class="aboutHero w-full aspect-[16/6] object-cover mb-10 rounded-xl bg-[#18222c] shadow-lg"
     />
     <div class="text-left" style="margin-top: 40px;">
       <h1 class="font-serif !text-7xl !mb-5 md:text-6xl !text-[#545a73]" style="font-weight: 700;">{name}</h1>
@@ -19,3 +19,21 @@ const { hero, name, intro } = Astro.props;
     </div>
   </div>
 </section>
+
+<style>
+    @media (max-width:640px){
+      .aboutHero{
+        aspect-ratio: 13 / 8;
+      }
+      h1{
+        text-align: center;
+      }
+      p{
+        text-align: justify;
+      }
+      .aboutBody{
+        width: 90% !important;
+        max-width: 90% !important;
+      }
+    }
+</style>

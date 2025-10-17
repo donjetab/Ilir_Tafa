@@ -38,7 +38,7 @@ const {
     <div></div>
 
     <!-- Right side (centered text) -->
-    <div class="flex items-center justify-center text-center px-6 md:px-[100px]">
+    <div class="heroTextDiv flex items-center justify-center text-center px-6 md:px-[100px]">
       <div>
         <h1 class="heroTitle">
           {title}
@@ -56,12 +56,27 @@ const {
     height: 100%;
   }
   .heroTitle{
-      /* font-family: "Playfair Display", serif; */
       color: var(--gold);
       font-size: 130px;
   }
   .heroParagraph{
     font-size: 25px;
     margin-top: -20px;
+  }
+  @media (max-width:640px){ 
+    .heroImg{
+      filter: brightness(80%);
+    }
+    .heroTextDiv{
+      padding: 40px;
+      margin-top: 55%;
+    }
+    .heroTitle { 
+      font-size: 5.5rem; 
+    } 
+    .heroParagraph{
+      font-size: 20px;
+    }
+
   }
 </style>

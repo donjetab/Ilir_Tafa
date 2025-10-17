@@ -5,7 +5,7 @@ const path = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
 const is = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
 
 const links = [
-  { href: "index", label: "Ballina", exact: true },
+  { href: "", label: "Ballina", exact: true },
   { href: "about", label: "Biografia" },
   { href: "works", label: "Veprat" },
   { href: "news", label: "Lajme" },
@@ -13,81 +13,139 @@ const links = [
 ];
 ---
 
-<header id="navbar" class="fixed inset-x-0 top-0 z-50 transition-colors duration-300" style="padding: 10px 50px !important;">
-  <nav class="w-full flex h-20 items-center justify-between px-6 md:px-12">
-    <img src={logo.src} alt="Logo" class="w-24 h-auto" />
+<header id="navbar" class="fixed inset-x-0 top-0 z-50 transition-colors duration-300" style="padding: 10px 50px !important;"> 
+  <nav class="w-full flex h-20 items-center justify-between px-6 md:px-12"> 
+<a href={import.meta.env.BASE_URL} class="block">
+  <img src={logo.src} alt="Logo" class="w-24 h-auto" />
+</a>
 
-    <!-- Desktop -->
-    <div class="hidden md:flex items-center gap-6">
+  <!-- Desktop --> 
+   <div class="hidden md:flex items-center gap-6"> 
+    {links.map((l) => ( 
+      <a href={l.href} 
+        aria-current={(l.exact ? l.href === path : is(l.href)) ? "page" : undefined} 
+        class:list={[ "px-4 py-3 text-[17px] font-medium tracking-wide transition-colors text-white hover:text-[#d4b16a]", 
+        (l.exact ? l.href === path : is(l.href)) ? "font-semibold text-[#d4b16a] underline underline-offset-4" : "opacity-90", ]} > {l.label} 
+      </a> ))} 
+    <!-- Language toggle --> 
+     <button type="button" class="ml-4 px-3 py-2 border border-[#d4b16a] rounded-md text-sm font-medium text-[#d4b16a] hover:bg-[#d4b16a] hover:text-black transition-colors" > 
+      🇦🇱 AL </button> 
+    </div>
+    <!-- Mobile toggle button -->
+    <button aria-label="menu" id="hamburger" class="md:hidden relative p-3 flex flex-col justify-center items-center gap-[6px] group" style="margin-right: 5%;">
+      <span class="block h-[2px] w-6 bg-white rounded transition-all duration-300 group-[.active]:rotate-45 group-[.active]:translate-y-[8px]"></span>
+      <span class="block h-[2px] w-6 bg-white rounded transition-all duration-300 group-[.active]:opacity-0"></span>
+      <span class="block h-[2px] w-6 bg-white rounded transition-all duration-300 group-[.active]:-rotate-45 group-[.active]:-translate-y-[8px]"></span>
+    </button>
+  </nav>
+
+  <!-- Overlay -->
+<div id="navLayer"
+     aria-hidden="true"
+     class="fixed inset-0 z-[60] h-screen w-screen origin-bottom scale-y-0 bg-black/60 backdrop-blur-sm transition duration-500 md:hidden">
+</div>  
+
+  <!-- Mobile menu -->
+<div id="navlinks"
+     class="invisible fixed top-20 left-0 z-[70] w-full origin-top-right translate-y-1 scale-95 flex-col gap-6
+            rounded-3xl border border-white/10 bg-[#0b1116] p-7 opacity-0 shadow-2xl transition-all duration-300 md:hidden">
+      <div class="flex items-center justify-center relative mb-6">
+        <a href={import.meta.env.BASE_URL} class="block">
+          <img src={logo.src} alt="Logo" class="w-24 h-auto" />
+        </a>
+        <button
+          id="closeMenu"
+          type="button"
+          aria-label="close"
+          class="absolute right-0 flex h-10 w-10 items-center justify-center rounded-full border border-white/20
+                text-white hover:text-[#d4b16a] hover:border-[#d4b16a] transition-colors duration-200"
+          style="top: 7%; right: 3%;"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="3.3" class="w-10 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+      </div>
+
+
+    <nav id="links-group" class="flex flex-col items-center gap-8 tracking-wide">
       {links.map((l) => (
         <a
           href={l.href}
-          aria-current={(l.exact ? l.href === path : is(l.href)) ? "page" : undefined}
           class:list={[
-            "px-4 py-3 text-[17px] font-medium tracking-wide transition-colors text-white hover:text-[#d4b16a]",
-            (l.exact ? l.href === path : is(l.href))
-              ? "font-semibold text-[#d4b16a] underline underline-offset-4"
-              : "opacity-90",
+            'text-lg font-medium transition-colors hover:text-[#d4b16a]',
+            (l.exact ? l.href === path : is(l.href)) ? 'text-[#d4b16a]' : 'text-white/90',
           ]}
         >
           {l.label}
         </a>
       ))}
+    </nav>
 
-      <!-- Language toggle -->
-      <button
-        type="button"
-        class="ml-4 px-3 py-2 border border-[#d4b16a] rounded-md text-sm font-medium text-[#d4b16a]
-               hover:bg-[#d4b16a] hover:text-black transition-colors"
-      >
-        🇦🇱 AL
-      </button>
+    <div class="mt-8 flex justify-center">
+      <button type="button"
+        class="px-5 py-2 border border-[#d4b16a] rounded-full text-[#d4b16a]
+               hover:bg-[#d4b16a] hover:text-black transition-colors text-sm font-semibold tracking-wide"
+        id="langBtn" style="margin-top: 20px;">🇦🇱 AL</button>
     </div>
-
-    <!-- Mobile -->
-    <details class="md:hidden relative">
-      <summary class="list-none cursor-pointer px-2 py-1 rounded border border-white/15 text-white">Menu</summary>
-      <div class="absolute right-0 mt-2 w-48 rounded-lg border border-white/10 bg-black/90 p-1">
-        {links.map((l) => (
-          <a
-            href={l.href}
-            aria-current={(l.exact ? l.href === path : is(l.href)) ? "page" : undefined}
-            class:list={[
-              "block px-3 py-2 text-sm rounded hover:bg-white/10 text-white",
-              (l.exact ? l.href === path : is(l.href))
-                ? "font-semibold underline underline-offset-4"
-                : "opacity-90",
-            ]}
-          >
-            {l.label}
-          </a>
-        ))}
-        <button
-          type="button"
-          class="block w-full text-left mt-1 px-3 py-2 text-sm border border-[#d4b16a] rounded-md text-[#d4b16a]
-                 hover:bg-[#d4b16a] hover:text-black transition-colors"
-        >
-          🇦🇱 AL
-        </button>
-      </div>
-    </details>
-  </nav>
+  </div>
 </header>
 
 <div class="h-20"></div>
 
 <script is:inline>
-  const apply = () => {
-    const nb = document.getElementById('navbar');
-    if (!nb) return;
-    const scrolled = window.scrollY > 50;
-    nb.classList.toggle('bg-[#0e141a]/90', scrolled);
-    nb.classList.toggle('backdrop-blur-md', scrolled);
-  };
+  const root  = document.getElementById('navbar');
+  const btn   = document.getElementById('hamburger');
+  const layer = document.getElementById('navLayer');
+  const panel = document.getElementById('navlinks');
+  const close = document.getElementById('closeMenu');
+  const linksN = [...document.querySelectorAll('#links-group a')];
 
-  // initial + on scroll + after client-side navigations
-  apply();
-  addEventListener('scroll', apply, { passive: true });
-  addEventListener('astro:page-load', apply);
-  addEventListener('astro:after-swap', apply);
+  // Mobile open/close
+  const setOpen = (open) => {
+    root?.setAttribute('data-state', open ? 'active' : '');
+    btn?.classList.toggle('active', open);
+    document.documentElement.classList.toggle('overflow-hidden', open);
+    layer?.classList.toggle('scale-y-100', open);
+    panel?.classList.toggle('visible', open);
+    panel?.classList.toggle('opacity-100', open);
+    panel?.classList.toggle('scale-100', open);
+  };
+  btn?.addEventListener('click', () => setOpen(root?.dataset.state !== 'active'));
+  layer?.addEventListener('click', () => setOpen(false));
+  close?.addEventListener('click', () => setOpen(false));
+  linksN.forEach(a => a.addEventListener('click', () => setOpen(false)));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+
+  // Navbar background on scroll
+  const applyScrollState = () => {
+    const scrolled = window.scrollY > 10;
+    root?.classList.toggle('bg-[#0e141a]/90', scrolled);
+    root?.classList.toggle('backdrop-blur-md', scrolled);
+    root?.classList.toggle('border-b', scrolled);
+    root?.classList.toggle('border-white/10', scrolled);
+  };
+  applyScrollState();
+  addEventListener('scroll', applyScrollState, { passive: true });
+  addEventListener('astro:page-load', applyScrollState);
+  addEventListener('astro:after-swap', applyScrollState);
 </script>
+
+
+<style>
+#navlinks.visible {
+  visibility: visible !important;
+}
+#navlinks.opacity-100 {
+  opacity: 1 !important;
+}
+#navlinks.scale-100 {
+  transform: scale(1) translateY(0) !important;
+}
+#navLayer.scale-y-100 {
+  transform: scaleY(1) !important;
+  transform-origin: top;
+}
+</style>

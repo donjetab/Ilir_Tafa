@@ -18,18 +18,19 @@ const {
 } = Astro.props;
 ---
 
-<section class="w-full">
+<section class="aboutSection w-full">
   <div class="min-h-screen grid place-content-center grid-cols-1 md:grid-cols-2 gap-10 px-6 md:px-[100px] place-items-center">
    
   <!-- Left: image -->
-  <div class="place-self-center">
-    <div class="inline-block rounded-lg bg-black/20 p-3 ring-4 ring-[#d4b16a]">
-        <img src={image.src} class="block md:w-[500px] h-auto object-cover rounded-lg" />
-    </div>
+<div class="flex justify-center items-center">
+  <div class="aboutImgC rounded-lg bg-black/20 p-3 ring-4 ring-[#d4b16a]">
+    <img src={image.src} class="block md:w-[500px] w-full h-auto object-cover rounded-lg" />
   </div>
+</div>
+
 
   <!-- Right: content -->
-  <div class="place-self-center">
+  <div class="aboutText place-self-center">
     <div class="max-w-3xl gap-10 flex flex-col">
         <h2 class="font-serif md:text-4xl text-white pb-8 title">{title}</h2>
         <p class="text-lg text-white/85 leading-relaxed mb-8">{text}</p>
@@ -39,3 +40,33 @@ const {
 </div>
 
 </section>
+
+<style>
+    @media (max-width:640px){
+      .aboutSection{
+        margin-top: 70px;
+      } 
+        
+      .title{
+        font-size: 2.5rem;
+      }
+      .aboutImgC{
+        width: 60%;
+      }
+      .aboutText{
+        padding: 0 40px;
+      }
+      .aboutText h2{
+        text-align: center;
+      }
+
+      .aboutText p{
+        text-align: justify;
+        font-size: 18px;
+      }
+
+      .btn-gold{
+        margin-top: 0px;
+      }
+    }
+</style>

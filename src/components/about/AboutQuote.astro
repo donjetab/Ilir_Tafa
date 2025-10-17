@@ -18,7 +18,21 @@ const { quote, author = "Ilir Tafa" } = Astro.props;
 
 <style>
     .quote{
-        width: 55% !important;
-        padding: 60px !important;
+      width: 55% !important;
+      padding: 60px !important;
     }
+
+    @media (max-width:640px){
+    .quote{
+      width: 85% !important;
+      padding: 30px !important;
+    }
+    blockquote{
+      font-size: 20px;
+    }
+    figcaption{
+      padding-top: 10px;
+    }
+  }
+
 </style>

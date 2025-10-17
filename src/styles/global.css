@@ -88,8 +88,12 @@ a:hover {
 .section-gap-bottom { margin-bottom:2.5rem;}
 
 
-@media (min-width:640px){ 
-
+@media (max-width:640px){ 
+    .btn-gold{
+      font-size: 18px;
+      padding: 10px 20px;
+      align-self: center;
+    }
 }
 
 @media (min-width:1024px){ /* lg */ }

@@ -7,9 +7,9 @@ const awards = [
 ];
 ---
 <section class="w-full min-h-[80vh] bg-[#0e141a] text-white flex items-center justify-center">
-  <div class="flex flex-col items-center text-center !mt-[-200px]"> 
+  <div class="test flex flex-col items-center text-center" style="margin-top: -100px;"> 
     <!-- move block up or down with mt -->
-    <h2 class="title text-3xl md:text-5xl font-semibold uppercase !mb-24">
+    <h2 class="title text-3xl md:text-5xl font-semibold uppercase" style="margin-bottom: 90px;">
       çmimet
     </h2>
 
@@ -32,3 +32,20 @@ const awards = [
     </div>
   </div>
 </section>
+<style>
+  @media (max-width:640px){
+    .test{
+      margin-top: 10px !important;
+    }
+    .test h2{
+      font-size: 60px;
+
+      z-index: 10;
+      margin-bottom: 50px !important;
+    }
+    article{
+      height: 180px !important;
+      width: 300px !important;
+    }
+  }
+</style>

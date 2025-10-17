@@ -36,7 +36,7 @@ const items = Object.values(entries)
 
 
       <!-- Grid -->
-      <main class="mx-auto max-w-[100%] px-4 md:px-6 py-10 space-y-6" style="margin: 4% 10% 10% 10%;">
+      <main class="mainNews mx-auto max-w-[100%] px-4 md:px-6 py-10 space-y-6" style="margin: 4% 10% 10% 10%;">
         <!-- Top bar unchanged -->
         <section id="news-grid" class="grid gap-15 md:grid-cols-2 w-[95%] mx-auto justify-center">
 
@@ -72,15 +72,25 @@ const items = Object.values(entries)
 </html>
 
 <style>
+  
   #news-search {
-  border: 2px solid rgba(255,255,255,0.3) !important;
-  border-radius: 1.5rem !important;
-}
-#news-search:focus {
-  border-color: white !important;
-}
+    border: 2px solid rgba(255,255,255,0.3) !important;
+    border-radius: 1.5rem !important;
+  }
+  #news-search:focus {
+    border-color: white !important;
+  }
 
-.pl{
-  padding-left: 2.5rem !important;
-}
+  .pl{
+    padding-left: 2.5rem !important;
+  }
+
+  @media (max-width: 640px) {
+  .pl{
+    padding-left: 3.5rem !important;
+  }
+  .mainNews {
+      justify-items: center;
+    }
+  }
 </style>

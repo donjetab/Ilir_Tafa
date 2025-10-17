@@ -7,6 +7,8 @@ poster: "../../assets/works/lzn-poster.jpg"
 description: "Një nga serialet komedike më të njohura në Ballkan, që përmes humorit dhe ironisë pasqyron jetën e përditshme të tre brezave të familjes Fazlinović në Sarajevë."
 director: "Elmir Jukić"
 venue: "Bosnje / Federalna TV"
+trailer: "videos/lzn.mp4"
+
 ---
 
 “Lud, Zbunjen, Normalan” është një nga serialet komedike më të njohura të rajonit të Ballkanit, krijuar nga Feđa Isović dhe me regji të Elmir Jukić. Seriali u transmetua nga viti 2007 deri në 2021, duke numëruar mbi 300 episode dhe 13 sezone.

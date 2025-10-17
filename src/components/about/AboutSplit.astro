@@ -10,7 +10,7 @@ const src = (x: any) => typeof x === "string" ? x : x.src;
 ---
 
 <section class="flex justify-center px-10 py-12 md:py-20">
-  <div class="w-[70%] max-w-[70%] !space-y-24">
+  <div class="aboutBody w-[70%] max-w-[70%] !space-y-24">
     {items.map((it, i) => (
       <div
         class={`grid md:grid-cols-2 items-center gap-12 ${
@@ -41,3 +41,19 @@ const src = (x: any) => typeof x === "string" ? x : x.src;
     ))}
   </div>
 </section>
+
+<style>
+    @media (max-width:640px){
+      img{
+        aspect-ratio: 10 / 7;
+        width: 100%;
+      }
+      p{
+        text-align: justify;
+      }
+      .aboutBody{
+        width: 90% !important;
+        max-width: 90% !important;
+      }
+    }
+</style>

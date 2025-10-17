@@ -65,7 +65,7 @@ const pageDesc = item.excerpt ?? "";
     <Header />
 
     <!-- Back to News -->
-    <div class="w-full flex justify-center px-6 mt-6">
+    <div class="bNews w-full flex justify-center px-6 mt-6">
       <div class="w-full max-w-3xl">
         <a
           href="news"
@@ -151,27 +151,29 @@ const pageDesc = item.excerpt ?? "";
           }
         </div>
       </section>
-      <!-- Prev/Next -->
-      <!-- <div class="w-full flex justify-center px-6">
-        <div class="w-full max-w-3xl pt-10 mt-10 border-top border-white/10 flex items-center justify-between">
-          {prev
-            ? <a href={urlFor(prev)} class="min-w-0 max-w-[48%] hover:underline">
-                <div class="text-xs text-white/60">Previous</div>
-                <div class="truncate">{prev.title}</div>
-              </a>
-            : <span />
-          }
-          {next
-            ? <a href={urlFor(next)} class="min-w-0 max-w-[48%] text-right hover:underline">
-                <div class="text-xs text-white/60">Next</div>
-                <div class="truncate">{next.title}</div>
-              </a>
-            : <span />
-          }
-        </div>
-      </div> -->
+
     </main>
 
     <Footer />
   </body>
 </html>
+
+<style>
+  @media (max-width: 640px) {
+    .bNews{
+      margin: 0 1.5rem;
+    }
+    main {
+      max-width: 90%;
+      margin: 1.5rem auto;
+      border-radius: 0.75rem;
+      min-height: 60vh;
+    }
+
+    iframe {
+      border-radius: 0.75rem;
+    }
+
+  }
+
+</style>

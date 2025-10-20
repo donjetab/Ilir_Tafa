@@ -11,8 +11,7 @@ interface Props {
 }
 const {
   title = "Për Ilir Tafa",
-  text = "Ilir Tafa (i lindur më 1974 në Lipjan) është një nga aktorët më të njohur kosovarë, i afirmuar si në Kosovë ashtu edhe në rajon, sidomos në Bosnje e Kroaci. Ai ka interpretuar në filma, seriale dhe shfaqje teatrore, ndër të cilat veçohen Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit dhe seriali boshnjak Lud, Zbunjen, Normalan, që i dha famë të gjerë rajonale.",
-  ctaLabel = "BIOGRAFIA",
+  text = "Ilir Tafa (i lindur më 1974 në Lipjan) është një nga aktorët më të njohur kosovarë, i afirmuar si në Kosovë ashtu edhe në rajon, sidomos në Bosnje e Kroaci. Ai ka interpretuar në filma, seriale dhe shfaqje teatrore, ndër të cilat veçohen Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit dhe seriali boshnjak Lud, Zbunjen, Normalan, që i dha famë të gjerë rajonale.",  ctaLabel = "BIOGRAFIA",
   ctaHref = "/about",
   image = aboutImg,
 } = Astro.props;
@@ -20,53 +19,39 @@ const {
 
 <section class="aboutSection w-full">
   <div class="min-h-screen grid place-content-center grid-cols-1 md:grid-cols-2 gap-10 px-6 md:px-[100px] place-items-center">
-   
-  <!-- Left: image -->
-<div class="flex justify-center items-center">
-  <div class="aboutImgC rounded-lg bg-black/20 p-3 ring-4 ring-[#d4b16a]">
-    <img src={image.src} class="block md:w-[500px] w-full h-auto object-cover rounded-lg" />
-  </div>
-</div>
+    <!-- Left: image -->
+    <div class="flex justify-center items-center reveal" style="--delay:.07s">
+      <div class="aboutImgC rounded-lg bg-black/20 ring-4 ring-[#d4b16a]">
+        <img src={image.src} alt="Ilir Tafa" class="block md:w-[700px] w-full h-auto object-cover rounded-lg" />
+      </div>
+    </div>
 
-
-  <!-- Right: content -->
-  <div class="aboutText place-self-center">
-    <div class="max-w-3xl gap-10 flex flex-col">
-        <h2 class="font-serif md:text-4xl text-white pb-8 title">{title}</h2>
-        <p class="text-lg text-white/85 leading-relaxed mb-8">{text}</p>
-        <a href={ctaHref} class="btn-gold self-start w-fit">{ctaLabel}</a>
+    <!-- Right: content -->
+    <div class="aboutText place-self-center">
+      <div class="max-w-3xl gap-10 flex flex-col">
+        <h2 class="font-serif md:text-4xl text-white pb-8 title reveal" style="--delay:.12s">{title}</h2>
+        <p class="text-lg text-white/85 leading-relaxed mb-8 reveal" style="--delay:.18s">{text}</p>
+        <a href={ctaHref} class="btn-gold self-start w-fit reveal" style="--delay:.24s">{ctaLabel}</a>
+      </div>
     </div>
   </div>
-</div>
-
 </section>
 
+
 <style>
-    @media (max-width:640px){
-      .aboutSection{
-        margin-top: 70px;
-      } 
-        
-      .title{
-        font-size: 2.5rem;
-      }
-      .aboutImgC{
-        width: 60%;
-      }
-      .aboutText{
-        padding: 0 40px;
-      }
-      .aboutText h2{
-        text-align: center;
-      }
+  @media (min-width: 768px){
+    .aboutImgC{ width:70%; }
+    .title{ font-size:2.5rem; }
+    .aboutText{ padding:0 40px 0 0; font-size:20px; }
+  }
 
-      .aboutText p{
-        text-align: justify;
-        font-size: 18px;
-      }
-
-      .btn-gold{
-        margin-top: 0px;
-      }
-    }
+  @media (max-width:768px){
+    .aboutSection{ margin-top:70px; }
+    .title{ font-size:2.5rem; }
+    .aboutImgC{ width:60%; }
+    .aboutText{ padding:0 40px; }
+    .aboutText h2{ text-align:center; }
+    .aboutText p{ text-align:justify; font-size:18px; }
+    .btn-gold{ margin-top:0; }
+  }
 </style>

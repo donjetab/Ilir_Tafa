@@ -28,9 +28,9 @@ const links = [
         (l.exact ? l.href === path : is(l.href)) ? "font-semibold text-[#d4b16a] underline underline-offset-4" : "opacity-90", ]} > {l.label} 
       </a> ))} 
     <!-- Language toggle --> 
-     <button type="button" class="ml-4 px-3 py-2 border border-[#d4b16a] rounded-md text-sm font-medium text-[#d4b16a] hover:bg-[#d4b16a] hover:text-black transition-colors" > 
-      🇦🇱 AL </button> 
-    </div>
+     <!-- <button type="button" class="ml-4 px-3 py-2 border border-[#d4b16a] rounded-md text-sm font-medium text-[#d4b16a] hover:bg-[#d4b16a] hover:text-black transition-colors" > 
+      🇦🇱 AL </button> -->
+    </div> 
     <!-- Mobile toggle button -->
     <button aria-label="menu" id="hamburger" class="md:hidden relative p-3 flex flex-col justify-center items-center gap-[6px] group" style="margin-right: 5%;">
       <span class="block h-[2px] w-6 bg-white rounded transition-all duration-300 group-[.active]:rotate-45 group-[.active]:translate-y-[8px]"></span>
@@ -46,7 +46,7 @@ const links = [
 </div>  
 
   <!-- Mobile menu -->
-<div id="navlinks"
+    <div id="navlinks"
      class="invisible fixed top-20 left-0 z-[70] w-full origin-top-right translate-y-1 scale-95 flex-col gap-6
             rounded-3xl border border-white/10 bg-[#0b1116] p-7 opacity-0 shadow-2xl transition-all duration-300 md:hidden">
       <div class="flex items-center justify-center relative mb-6">
@@ -84,12 +84,12 @@ const links = [
       ))}
     </nav>
 
-    <div class="mt-8 flex justify-center">
+    <!-- <div class="mt-8 flex justify-center">
       <button type="button"
         class="px-5 py-2 border border-[#d4b16a] rounded-full text-[#d4b16a]
                hover:bg-[#d4b16a] hover:text-black transition-colors text-sm font-semibold tracking-wide"
         id="langBtn" style="margin-top: 20px;">🇦🇱 AL</button>
-    </div>
+    </div> -->
   </div>
 </header>
 
@@ -135,17 +135,17 @@ const links = [
 
 
 <style>
-#navlinks.visible {
-  visibility: visible !important;
-}
-#navlinks.opacity-100 {
-  opacity: 1 !important;
-}
-#navlinks.scale-100 {
-  transform: scale(1) translateY(0) !important;
-}
-#navLayer.scale-y-100 {
-  transform: scaleY(1) !important;
-  transform-origin: top;
-}
+  #navlinks.visible {
+    visibility: visible !important;
+  }
+  #navlinks.opacity-100 {
+    opacity: 1 !important;
+  }
+  #navlinks.scale-100 {
+    transform: scale(1) translateY(0) !important;
+  }
+  #navLayer.scale-y-100 {
+    transform: scaleY(1) !important;
+    transform-origin: top;
+  }
 </style>

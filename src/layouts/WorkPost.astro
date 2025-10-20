@@ -52,7 +52,7 @@ const isFilm = type === "film";
             )}
             {Array.isArray(episodes) && episodes.length > 0 && (
               <span class="badge">
-                {type === "film" ? `${episodes.length} parts` : `${episodes.length} episodes`}
+                {type === "film" ? `${episodes.length} pjesë` : `${episodes.length} episode`}
               </span>
             )}
           </div>
@@ -86,3 +86,21 @@ const isFilm = type === "film";
     <Footer />
   </body>
 </html>
+
+<style>
+
+@media (max-width:900px){
+  .poster { 
+    width: 60% !important;  
+    max-width: 100%;
+    aspect-ratio: 2/3;
+    margin: 0 auto;  
+  }
+}
+@media (max-width:900px){
+  .poster { 
+      width: 80% !important;  
+    }
+}
+
+</style>

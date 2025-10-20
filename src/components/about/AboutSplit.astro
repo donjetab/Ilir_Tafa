@@ -18,7 +18,7 @@ const src = (x: any) => typeof x === "string" ? x : x.src;
         }`}
       >
         <!-- Image -->
-        <div class={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}>
+        <div class={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`} class="imggg">
           <img
             src={src(it.img)}
             alt={it.title || ""}
@@ -43,15 +43,35 @@ const src = (x: any) => typeof x === "string" ? x : x.src;
 </section>
 
 <style>
+    @media (min-width: 768px)and (max-width: 1024px) {
+      .aboutBody{
+        max-width: 80% !important;
+      }
+      p{
+        font-size: 12px;
+        line-height: 22px;
+      }
+      img{
+        aspect-ratio: 15 / 15;
+        width: 93%;
+      }
+    }
+    @media (max-width: 768px){
+      .flex{
+        justify-content: center !important;
+      }
+            p{
+        text-align: justify;
+      }
+    }
     @media (max-width:640px){
       img{
         aspect-ratio: 10 / 7;
         width: 100%;
       }
-      p{
-        text-align: justify;
-      }
+
       .aboutBody{
+        margin-top: 15%;
         width: 90% !important;
         max-width: 90% !important;
       }

@@ -2,7 +2,7 @@
 // src/components/EpisodesGrid.astro
 interface Ep { n?: number; url: string; title?: string; }
 interface Props { episodes: Ep[]; perPage?: number; label?: string; }
-const { episodes = [], perPage = 24, label = "Episodes" } = Astro.props;
+const { episodes = [], perPage = 24, label = "Episodet" } = Astro.props;
 
 const singular = label.toLowerCase().includes("film") ? "Pjesa" : "Episodi";
 const chipAbbr = label.toLowerCase().includes("film") ? "Pj" : "Ep";

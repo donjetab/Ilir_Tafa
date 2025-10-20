@@ -6,23 +6,25 @@ const awards = [
   { title: "'Aktori më i Mirë'", subtitle: "Festivali i Teatrove Shqiptare në Dibër të Maqedonisë" },
 ];
 ---
+
 <section class="w-full min-h-[80vh] bg-[#0e141a] text-white flex items-center justify-center">
-  <div class="test flex flex-col items-center text-center" style="margin-top: -100px;"> 
-    <!-- move block up or down with mt -->
-    <h2 class="title text-3xl md:text-5xl font-semibold uppercase" style="margin-bottom: 90px;">
+  <div class="test flex flex-col items-center text-center" style="margin-top:-100px;">
+    <!-- Title -->
+    <h2 class="title text-3xl md:text-5xl font-semibold uppercase reveal" style="--delay:.1s; margin-bottom:90px;">
       çmimet
     </h2>
 
+    <!-- Awards grid -->
     <div class="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 justify-items-center">
-      {awards.map((a) => (
+      {awards.map((a, i) => (
         <article
-        class="relative h-80 w-64 overflow-hidden rounded-xl bg-[#12181f] !border-2 !border-[#d4b16a]
-                 shadow-[0_0_15px_rgba(212,177,106,0.2)] transition-transform duration-300
-                 hover:-translate-y-2 flex items-center justify-center text-center"
+          class="relative h-80 w-64 overflow-hidden rounded-xl bg-[#12181f] !border-2 !border-[#d4b16a]
+                   shadow-[0_0_15px_rgba(212,177,106,0.2)] transition-transform duration-300
+                   hover:-translate-y-2 flex items-center justify-center text-center reveal"
+          style={`--delay:${0.15 + i * 0.1}s`}
         >
-          <div class="absolute inset-0  bg-cover bg-center opacity-20"></div>
+          <div class="absolute inset-0 bg-cover bg-center opacity-20"></div>
           <div class="absolute inset-0 bg-black/40"></div>
-
           <div class="relative z-10 px-6 py-4 !p-3">
             <h3 class="text-[23px] md:text-2xl font-semibold mb-3 text-white leading-snug">{a.title}</h3>
             <p class="text-sm text-[#d4b16a] uppercase tracking-wide">{a.subtitle}</p>
@@ -32,20 +34,11 @@ const awards = [
     </div>
   </div>
 </section>
+
 <style>
   @media (max-width:640px){
-    .test{
-      margin-top: 10px !important;
-    }
-    .test h2{
-      font-size: 60px;
-
-      z-index: 10;
-      margin-bottom: 50px !important;
-    }
-    article{
-      height: 180px !important;
-      width: 300px !important;
-    }
+    .test{ margin-top:10px!important; }
+    .test h2{ font-size:60px; z-index:10; margin-bottom:50px!important; }
+    article{ height:180px!important; width:300px!important; }
   }
 </style>

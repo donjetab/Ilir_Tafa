@@ -11,8 +11,8 @@ const items = Object.values(entries)
 ---
 <html lang="sq">
   <head>
-    
-    <BaseHead title="Lajme | Ilir Tafa" description="Lajmet e fundit nga Ilir Tafa." /></head>
+    <BaseHead title="Lajme | Ilir Tafa" description="Lajmet e fundit nga Ilir Tafa." />
+  </head>
   <body class="bg-[#0b1116] text-white">
     <Header />
     <main class="mx-auto px-4 md:px-6 py-10 space-y-6" style="margin-top: 3%;">
@@ -38,7 +38,9 @@ const items = Object.values(entries)
       <!-- Grid -->
       <main class="mainNews mx-auto max-w-[100%] px-4 md:px-6 py-10 space-y-6" style="margin: 4% 10% 10% 10%;">
         <!-- Top bar unchanged -->
-        <section id="news-grid" class="grid gap-15 md:grid-cols-2 w-[95%] mx-auto justify-center">
+        <!-- <section id="news-grid" class="grid gap-15 md:grid-cols-2 w-[95%] mx-auto justify-center"> -->
+          <section id="news-grid" class="grid gap-15 min-[1001px]:grid-cols-2 w-[95%] mx-auto justify-center">
+
 
           {items.map((it:any)=>
             <div
@@ -86,7 +88,10 @@ const items = Object.values(entries)
   }
 
   @media (max-width: 640px) {
-  .pl{
+    h1{
+      margin-bottom: 5%;
+    }
+    .pl{
     padding-left: 3.5rem !important;
   }
   .mainNews {

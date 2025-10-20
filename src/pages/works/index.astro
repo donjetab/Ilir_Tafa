@@ -31,7 +31,8 @@ const pageTitle = "Veprimtaria Artistike";
    .head { padding: 3rem 0 1rem; text-align: left; position: relative; z-index: 5; } .title { font-size: 3.2rem; margin: 0; color: #e7ecef; line-height: 1; } .sub { color: #9aa4ad; margin: .4rem 0 0; } /* Filter buttons */ .filter { display: flex; gap: .5rem; margin-top: 1rem; flex-wrap: wrap; position: relative; z-index: 5; } .chip { background: transparent; border: 1px solid rgba(255,215,0,.25); color: var(--gold); padding: .4rem .9rem; border-radius: 999px; cursor: pointer; font-size: .9rem; transition: all .15s ease; width: auto; } 
    .chip.active { background: rgba(255,215,0,.12); border-color: var(--gold); } .chip:hover { background: rgba(255,215,0,.08); } /* Grid */ .grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(3, 1fr); margin-top: 2rem; } @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } } @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } } /* Cards */ .card { background: #0f141a; border: 1px solid rgba(255,255,255,.06); border-radius: 14px; overflow: hidden; text-decoration: none; color: inherit; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; display: block; } .card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0,0,0,.35); border-color: rgba(245,215,121,.35); } 
    .poster { width: 100%; aspect-ratio: 16/20; object-fit: cover; display: block; background: #111821; } .meta { padding: .9rem; } .row { display: flex; justify-content: space-between; align-items: center; gap: .75rem; } .badge { font-size: .75rem; letter-spacing: .02em; padding: .25rem .5rem; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; text-transform: uppercase; color: #c9c9c9; } .title2 { margin: .35rem 0 0; color: #e7ecef; font-weight: 600; font-size: 1.08rem; } .role { margin: .15rem 0 0; color: #9aa4ad; font-size: .92rem; } 
-   </style> </head>
+   </style> 
+   </head>
   <body>
     <Header />
     <main>
@@ -96,7 +97,7 @@ const pageTitle = "Veprimtaria Artistike";
 
     </main>
     <Footer />
-    <script is:inline> 
+   <script is:inline> 
     window.addEventListener('DOMContentLoaded', () => { 
       const chips = Array.from(document.querySelectorAll('.chip')); 
       const cards = Array.from(document.querySelectorAll('.card')); 
@@ -121,7 +122,8 @@ const pageTitle = "Veprimtaria Artistike";
 </html>
 
 <style>
-  
+
+  /* Poster më i vogël dhe i centruar midis 641–1000px */
   @media (max-width: 640px) {
     main h1{
       text-align: center;

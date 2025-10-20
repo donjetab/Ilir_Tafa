@@ -14,7 +14,8 @@ const { items = [] as Item[] } = Astro.props;
       <div class="g-track flex overflow-x-auto scroll-smooth gap-4 pb-2" style="scroll-snap-type:x mandatory;">
         {items.map((it: Item, i: number) => (
           <figure
-            class="g-card snap-start shrink-0 rounded-xl overflow-hidden bg-[#111821] border border-white/10 cursor-zoom-in"
+            class="g-card snap-start shrink-0 rounded-xl overflow-hidden bg-[#111821] border border-white/10 cursor-pointer"
+
             data-index={i}
             data-fullsrc={it.src.src}
             data-alt={it.alt ?? ""}
@@ -41,63 +42,142 @@ const { items = [] as Item[] } = Astro.props;
 
 
 <script is:inline>
-(() => {
-  const root  = document.querySelector('section[data-gallery]');
-  if (!root) return;
-  const track = root.querySelector('.g-track');
-  const prev  = root.querySelector('[data-role="prev"]');
-  const next  = root.querySelector('[data-role="next"]');
-  if (!track) return;
+  (() => {
+    const root  = document.querySelector('section[data-gallery]');
+    if (!root) return;
 
-  function cardW(){ const c = track.querySelector('.g-card'); return c ? c.getBoundingClientRect().width + 16 : 320; }
-  function slide(d){ track.scrollBy({ left: d*cardW(), behavior:'smooth' }); }
-  prev?.addEventListener('click', () => slide(-1));
-  next?.addEventListener('click', () => slide(1));
+    // ---- Elements
+    const track = root.querySelector('.g-track');
+    const cards = Array.from(root.querySelectorAll('.g-card'));
+    const modal = root.querySelector('.g-modal');
+    const imgEl = modal.querySelector('.g-image');
+    const capEl = modal.querySelector('.g-caption');
+    const btnClose = modal.querySelector('[data-role="close"]');
+    const btnPrev  = modal.querySelector('[data-role="mprev"]');
+    const btnNext  = modal.querySelector('[data-role="mnext"]');
 
-  let down=false, sx=0, sl=0, moved=false, startTarget=null;
-  track.addEventListener('pointerdown', e=>{
-    down=true; moved=false; sx=e.clientX; sl=track.scrollLeft; startTarget = e.target;
-    track.setPointerCapture(e.pointerId);
-    track.style.cursor='grabbing';
-  });
-  track.addEventListener('pointermove', e=>{
-    if(!down) return;
-    const dx = e.clientX - sx;
-    if (Math.abs(dx) > 4) moved = true;
-    track.scrollLeft = sl - dx;
-  });
-  function end(e){
-    if(!down) return;
-    down=false; track.style.cursor='';
-    // tap => open
-    if (!moved && typeof window.__openLightbox === 'function') {
-      window.__openLightbox(startTarget);
+    // ---- State
+    let index = 0;
+
+    // ---- Render
+    function render(i){
+      const card = cards[i];
+      if (!card) return;
+      imgEl.src = card.dataset.fullsrc || card.querySelector('img')?.src || '';
+      imgEl.alt = card.dataset.alt || '';
+      capEl.textContent = card.dataset.caption || '';
     }
-  }
-  track.addEventListener('pointerup', end);
-  track.addEventListener('pointercancel', end);
-  track.addEventListener('mouseleave', end);
-})();
+
+    // ---- Open/close
+    function openAt(i){
+      index = (i + cards.length) % cards.length;
+      render(index);
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.documentElement.style.overflow = 'hidden';
+    }
+    function close(){
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.documentElement.style.overflow = '';
+    }
+
+    function next(){ index = (index + 1) % cards.length; render(index); }
+    function prev(){ index = (index - 1 + cards.length) % cards.length; render(index); }
+
+    // ---- Public hook for your pointer code
+    window.__openLightbox = (startTarget) => {
+      const fig = startTarget?.closest?.('.g-card');
+      if (!fig) return;
+      const i = cards.indexOf(fig);
+      if (i >= 0) openAt(i);
+    };
+
+    // ---- Click fallback (desktop/mouse)
+    cards.forEach((c, i) => {
+      c.addEventListener('click', (e) => {
+        // ignore if drag occurred (pointer code sets moved)
+        if (typeof window.__g_dragging === 'boolean' && window.__g_dragging) return;
+        openAt(i);
+      });
+    });
+
+    // ---- Track drag for desktop
+    if (track) {
+      let down=false, sx=0, sl=0, moved=false, startTarget=null;
+      function cardW(){ const c = track.querySelector('.g-card'); return c ? c.getBoundingClientRect().width + 16 : 320; }
+      function slide(d){ track.scrollBy({ left: d*cardW(), behavior:'smooth' }); }
+      root.querySelector('[data-role="prev"]')?.addEventListener('click', () => slide(-1));
+      root.querySelector('[data-role="next"]')?.addEventListener('click', () => slide(1));
+
+      track.addEventListener('pointerdown', e=>{
+        down=true; moved=false; sx=e.clientX; sl=track.scrollLeft; startTarget = e.target;
+        track.setPointerCapture(e.pointerId);
+        track.style.cursor='grabbing';
+        window.__g_dragging = false;
+      });
+      track.addEventListener('pointermove', e=>{
+        if(!down) return;
+        const dx = e.clientX - sx;
+        if (Math.abs(dx) > 4) { moved = true; window.__g_dragging = true; }
+        track.scrollLeft = sl - dx;
+      });
+      function end(){
+        if(!down) return;
+        down=false; track.style.cursor='';
+        setTimeout(()=>{ window.__g_dragging = false; }, 50);
+        if (!moved) window.__openLightbox(startTarget);
+      }
+      track.addEventListener('pointerup', end);
+      track.addEventListener('pointercancel', end);
+      track.addEventListener('mouseleave', end);
+    }
+
+    // ---- Modal controls
+    btnClose.addEventListener('click', close);
+    btnNext.addEventListener('click', next);
+    btnPrev.addEventListener('click', prev);
+    modal.addEventListener('click', (e)=>{ if (e.target === modal) close(); });
+
+    // ---- Keyboard
+    document.addEventListener('keydown', (e)=>{
+      if (modal.classList.contains('hidden')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+    });
+
+    // ---- Swipe inside modal
+    let tsX=0, tsY=0;
+    modal.addEventListener('touchstart', e=>{ const t=e.changedTouches[0]; tsX=t.clientX; tsY=t.clientY; }, {passive:true});
+    modal.addEventListener('touchend', e=>{
+      const t=e.changedTouches[0];
+      const dx=t.clientX-tsX, dy=t.clientY-tsY;
+      if (Math.abs(dx) > 40 && Math.abs(dy) < 60) { dx<0 ? next() : prev(); }
+    }, {passive:true});
+  })();
 </script>
 
 
 <style>
+  .g-image { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+
   .lightboxButton{
     font-size: 2.5rem !important;
   }
   .gallery_title { color:#e7ecef; font-size:1.4rem; margin-bottom: 1.5rem; }
 
   .g-track { scrollbar-width: none; touch-action: pan-x; cursor: grab; }
-.g-track::-webkit-scrollbar { display: none; }
+  .g-track::-webkit-scrollbar { display: none; }
 
 
-/* 1 / 2 / 3 / 4 per view based on container width */
-.g-card { width: 100%; aspect-ratio: 16/10; scroll-snap-align: start; overflow: hidden; }
-@media (min-width: 640px)  { .g-card { width: 50%; } }        /* ~2 */
-@media (min-width: 1024px) { .g-card { width: 33.333%; } }    /* ~3 */
-@media (min-width: 1280px) { .g-card { width: 25%; } }        /* ~4 */
+  /* 1 / 2 / 3 / 4 per view based on container width */
+  .g-card { width: 100%; aspect-ratio: 16/10; scroll-snap-align: start; overflow: hidden; }
+  @media (min-width: 640px)  { .g-card { width: 50%; } }        /* ~2 */
+  @media (min-width: 1024px) { .g-card { width: 33.333%; } }    /* ~3 */
+  @media (min-width: 1280px) { .g-card { width: 25%; } }        /* ~4 */
 
-/* optional: keep images contained */
-.g-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* optional: keep images contained */
+  .g-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 </style>

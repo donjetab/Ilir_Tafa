@@ -2,6 +2,50 @@
 @import "tailwindcss/preflight";   /* replaces @tailwind base */
 @import "tailwindcss/utilities";  
 
+:root { --ease:cubic-bezier(.2,.8,.2,1); --dur:.25s; }
+.card, .btn, img { transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), opacity var(--dur) var(--ease); }
+.card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,.35); }
+img.hover-zoom { transform-origin:center; }
+img.hover-zoom:hover { transform: scale(1.03); }
+
+:root { --dur: .6s; --ease: cubic-bezier(.2,.8,.2,1); }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* Load-in animations */
+@keyframes fadeUp { from { opacity:0; transform: translateY(16px);} to { opacity:1; transform:none;} }
+.fade-up   { opacity:0; animation: fadeUp var(--dur) var(--ease) forwards; }
+.fade-100  { animation-delay:.10s; }
+.fade-200  { animation-delay:.20s; }
+.fade-300  { animation-delay:.30s; }
+
+/* Hover micro-interactions */
+.hover-lift { transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+.hover-lift:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,.35); }
+.hover-zoom img { transition: transform .35s var(--ease); }
+.hover-zoom:hover img { transform: scale(1.03); }
+
+/* Button */
+.btn-gold { transition: transform .2s var(--ease), box-shadow .2s var(--ease), opacity .2s var(--ease); }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(212,175,55,.35); }
+
+/* Optional: background parallax-ish (CSS only) */
+@media (min-width: 768px){
+  .hero-fixed { background-attachment: fixed; }
+}
+
+/* Progressive enhancement: view()-timeline */
+@supports (animation-timeline: view()) {
+  .reveal {
+    opacity: 0;
+    animation: fadeUp linear both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 30%;
+  }
+}
 
 :root {
 	--accent: #0E141B;
@@ -88,16 +132,10 @@ a:hover {
 .section-gap-bottom { margin-bottom:2.5rem;}
 
 
-@media (max-width:640px){ 
+@media (max-width: 1024px) {
     .btn-gold{
       font-size: 18px;
       padding: 10px 20px;
       align-self: center;
     }
 }
-
-@media (min-width:1024px){ /* lg */ }
-@media (min-width:1280px){ /* xl */ }
-@media (min-width:1536px){ /* 2xl */ }
-/* optional */
-@media (min-width:1920px){ /* full hd */ }

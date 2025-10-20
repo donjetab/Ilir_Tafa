@@ -21,9 +21,16 @@ const { hero, name, intro } = Astro.props;
 </section>
 
 <style>
+    @media (min-width: 768px)and (max-width: 1024px) {
+      .aboutHero{
+        margin-top: 5%;
+        aspect-ratio: 16 / 7;
+      }
+    }
     @media (max-width:640px){
       .aboutHero{
         aspect-ratio: 13 / 8;
+                margin-top: 15%;
       }
       h1{
         text-align: center;

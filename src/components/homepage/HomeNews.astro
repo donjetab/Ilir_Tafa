@@ -36,14 +36,18 @@ const safeItems = items.length ? items : posts.slice(0, 2);
 
 
 <section class="news w-full h-screen bg-[#0e141a] text-white flex flex-col items-center justify-center text-center gap-20">
-  <h2 class=" text-3xl md:text-5xl font-semibold title mt-10">LAJMET E FUNDIT</h2>
+  <h2 class="text-3xl md:text-5xl font-semibold title mt-10 reveal" style="--delay:.1s">
+    LAJMET E FUNDIT
+  </h2>
+
   <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-12 px-12 text-left">
-    {safeItems.map((n) => (
+    {safeItems.map((n, i) => (
       <a
         href={n.sourceUrl || `/lajmet/${n.slug}`}
         target={n.type === "external" ? "_blank" : "_self"}
         rel={n.type === "external" ? "noopener noreferrer" : undefined}
-        class="flex items-center justify-center gap-6 w-full group"
+        class="flex items-center justify-center gap-6 w-full group reveal"
+        style={`--delay:${0.15 + i * 0.1}s`}
       >
         <!-- Image -->
         <div class="w-48 h-48 lg:w-56 lg:h-56 rounded-[28px] overflow-hidden flex-shrink-0 bg-[#1c2733]">
@@ -51,73 +55,128 @@ const safeItems = items.length ? items : posts.slice(0, 2);
             src={n.cover}
             alt={n.title}
             class="w-full h-full object-cover object-center"
-            style="aspect-ratio: 1/1; display: block;"
+            style="aspect-ratio:1/1;display:block;"
           />
         </div>
 
-
         <!-- Text -->
         <div class="max-w-md">
-          <h3 class="text-xl md:text-2xl font-medium mb-2 group-hover:text-[#d4af37] transition-colors" style="font-size: 1.3rem; font-weight: 500;">
+          <h3 class="text-xl md:text-2xl font-medium mb-2 group-hover:text-[#d4af37] transition-colors" style="font-size:1.3rem;font-weight:500;">
             {n.title}
           </h3>
-
-          <!-- paragraph (shown even for external links) -->
-          <p class="text-sm md:text-base leading-relaxed text-[#d4dbe1]" style="margin-top: 10px;">
+          <p class="text-sm md:text-base leading-relaxed text-[#d4dbe1]" style="margin-top:10px;">
             {n.excerpt}
           </p>
-
         </div>
       </a>
     ))}
-</div>
+  </div>
 
-  <a href="news" class="btn-gold mt-4">MË SHUMË</a>
+  <a href="news" class="btn-gold reveal" style="--delay:.35s">MË SHUMË</a>
 </section>
 
 
 <style>
+/* ───────────── Desktop & tablet ≤1024px ───────────── */
+@media (max-width:1024px) {
+  .news {
+    padding: 5%;
+  }
+  .news h3 {
+    font-size: 15px !important;
+  }
+  .news p {
+    font-size: 10px;
+  }
+}
 
+/* ───────────── Tablet ≤768px ───────────── */
+@media (max-width:768px) {
+  .news {
+    gap: 40px;
+  }
+}
 
-/* Mobile ≤640px: stack image above text, full width image */
-@media (max-width:640px){
-  /* Base: let section grow and center grid container */
-.news{ 
+/* ───────────── Mobile ≤640px ───────────── */
+@media (max-width:640px) {
+  /* Section layout */
+  .news {
     margin-top: 100px;
     margin-bottom: 100px;
-  height:auto; min-height:100vh; padding-block:3rem; gap: 40px; }
-.news .grid{ max-width:1100px; margin-inline:auto; }
+    height: auto;
+    min-height: 100vh;
+    padding-block: 3rem;
+    gap: 40px;
+    justify-content: flex-start;
+    text-align: center;
+  }
 
-/* Card look */
-.news a{
-  background:#101923;
-  border:1px solid #243241;
-  border-radius:20px;
-  padding:16px;
-  transition:transform .2s ease;
-}
-.news a:hover{ transform:translateY(-2px); }
-.news a h3{ margin:0; }
-.news a p{ margin:8px 0 0; }
-  .news{ justify-content:flex-start; text-align:left; }
-  .news .grid{ grid-template-columns:1fr; gap:30px; padding-inline:16px; }
+  .news .grid {
+    max-width: 1100px;
+    margin-inline: auto;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-inline: 16px;
+  }
 
-  .news a{ flex-direction:column; align-items:stretch; gap:12px; }
-  .news a > div:first-child{ width:100%; height:200px; border-radius:18px; overflow:hidden; }
-  .news a img{ width:100%; height:180%; object-fit:cover; }
-  .news .title{ font-size: 50px; margin-bottom:0rem; }
-.btn-gold {
+  /* Card look */
+  .news a {
+    background: #101923;
+    border: 1px solid #243241;
+    border-radius: 20px;
+    padding: 16px;
+    transition: transform .2s ease;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .news a:hover {
+    transform: translateY(-2px);
+  }
+
+  .news a h3 {
+    margin: 0;
+  }
+
+  .news a p {
+    margin: 8px 0 0;
+  }
+
+  /* Image handling */
+  .news a > div:first-child {
+    width: 100%;
+    height: 200px;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .news a img {
+    width: 100%;
+    height: 180%;
+    object-fit: cover;
+  }
+
+  /* Title + button */
+  .news .title {
+    font-size: 50px;
+    margin-bottom: 0;
+  }
+
+  .btn-gold {
     padding: 0.85rem 2.5rem !important;
     border-radius: 9999px !important;
     border: 3.5px solid #d4b16a !important;
     background-color: #1c2229 !important;
-  margin-top: 0px;
-}
-}
-
-/* ≥641px: keep side-by-side with consistent image size */
-@media (min-width:641px){
-  .news a > div:first-child{ width:224px; height:224px; } /* ~ w-56 h-56 */
+    margin-top: 0;
+  }
 }
 
+/* ───────────── Larger screens ≥641px ───────────── */
+@media (min-width:641px) {
+  .news a > div:first-child {
+    width: 224px;
+    height: 224px; /* roughly w-56 h-56 */
+  }
+}
 </style>

@@ -65,9 +65,9 @@ const { items = [] as Item[] } = Astro.props;
 <div
   id="lightbox"
   class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/90">
-  <button id="lb-close" class="absolute top-4 right-4 text-white text-3xl" aria-label="Close">×</button>
-  <button id="lb-prev"  class="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 text-white text-2xl" aria-label="Previous">❮</button>
-  <button id="lb-next"  class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 text-white text-2xl" aria-label="Next">❯</button>
+  <button id="lb-close" class="absolute top-4 right-4 text-white text-3xl lightboxButton" aria-label="Close">×</button>
+  <button id="lb-prev"  class="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 text-white text-2xl lightboxButton" aria-label="Previous">❮</button>
+  <button id="lb-next"  class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 text-white text-2xl lightboxButton" aria-label="Next">❯</button>
 
   <figure class="max-w-[92vw] max-h-[86vh] flex flex-col items-center justify-center">
     <img id="lb-img" alt="" class="mx-auto max-h-[70vh] w-auto object-contain rounded-lg shadow-2xl" />
@@ -145,3 +145,10 @@ const { items = [] as Item[] } = Astro.props;
     });
   });
 </script>
+
+
+<style>
+  .lightboxButton{
+    font-size: 2.5rem !important;
+  }
+</style>

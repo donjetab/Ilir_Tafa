@@ -4,47 +4,33 @@ import heroImg from "../../assets/hero.png";
 import heroMobileImg from "../../assets/backup.png";
 import type { ImageMetadata } from "astro";
 
-interface Props {
-  title?: string;
-  subtitle?: string;
-  ctaLabel?: string;
-  ctaHref?: string;
-  image?: ImageMetadata;
-}
-
+interface Props { title?: string; subtitle?: string; ctaLabel?: string; ctaHref?: string; image?: ImageMetadata; }
 const {
   title = "Ilir Tafa",
   subtitle = "Aktori më i njohur i teatrit dhe filmit nga Kosova",
   ctaLabel = "veprimtaria",
-  ctaHref = "/works",
+  ctaHref = "works",
   image = heroImg,
 } = Astro.props;
 ---
 
 <section class="relative w-full h-screen overflow-hidden">
   <!-- Background -->
-   <picture class="absolute inset-0 -z-10">
-    <source media="(min-width:1024px)" srcset={heroImg.src} />
-    <img src={heroMobileImg.src} alt="Ilir Tafa" class="heroImg absolute inset-0 w-full h-full object-cover object-center" />
+  <picture class="absolute inset-0 -z-10">
+    <source media="(min-width:754px)" srcset={heroImg.src} />
+    <img src={heroMobileImg.src} alt="Ilir Tafa"
+         class="heroImg absolute inset-0 w-full h-full object-cover object-center" />
   </picture>
-  <!-- Header -->
-  <div class="absolute top-0 left-0 w-full z-20">
-    <Header />
-  </div>
 
-  <!-- Split content -->
+  <div class="absolute top-0 left-0 w-full z-20"><Header /></div>
+
   <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 h-full">
-    <!-- Left side (empty / image space) -->
     <div></div>
-
-    <!-- Right side (centered text) -->
     <div class="heroTextDiv flex items-center justify-center text-center px-6 md:px-[100px]">
       <div>
-        <h1 class="heroTitle">
-          {title}
-        </h1>
-        <p class="heroParagraph mt-2 text-white/90">{subtitle}</p>
-        <a href={ctaHref} class="btn-gold">{ctaLabel}</a>
+        <h1 class="heroTitle fade-up fade-200">{title}</h1>
+        <p class="heroParagraph mt-2 text-white/90 fade-up fade-300">{subtitle}</p>
+        <a href={ctaHref} class="btn-gold inline-block mt-4 fade-up fade-300">{ctaLabel}</a>
       </div>
     </div>
   </div>
@@ -52,31 +38,18 @@ const {
 
 
 <style>
-  .heroImg{
-    height: 100%;
-  }
-  .heroTitle{
-      color: var(--gold);
-      font-size: 130px;
-  }
-  .heroParagraph{
-    font-size: 25px;
-    margin-top: -20px;
-  }
-  @media (max-width:640px){ 
-    .heroImg{
-      filter: brightness(80%);
-    }
-    .heroTextDiv{
-      padding: 40px;
-      margin-top: 55%;
-    }
-    .heroTitle { 
-      font-size: 5.5rem; 
-    } 
-    .heroParagraph{
-      font-size: 20px;
-    }
+  .heroImg{ height:100%; }
+  .heroTitle{ color:var(--gold); font-size:130px; }
+  .heroParagraph{ font-size:25px; margin-top:-20px; }
 
+  @media (min-width:768px) and (max-width:1024px){
+    .heroTitle{ font-size:5rem; }
+    .heroParagraph{ font-size:20px; }
+  }
+  @media (max-width:768px){
+    .heroImg{ filter:brightness(80%); }
+    .heroTextDiv{ padding:40px; margin-top:55%; }
+    .heroTitle{ font-size:5.5rem; }
+    .heroParagraph{ font-size:20px; }
   }
 </style>

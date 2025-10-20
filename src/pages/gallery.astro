@@ -44,19 +44,25 @@ const pageTitle = "Galeri";
   <body class="bg-[#0e141a] text-white">
     <Header />
     <div class="h-15 md:h-15"></div>
-    <section class="w-full">
-      <div class="mx-auto max-w-[100%] px-6 py-16 text-center">
-        <h1 class="galleryTitle md:text-7xl font-bold mb-6">Galeri</h1>
-        <p class="text-lg text-white/70 mb-12">
-          Foto të përzgjedhura nga veprat dhe portretet personale
-        </p>
-        <GalleryGrid items={items} />
-      </div>
-    </section>
-    <Footer />
-  </body>
-</html>
+<section class="w-full">
+  <div class="mx-auto max-w-[100%] px-6 py-16 text-center">
+    <h1 class="galleryTitle md:text-7xl font-bold mb-6 reveal" style="--delay:.1s">Galeri</h1>
+<p class="text-lg text-white/70 mb-12 reveal" style="--delay:.18s">
+      Foto të përzgjedhura nga veprat dhe portretet personale
+    </p>
+    <GalleryGrid items={items} />
+  </div>
+</section>
 
+<script type="module">
+  // JS fallback for browsers without view-timeline
+  if (!CSS.supports('animation-timeline: view()')) {
+    const io = new IntersectionObserver((es)=>{
+      for (const e of es) if (e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); }
+    }, { threshold:0.15, rootMargin:"0px 0px -10% 0px" });
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  }
+</script>
 
 <style>
   .galleryTitle{
@@ -65,3 +71,4 @@ const pageTitle = "Galeri";
     color: #f3f4f6;
     padding-bottom: 10px;
   }
+</style>

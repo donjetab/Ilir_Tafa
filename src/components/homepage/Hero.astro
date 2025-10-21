@@ -16,11 +16,13 @@ const {
 
 <section class="relative w-full h-screen overflow-hidden">
   <!-- Background -->
-  <picture class="absolute inset-0 -z-10">
-    <source media="(min-width:754px)" srcset={heroImg.src} />
-    <img src={heroMobileImg.src} alt="Ilir Tafa"
-         class="heroImg absolute inset-0 w-full h-full object-cover object-center" />
-  </picture>
+<picture class="absolute inset-0 -z-10">
+  <source media="(min-width:1025px)" srcset={heroImg.src} />     <!-- desktop -->
+  <source media="(min-width:768px)" srcset={heroMobileImg.src} /> <!-- tablet -->
+  <img src={heroMobileImg.src} alt="Ilir Tafa"
+       class="heroImg absolute inset-0 w-full h-full object-cover object-center" />
+</picture>
+
 
   <div class="absolute top-0 left-0 w-full z-20"><Header /></div>
 
@@ -42,7 +44,7 @@ const {
   .heroTitle{ color:var(--gold); font-size:130px; }
   .heroParagraph{ font-size:25px; margin-top:-20px; }
 
-  @media (min-width:768px) and (max-width:1024px){
+  @media (min-width:768px) and (max-width:1024px) {
     .heroTitle{ font-size:5rem; }
     .heroParagraph{ font-size:20px; }
   }
@@ -52,4 +54,15 @@ const {
     .heroTitle{ font-size:5.5rem; }
     .heroParagraph{ font-size:20px; }
   }
+  @media (min-width: 800px) and (min-height: 1100px) {
+    .grid {
+      grid-template-columns: 1fr !important; /* stack vertically */
+    }
+    .heroImg { filter: brightness(80%); }
+    .heroTextDiv { padding: 40px; margin-top: 55%; }
+    .heroTitle { font-size: 5.5rem; }
+    .heroParagraph { font-size: 20px; }
+  }
+
+
 </style>

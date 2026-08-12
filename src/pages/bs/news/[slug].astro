@@ -1,0 +1,18 @@
+---
+import Page from '../../news/[slug].astro';
+
+type Post = {
+  type?: 'internal' | 'external'; slug?: string; title: string; excerpt?: string; date?: string;
+  cover?: string; contentHtml?: string; sourceName?: string; dek?: string; author?: string;
+  videoUrl?: string; showVideoOnly?: boolean;
+};
+export function getStaticPaths() {
+  const posts = import.meta.glob('../../../content/news/*.json', { eager: true, import: 'default' });
+  return Object.entries(posts).flatMap(([file, value]) => {
+    const post = value as Post;
+    if (post.type !== 'internal') return [];
+    return [{ params: { slug: post.slug ?? file.split('/').pop()!.replace('.json', '') }, props: { post, __file: file } }];
+  });
+}
+---
+<Page {...Astro.props} />

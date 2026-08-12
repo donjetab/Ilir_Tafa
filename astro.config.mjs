@@ -9,7 +9,17 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://donjetab.github.io/',
   base: '/Ilir_Tafa/',
-  integrations: [mdx(), sitemap()],
+  i18n: {
+    locales: ['sq', 'en', 'bs'],
+    defaultLocale: 'sq',
+    routing: { prefixDefaultLocale: false },
+  },
+  integrations: [mdx(), sitemap({
+    i18n: {
+      defaultLocale: 'sq',
+      locales: { sq: 'sq-AL', en: 'en', bs: 'bs-BA' },
+    },
+  })],
 
   vite: {
     plugins: [tailwindcss()],

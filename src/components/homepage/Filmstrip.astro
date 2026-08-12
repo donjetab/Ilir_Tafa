@@ -1,110 +1,98 @@
 ---
-import film from "../../assets/filmstrip.png";
-import { getCollection } from "astro:content";
+import { getCollection } from 'astro:content';
+import { localeFromPath, localizedUrl } from '../../i18n';
 
-const entries = await getCollection("works");
-
-const works = entries
-  .filter((e) => e.data?.draft !== true)
-  .map((e) => ({
-    slug: e.data.slug ?? e.id,
-    year: Number(e.data.year) || 0,
-    title: e.data.title ?? "",
-    type: e.data.type ?? "",
-  }))
-  .sort((a, b) => b.year - a.year);
-
-const list = [...works, ...works, ...works]; // still triple for looping
-const FRAME = 250;
-const GAP = 40;
+const locale = localeFromPath(Astro.url.pathname);
+const copy = {
+  sq: { eyebrow:'FILMOGRAFIA', title:'Rrugëtimi në film & teatër', cta:'SHIKO VEPRIMTARINË', film:'Film', tv:'Serial', theatre:'Shfaqje teatrore' },
+  en: { eyebrow:'FILMOGRAPHY', title:'A journey through film & theatre', cta:'VIEW ALL WORKS', film:'Film', tv:'TV series', theatre:'Theatre' },
+  bs: { eyebrow:'FILMOGRAFIJA', title:'Putovanje kroz film i pozorište', cta:'POGLEDAJ SVA DJELA', film:'Film', tv:'Serija', theatre:'Pozorište' },
+}[locale];
+const entries = await getCollection('works');
+const works = entries.filter((e) => !e.data.draft).sort((a,b) => b.data.year-a.data.year);
+const loopedWorks = [...works, ...works, ...works];
+const typeLabel = (type:string) => copy[type as 'film'|'tv'|'theatre'];
+const galleryFiles = import.meta.glob<{ default: ImageMetadata }>('../../assets/gallery/*/*.{jpg,jpeg,png,webp}', { eager:true });
+const galleryImages = new Map<string, ImageMetadata>();
+Object.entries(galleryFiles)
+  .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric:true }))
+  .forEach(([path, module]) => {
+    const folder = path.match(/gallery\/([^/]+)\//)?.[1];
+    if (folder && !galleryImages.has(folder)) galleryImages.set(folder, module.default);
+  });
+const galleryImageFor = (work:(typeof works)[number]) => galleryImages.get(work.data.slug ?? work.id.replace(/\.md$/, ''));
 ---
 
-
-
-<section class="relative w-full h-screen overflow-hidden bg-[#0e141a] ">
-  <!-- Centered stack: title + film + button -->
-  <div class="absolute inset-0 flex flex-col items-center justify-center gap-30">
-    <!-- Title closer to filmstrip -->
-<h2 class="z-20 text-3xl md:text-5xl font-semibold tracking-wide px-4 py-2 title reveal"
-    style="--delay:.18s">
-  Filmografia
-</h2>
-
-    <!-- Film stripe -->
-    <div class="relative w-full h-[220px]"
-         style={`--frame:${FRAME}px; --gap:${GAP}px; --tile: calc(var(--frame) + var(--gap));`}>
-      <div id="marquee" class="absolute inset-0 flex items-center will-change-transform">
-        <div id="film" class="absolute inset-0"
-             style={`background-image:url(${film.src});
-                     background-repeat:repeat-x;
-                     background-size: var(--tile) 100%;
-                     background-position: 0 center;`} aria-hidden="true"></div>
-
-        <div id="cards" class="relative z-10 flex"
-             style="gap:var(--gap); padding:0 var(--gap); background-color:#a29667;">
-          {list.map((w) => (
-            <a href={`works/${w.slug}/`} class="block" aria-label={`${w.title} (${w.year})`}>
-              <article class="h-[155px] shrink-0 grid place-items-center text-center bg-[#1c2733] text-white rounded border-4 border-[#d4b16a]"
-                      style="width:var(--frame);">
-                <div>
-                  <p class="text-sm opacity-70">{w.year}</p>
-                  <h3 class="text-lg">{w.title}</h3>
-                  <p class="text-xs italic opacity-70">{w.type}</p>
-                </div>
-              </article>
-            </a>
-          ))}
-        </div>
-      </div>
+<section class="journey">
+  <div class="journey__heading">
+    <div>
+      <p>{copy.eyebrow}</p>
+      <h2>{copy.title}</h2>
     </div>
-
-    <!-- Button -->
-    <a href="works" class="btn-gold">Detaje</a>
+    <a href={localizedUrl(locale, 'works')} class="btn-gold">{copy.cta}</a>
+  </div>
+  <div class="filmstrip" role="list">
+    <div class="filmstrip__track" data-filmstrip-track>
+      {loopedWorks.map((work) => (
+        <a role="listitem" href={localizedUrl(locale, `works/${work.data.slug ?? work.id}`)} class="filmstrip__frame">
+          {galleryImageFor(work) && <img src={galleryImageFor(work)!.src} alt="" loading="lazy" />}
+          <span class="filmstrip__veil"></span>
+          <span class="filmstrip__year">{work.data.year}</span>
+          <strong>{work.data.title}</strong>
+          <small>{typeLabel(work.data.type)}</small>
+        </a>
+      ))}
+    </div>
   </div>
 </section>
 
+<script>
+  document.querySelectorAll<HTMLElement>('[data-filmstrip-track]').forEach((track) => {
+    if (track.dataset.ready === 'true') return;
+    track.dataset.ready = 'true';
+    const strip = track.closest<HTMLElement>('.filmstrip');
+    if (!strip || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-
-<script is:inline>
-    const viewport = document.getElementById('marquee'); // for hover only
-    const cards = document.getElementById('cards');
-    const filmBg = document.getElementById('film');
-
-    const ease = 0.12;
     let offset = 0;
-    let speed = 60;     // px/sec
-    let target = 55;    // px/sec
+    let speed = 60;
+    let target = 60;
     let last = performance.now();
 
-    viewport.addEventListener('mouseenter', () => target = 40);   // slow on hover
-    viewport.addEventListener('mouseleave', () => target = 100);  // fast when leaving
+    strip.addEventListener('mouseenter', () => { target = 28; });
+    strip.addEventListener('mouseleave', () => { target = 60; });
 
-    function tick(now) {
-      const dt = (now - last) / 1000;
+    const tick = (now:number) => {
+      const delta = Math.min((now - last) / 1000, .05);
       last = now;
-
-      speed += (target - speed) * ease; // ease toward target
-      offset += speed * dt;             // move by px/sec
-
-      const loopWidth = cards.scrollWidth / 3;
+      speed += (target - speed) * .12;
+      offset += speed * delta;
+      const loopWidth = track.scrollWidth / 3;
       if (offset >= loopWidth) offset -= loopWidth;
-
-      cards.style.transform = `translateX(${-offset}px)`;
-      filmBg.style.backgroundPosition = `${-offset}px center`;
-
+      track.style.transform = `translate3d(${-offset}px, 0, 0)`;
       requestAnimationFrame(tick);
-    }
+    };
     requestAnimationFrame(tick);
-
+  });
 </script>
 
 <style>
-  @media (max-width:640px){
-    .title{
-      font-size: 60px;
-    }
-    .btn-gold{
-        margin-top: 0px;
-      }
-  }
+  .journey { padding-top:clamp(4.5rem, 7vw, 3rem); min-height:73svh; background:#070b10; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-start; }
+  .journey__heading { width:min(calc(100% - 2 * var(--page-gutter)), 1280px); margin:0 auto 8rem; display:flex; align-items:end; justify-content:space-between; gap:2rem; }
+  .journey__heading p { color:var(--color-gold-bright); font-size:.78rem; letter-spacing:.08em;}
+  .journey__heading h2 { font-size:var(--home-section-title-size); font-weight:400; white-space:nowrap; }
+  .filmstrip { position:relative; height:225px; overflow:hidden; background:#070b10; }
+  .filmstrip__track { position:relative; display:flex; align-items:center; width:max-content; min-height:225px; gap:8px; padding:35px 4px; background:#b99d59; will-change:transform; }
+  .filmstrip__track::before,.filmstrip__track::after { content:''; position:absolute; z-index:2; left:0; right:0; height:13px; background:repeating-linear-gradient(90deg,#070b10 0 12px,transparent 12px 23px); pointer-events:none; }
+  .filmstrip__track::before { top:8px; }
+  .filmstrip__track::after { bottom:8px; }
+  .filmstrip__frame { position:relative; z-index:1; isolation:isolate; flex:0 0 clamp(200px, 14vw, 265px); height:155px; overflow:hidden; border:0; background:#1c2733; color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+  .filmstrip__frame img,.filmstrip__veil { position:absolute; z-index:0; inset:0; display:block; width:100%; height:100%; }
+  .filmstrip__frame img { object-fit:cover; object-position:center; opacity:.72; filter:saturate(.65); transition:transform .5s var(--ease),opacity .4s; }
+  .filmstrip__veil { z-index:1; background:rgba(28,39,51,.68); }
+  .filmstrip__frame:hover img { opacity:.86; transform:scale(1.04); }
+  .filmstrip__year,.filmstrip__frame strong,.filmstrip__frame small { position:relative; z-index:2; }
+  .filmstrip__year { font-size:.7rem; opacity:.7; }
+  .filmstrip__frame strong { margin:.4rem 1rem; font:400 1.15rem/1.15 'Cormorant Garamond',serif; }
+  .filmstrip__frame small { font-size:.66rem; opacity:.72; }
+  @media(max-width:700px){ .journey__heading{align-items:flex-start;flex-direction:column;margin-bottom:2.5rem}.journey__heading h2{white-space:normal}.filmstrip__track{gap:8px;padding:24px 4px}.filmstrip__frame{flex-basis:220px;height:145px}.journey__heading .btn-gold{margin-top:0} }
 </style>

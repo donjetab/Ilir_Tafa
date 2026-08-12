@@ -6,8 +6,8 @@ export async function GET(context) {
   const works = await getCollection('works', ({ data }) => !data.draft);
 
   return rss({
-    title: 'Ilir Tafa – Veprimtaria Artistike',
-    description: 'Filma, seriale dhe shfaqje teatrore të Ilir Tafës.',
+    title: `${SITE_TITLE} – Veprimtaria Artistike`,
+    description: SITE_DESCRIPTION,
     site: context.site,
     items: works.map((work) => ({
       title: work.data.title,

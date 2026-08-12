@@ -1,185 +1,44 @@
 ---
-// load files
-const entries = await import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
-
-type NewsPost = {
-  type?: "internal" | "external";
-  date?: string;
-  slug: string;
-  cover?: string;
-  title?: string;
-  excerpt?: string;
-  sourceUrl?: string;
-};
-
-// normalize + add slug from filename
-const posts: NewsPost[] = Object.entries(entries).map(([file, p]: [string, any]) => {
-  const fileSlug = file.split("/").pop()?.replace(".json", "") ?? "";
+import { localeFromPath, localizedUrl } from '../../i18n';
+const entries=import.meta.glob('../../content/news/*.json',{eager:true,import:'default'});
+const locale=localeFromPath(Astro.url.pathname);
+const copy={sq:{title:'Lajmet e fundit',read:'LEXO MË SHUMË',all:'LEXO MË SHUMË'},en:{title:'Latest news',read:'READ MORE',all:'VIEW ALL NEWS'},bs:{title:'Najnovije vijesti',read:'PROČITAJ VIŠE',all:'SVE VIJESTI'}}[locale];
+type Post={type?:'internal'|'external';slug:string;date?:string;cover?:string;title?:string;excerpt?:string;sourceUrl?:string};
+const posts: Post[] = Object.entries(entries).map(([file,value]) => {
+  const p = value as Partial<Post>;
   return {
-    slug: p?.slug ?? fileSlug,
-    type: p?.type,
-    sourceUrl: p?.sourceUrl,
-    date: p?.date ?? "",
-    cover: p?.cover ?? "",
-    title: p?.title ?? "",
-    excerpt: p?.excerpt ?? "",
-  };
+    ...p,
+    slug: p.slug ?? file.split('/').pop()!.replace('.json',''),
+  } as Post;
 });
-
-// pick by slug
-const wanted = new Set(["bretkosat-teatri-prizren", "abasadori-kulturor-i-evropes"]);
-const items = posts.filter(p => wanted.has(p.slug));
-
-// fallback if none found
-const safeItems = items.length ? items : posts.slice(0, 2);
+const wanted=new Set(['bretkosat-teatri-prizren','abasadori-kulturor-i-evropes']);
+const selected=posts.filter((post)=>wanted.has(post.slug));
+const items=(selected.length>=2?selected:posts.filter((post)=>post.cover)).slice(0,2);
+const href=(post:Post)=>post.sourceUrl||localizedUrl(locale,`news/${post.slug}`);
 ---
 
-
-<section class="news w-full h-screen bg-[#0e141a] text-white flex flex-col items-center justify-center text-center gap-20">
-  <h2 class="text-3xl md:text-5xl font-semibold title mt-10 reveal" style="--delay:.1s">
-    LAJMET E FUNDIT
-  </h2>
-
-  <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-12 px-12 text-left">
-    {safeItems.map((n, i) => (
-      <a
-        href={n.sourceUrl || `/lajmet/${n.slug}`}
-        target={n.type === "external" ? "_blank" : "_self"}
-        rel={n.type === "external" ? "noopener noreferrer" : undefined}
-        class="flex items-center justify-center gap-6 w-full group reveal"
-        style={`--delay:${0.15 + i * 0.1}s`}
-      >
-        <!-- Image -->
-        <div class="w-48 h-48 lg:w-56 lg:h-56 rounded-[28px] overflow-hidden flex-shrink-0 bg-[#1c2733]">
-          <img
-            src={n.cover}
-            alt={n.title}
-            class="w-full h-full object-cover object-center"
-            style="aspect-ratio:1/1;display:block;"
-          />
+<section class="news-home">
+  <div class="news-home__inner">
+    <h2>{copy.title}</h2>
+    <div class="news-home__grid">
+      {items.map((post)=><article class="news-home__card">
+        <a href={href(post)} target={post.type==='external'?'_blank':undefined} rel={post.type==='external'?'noopener noreferrer':undefined} class="news-home__image">
+          {post.cover&&<img src={post.cover} alt={post.title??''} loading="lazy" />}
+        </a>
+        <div class="news-home__copy">
+          {post.date&&<time datetime={post.date}>{new Date(post.date).toLocaleDateString(locale==='sq'?'sq-AL':locale==='bs'?'bs-BA':'en-US')}</time>}
+          <h3><a href={href(post)}>{post.title}</a></h3>
+          {post.excerpt&&<p>{post.excerpt}</p>}
+          <a class="news-home__read" href={href(post)}>{copy.read} →</a>
         </div>
-
-        <!-- Text -->
-        <div class="max-w-md">
-            <span class="text-xs md:text-sm text-[#d4dbe1]/50 block mb-1">
-              {n.date}
-            </span>
-          <h3 class="text-xl md:text-2xl font-medium mb-2 group-hover:text-[#d4af37] transition-colors" style="font-size:1.3rem;font-weight:500;">
-            {n.title}
-          </h3>
-          <p class="text-sm md:text-base leading-relaxed text-[#d4dbe1]" style="margin-top:10px;">
-            {n.excerpt}
-          </p>
-        </div>
-      </a>
-    ))}
+      </article>)}
+    </div>
+    <a href={localizedUrl(locale,'news')} class="btn-gold">{copy.all}</a>
   </div>
-
-  <a href="news" class="btn-gold reveal" style="--delay:.35s">MË SHUMË</a>
 </section>
 
-
 <style>
-/* ───────────── Desktop & tablet ≤1024px ───────────── */
-@media (max-width:1024px) {
-  .news {
-    padding: 5%;
-  }
-  .news h3 {
-    font-size: 15px !important;
-  }
-  .news p {
-    font-size: 10px;
-  }
-}
-
-/* ───────────── Tablet ≤768px ───────────── */
-@media (max-width:768px) {
-  .news {
-    gap: 40px;
-  }
-}
-
-/* ───────────── Mobile ≤640px ───────────── */
-@media (max-width:640px) {
-  /* Section layout */
-  .news {
-    margin-top: 100px;
-    margin-bottom: 100px;
-    height: auto;
-    min-height: 100vh;
-    padding-block: 3rem;
-    gap: 40px;
-    justify-content: flex-start;
-    text-align: center;
-  }
-
-  .news .grid {
-    max-width: 1100px;
-    margin-inline: auto;
-    grid-template-columns: 1fr;
-    gap: 30px;
-    padding-inline: 16px;
-  }
-
-  /* Card look */
-  .news a {
-    background: #101923;
-    border: 1px solid #243241;
-    border-radius: 20px;
-    padding: 16px;
-    transition: transform .2s ease;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .news a:hover {
-    transform: translateY(-2px);
-  }
-
-  .news a h3 {
-    margin: 0;
-  }
-
-  .news a p {
-    margin: 8px 0 0;
-  }
-
-  /* Image handling */
-  .news a > div:first-child {
-    width: 100%;
-    height: 200px;
-    border-radius: 18px;
-    overflow: hidden;
-  }
-
-  .news a img {
-    width: 100%;
-    height: 180%;
-    object-fit: cover;
-  }
-
-  /* Title + button */
-  .news .title {
-    font-size: 50px;
-    margin-bottom: 0;
-  }
-
-  .btn-gold {
-    padding: 0.85rem 2.5rem !important;
-    border-radius: 9999px !important;
-    border: 3.5px solid #d4b16a !important;
-    background-color: #1c2229 !important;
-    margin-top: 0;
-  }
-}
-
-/* ───────────── Larger screens ≥641px ───────────── */
-@media (min-width:641px) {
-  .news a > div:first-child {
-    width: 224px;
-    height: 224px; /* roughly w-56 h-56 */
-  }
-}
+  .news-home{padding:0 var(--page-gutter) clamp(5rem,9vw,9rem);background:#070b10}.news-home__inner{width:min(100%,var(--content-width));margin:auto;padding-top:clamp(3rem,6vw,6rem);border-top:1px solid rgba(198,166,100,.65);text-align:center}.news-home h2{text-align:left;font-size:clamp(3.1rem,5.5vw,5.4rem);font-weight:400;margin-bottom:2rem}.news-home__grid{display:grid;grid-template-columns:1fr 1fr;gap:2.4rem}.news-home__card{min-height:235px;display:grid;grid-template-columns:38% 1fr;gap:1.2rem;padding:.65rem;border:1px solid rgba(212,177,106,.7);border-radius:1rem;text-align:left;background:rgba(255,255,255,.012)}.news-home__image{display:block;overflow:hidden;border-radius:.7rem;background:#111820}.news-home__image img{width:100%;height:100%;object-fit:cover}.news-home__copy{padding:.55rem .7rem .4rem 0;display:flex;flex-direction:column}.news-home time{color:var(--color-gold-bright);font-size:.66rem}.news-home h3{margin:.6rem 0;font:500 1rem/1.35 Poppins,sans-serif}.news-home__copy p{color:rgba(255,255,255,.68);font-size:.72rem;line-height:1.65;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.news-home__read{margin-top:auto;color:var(--color-gold-bright);font-size:.66rem}.news-home .btn-gold{margin-top:2.8rem}@media(max-width:850px){.news-home__grid{grid-template-columns:1fr}.news-home h2{text-align:center}}@media(max-width:520px){.news-home__card{grid-template-columns:1fr}.news-home__image{height:190px}.news-home__copy{padding:.5rem}}
+  .news-home h2 { font-size:var(--home-section-title-size); text-align:center; }
+  .news-home__inner { width:min(100%,1280px); }
 </style>

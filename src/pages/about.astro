@@ -5,6 +5,7 @@ import Header from "../components/Header.astro";
 import AboutHero from "../components/about/AboutHero.astro";
 import AboutSplit from "../components/about/AboutSplit.astro";
 import AboutQuote from "../components/about/AboutQuote.astro";
+import { localeFromPath } from '../i18n';
 
 // import imazhet reale
 import hero from "../assets/gallery/ilir-tafa/IlirTafa-1.jpg";
@@ -74,7 +75,7 @@ Në vitin 2022, Tafa mori rolin e Bajram Bytyqit në serialin kosovar Tre Vllazn
 
 ---
 <!doctype html>
-<html lang="sq" class="scroll-smooth">
+<html lang={localeFromPath(Astro.url.pathname)} class="scroll-smooth">
   <head>
 
     <BaseHead title={title} description={description} />

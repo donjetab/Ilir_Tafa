@@ -1,14 +1,12 @@
 @import "tailwindcss";
 @import "tailwindcss/preflight";   /* replaces @tailwind base */
 @import "tailwindcss/utilities";  
+@import "./tokens.css";
 
-:root { --ease:cubic-bezier(.2,.8,.2,1); --dur:.25s; }
 .card, .btn, img { transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), opacity var(--dur) var(--ease); }
 .card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,.35); }
 img.hover-zoom { transform-origin:center; }
 img.hover-zoom:hover { transform: scale(1.03); }
-
-:root { --dur: .6s; --ease: cubic-bezier(.2,.8,.2,1); }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -47,20 +45,6 @@ img.hover-zoom:hover { transform: scale(1.03); }
   }
 }
 
-:root {
-	--accent: #0E141B;
-	--accent-dark: #1C2733;
-	--gold: #C6A664;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
-		rgba(var(--gray), 33%);
-}
-
 /* Fix breakpoints for Tailwind v4 */
 @theme {
   --breakpoint-sm: 640px;
@@ -84,8 +68,8 @@ html, body { min-width:100%; }
 /* Use Google fonts */
 body {
   font-family: "Poppins", system-ui, sans-serif ;
-    color: #fff;
-  background: var(--accent);
+  color: #fff;
+  background: var(--color-background);
 }
 
 /* Headings white instead of black */
@@ -105,18 +89,18 @@ a:hover {
 
 .btn-gold {
     display: inline-block;
-    padding: 0.85rem 2.5rem;
-    border-radius: 9999px;
-    border: 3.5px solid #d4b16a;
-    background-color: #1c2229;
+    padding: 0.7rem 1.9rem;
+    border-radius: 0.35rem;
+    border: 1px solid var(--color-gold-bright);
+    background-color: transparent;
     color: white;
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     margin-top: 25px;
     transition: all 0.3s ease;
-    font-size: 22px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    font-size: 0.78rem;
+    box-shadow: none;
 }
 
 .btn-gold:hover {
@@ -138,4 +122,11 @@ a:hover {
       padding: 10px 20px;
       align-self: center;
     }
+}
+@font-face {
+  font-family: 'Alex Brush';
+  src: url('/fonts/alex-brush-v2.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }

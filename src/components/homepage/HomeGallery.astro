@@ -1,100 +1,33 @@
 ---
-import bretkosa from "../../assets/gallery/bretkosa/PITF-2024.jpg";
-import zabaCast from "../../assets/gallery/ilir-tafa/Kasta e aktorëve të filmit ZABA Sarajevo Film Festival.jpg";
-import IlirTafa from "../../assets/gallery/ilir-tafa/IlirTafa-1.jpg";
-import teroristaInterview from "../../assets/gallery/ilir-tafa/terorista-interview-4.jpg";
-import tonightImAlone from "../../assets/gallery/sonte-jam-vetem/5.jpg";
-import kms from "../../assets/gallery/killing-me-softly/1.jpg";
-import lznj from "../../assets/gallery/lud-zbunjen-normalan/1.jpg";
-import set from "../../assets/gallery/kodi-i-jetes/12.jpg";
-
-const layout = [
-  { img: bretkosa },
-  { img: zabaCast },
-  { img: IlirTafa },
-  { img: tonightImAlone },
-  { img: teroristaInterview },
-  { img: kms },
-  { img: lznj },
-  { img: set },
-];
+import portrait from '../../assets/gallery/ilir-tafa/IlirTafa-1.jpg';
+import cast from '../../assets/gallery/ilir-tafa/Kasta e aktorëve të filmit ZABA Sarajevo Film Festival.jpg';
+import interview from '../../assets/gallery/ilir-tafa/terorista-interview-4.jpg';
+import stage from '../../assets/gallery/sonte-jam-vetem/5.jpg';
+import press from '../../assets/gallery/ilir-tafa/konferenca-per-media.jpg';
+import { localeFromPath, localizedUrl } from '../../i18n';
+const locale=localeFromPath(Astro.url.pathname);
+const copy={sq:{title:'Galeria',cta:'SHIKO MË SHUMË'},en:{title:'Gallery',cta:'VIEW MORE'},bs:{title:'Galerija',cta:'POGLEDAJ VIŠE'}}[locale];
+const images=[portrait,cast,interview,stage,press];
 ---
 
-<section class="gallery w-full bg-[#0e141a] text-white flex flex-col items-center justify-center py-12">
-  <h2 class="text-3xl md:text-5xl font-semibold title mb-10 reveal" style="--delay:.1s; margin-bottom: 30px;">
-    <a href="gallery">GALERIA</a>
-  </h2>
-
-  <div class="gallery-grid w-full max-w-6xl grid gap-3 lg:grid-cols-12 lg:grid-rows-3 reveal-group">
-    {layout.map((l, i) => (
-      <div
-        class="gallery-item relative w-full h-full overflow-hidden rounded-lg bg-black reveal"
-        style={`--delay:${0.1 + i * 0.07}s`}
-      >
-        <img
-          src={l.img.src}
-          alt=""
-          class="block w-full h-full object-cover object-center
-                transition-transform duration-700 ease-out
-                group-hover:scale-105 hover:scale-105"
-        />
-      </div>
-    ))}
+<section class="gallery-home">
+  <div class="gallery-home__inner">
+    <h2>{copy.title}</h2>
+    <div class="gallery-home__grid">
+      {images.map((image,i)=><figure class:list={['gallery-home__item',`item-${i+1}`]}><img src={image.src} alt="" loading="lazy" /></figure>)}
+    </div>
+    <a href={localizedUrl(locale,'gallery')} class="btn-gold">{copy.cta}</a>
   </div>
 </section>
 
 <style>
-  .gallery-grid {
-    display: grid;
-    gap: .75rem;
-    grid-template-columns: repeat(12,1fr);
-    grid-template-rows: repeat(3,1fr);
-    height: 70vh;
-  }
-  .gallery-item { width:100%; height:100%; overflow:hidden; }
-  .gallery-item img { width:100%; height:100%; object-fit:cover; object-position:center; }
-
-  .gallery-item img {
-  transition: transform 0.3s ease-out;
-}
-
-.gallery-item:hover img {
-  transform: scale(1.06);
-}
-
-
-  /* desktop layout */
-  .gallery-item:nth-child(1){grid-column:span 4;grid-row:span 2;}
-  .gallery-item:nth-child(2){grid-column:span 5;grid-row:span 1;}
-  .gallery-item:nth-child(3){grid-column:span 3;grid-row:span 1;}
-  .gallery-item:nth-child(4){grid-column:span 3;grid-row:span 1;}
-  .gallery-item:nth-child(5){grid-column:span 5;grid-row:span 1;}
-  .gallery-item:nth-child(6){grid-column:span 5;grid-row:span 1;}
-  .gallery-item:nth-child(7){grid-column:span 4;grid-row:span 1;}
-  .gallery-item:nth-child(8){grid-column:span 3;grid-row:span 1;}
-
-  @media (max-width:1024px){ .gallery{padding:5%;} }
-
-  /* phones */
-  @media (max-width:640px){
-    .gallery{ margin-top:160px; }
-    .gallery h2{ font-size:60px; margin-bottom:50px!important; }
-    .gallery-grid{
-      margin:0 auto;
-      max-width:100%;
-      padding:0 1rem;
-      grid-template-columns:repeat(2,1fr);
-      height:auto!important;
-      grid-auto-rows:160px;
-    }
-    section:has(.gallery-grid){ height:auto!important; min-height:unset; }
-    .gallery-item:nth-child(2){grid-column:1/span 2;grid-row:1/span 1;}
-    .gallery-item:nth-child(1){grid-column:1/span 1;grid-row:2/span 1;}
-    .gallery-item:nth-child(3){grid-column:2/span 1;grid-row:2/span 1;}
-    .gallery-item:nth-child(4){grid-column:1/span 2;grid-row:3/span 1;}
-    .gallery-item:nth-child(5){grid-column:1/span 1;grid-row:4/span 1;}
-    .gallery-item:nth-child(6){grid-column:2/span 1;grid-row:4/span 1;}
-    .gallery-item:nth-child(7){grid-column:1/span 2;grid-row:5/span 1;}
-    .gallery-item:nth-child(8){grid-column:1/span 2;grid-row:6/span 1;}
-  }
+  .gallery-home { padding:0 var(--page-gutter) clamp(5.5rem,8vw,8rem); background:#070b10; }
+  .gallery-home__inner { width:min(100%,1280px); margin:auto; padding-top:clamp(3.5rem,5vw,5rem); border-top:1px solid rgba(198,166,100,.7); text-align:center; }
+  .gallery-home h2 { text-align:left; color:var(--color-gold-bright); font-size:var(--home-section-title-size); line-height:1; font-weight:400; margin-bottom:2.25rem; }
+  .gallery-home__grid { height:500px; display:grid; grid-template-columns:1.15fr 1.35fr 1.35fr; grid-template-rows:1fr 1fr; gap:1.15rem; }
+  .gallery-home__item { overflow:hidden; background:#111820; }
+  .gallery-home__item img { width:100%;height:100%;object-fit:cover;transition:transform .55s var(--ease),filter .4s; }
+  .gallery-home__item:hover img { transform:scale(1.035); filter:brightness(1.08); }
+  .item-1 { grid-row:span 2; }.item-5{grid-column:3}.gallery-home .btn-gold{min-width:190px;margin-top:2.5rem}
+  @media(max-width:700px){.gallery-home__grid{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,180px)}.item-1{grid-row:span 2}.item-5{grid-column:auto}.gallery-home h2{text-align:center}}
 </style>

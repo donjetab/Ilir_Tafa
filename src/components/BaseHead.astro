@@ -3,16 +3,22 @@ import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
 import FallbackImage from '../assets/backup.png';
 import { SITE_TITLE } from '../consts';
+import { localeFromPath, locales, localizedUrl, stripLocale, type Locale } from '../i18n';
 
 interface Props {
 	title: string;
 	description: string;
 	image?: ImageMetadata;
+	type?: 'website' | 'article';
+	locale?: Locale;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-
-const { title, description, image = FallbackImage } = Astro.props;
+const siteRoot = new URL(import.meta.env.BASE_URL, Astro.site);
+const { title, description, image = FallbackImage, type = 'website', locale = localeFromPath(Astro.url.pathname) } = Astro.props;
+const socialImage = new URL(image.src, Astro.site);
+const languagePath = stripLocale(Astro.url.pathname);
+const htmlLocale = { sq: 'sq_AL', en: 'en_US', bs: 'bs_BA' }[locale];
 ---
 
 <!-- Global Metadata -->
@@ -20,13 +26,13 @@ const { title, description, image = FallbackImage } = Astro.props;
 <base href={import.meta.env.BASE_URL} />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href="logo.png" />
-<link rel="sitemap" href="sitemap-index.xml" />
+<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+<link rel="sitemap" href={new URL('sitemap-index.xml', siteRoot)} />
 <link
 	rel="alternate"
 	type="application/rss+xml"
 	title={SITE_TITLE}
-	href={new URL('rss.xml', Astro.site)}
+	href={new URL('rss.xml', siteRoot)}
 />
 <meta name="generator" content={Astro.generator} />
 
@@ -50,3 +56,21 @@ const { title, description, image = FallbackImage } = Astro.props;
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={socialImage} />
+<meta property="og:locale" content={htmlLocale} />
+{locales.filter((language) => language !== locale).map((language) => (
+  <meta property="og:locale:alternate" content={{ sq: 'sq_AL', en: 'en_US', bs: 'bs_BA' }[language]} />
+))}
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImage} />
+{locales.map((language) => (
+  <link rel="alternate" hreflang={language} href={new URL(localizedUrl(language, languagePath), Astro.site)} />
+))}
+<link rel="alternate" hreflang="x-default" href={new URL(localizedUrl('sq', languagePath), Astro.site)} />

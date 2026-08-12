@@ -1,6 +1,7 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
+import { localeFromPath } from '../i18n';
 
 interface Props {
   title: string;
@@ -9,17 +10,17 @@ interface Props {
 const { title, description } = Astro.props;
 ---
 <!doctype html>
-<html lang="sq" class="scroll-smooth">
+<html lang={localeFromPath(Astro.url.pathname)} class="scroll-smooth">
   <head>
     <BaseHead title={title} description={description} />
   </head>
-  <body class="bg-[#0c0c0c] text-white font-sans antialiased">
+  <body class="bg-[#070b10] text-white font-sans antialiased">
     <main id="main" class="min-h-screen">
       <slot />
     </main>
     <Footer />
 
-    <script type="module">
+    <script is:inline>
       if (!CSS.supports('animation-timeline: view()')) {
         const io = new IntersectionObserver((es)=>{
           for (const e of es) if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }

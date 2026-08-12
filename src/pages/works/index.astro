@@ -4,6 +4,8 @@ import { getCollection } from "astro:content";
 import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import { localeFromPath, localizedUrl } from '../../i18n';
+const locale = localeFromPath(Astro.url.pathname);
 
 const entries = await getCollection("works"); // ← include drafts so they show in grid
 const items = entries
@@ -21,7 +23,7 @@ const items = entries
 const pageTitle = "Veprimtaria Artistike";
 ---
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
    <BaseHead title={pageTitle + " | Ilir Tafa"} description="Filma, Seri, dhe Shfaqje Teatrale" /> 
    <style> :root { --gold: #f5d779; } 
@@ -72,7 +74,7 @@ const pageTitle = "Veprimtaria Artistike";
           ) : (
             <a
               class="card"
-              href={`works/${it.slug}/`}
+              href={localizedUrl(locale, `works/${it.slug}/`)}
               data-type={it.type}
               data-title={(it.title + ' ' + (it.role ?? '')).toLowerCase()}
               data-year={String(it.year)}

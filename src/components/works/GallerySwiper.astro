@@ -95,7 +95,7 @@ const { items = [] as Item[] } = Astro.props;
 
     // ---- Click fallback (desktop/mouse)
     cards.forEach((c, i) => {
-      c.addEventListener('click', (e) => {
+      c.addEventListener('click', () => {
         // ignore if drag occurred (pointer code sets moved)
         if (typeof window.__g_dragging === 'boolean' && window.__g_dragging) return;
         openAt(i);

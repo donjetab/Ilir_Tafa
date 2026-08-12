@@ -4,6 +4,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import GalleryGrid from "../components/GalleryGrid.astro";
 import { getCollection } from "astro:content";
+import { localeFromPath } from '../i18n';
 
 // Load all gallery JSON files
 const galleries = await getCollection("gallery");
@@ -37,7 +38,7 @@ const items = galleries.flatMap((g) =>
 
 const pageTitle = "Galeri";
 ---
-<html lang="sq">
+<html lang={localeFromPath(Astro.url.pathname)}>
   <head><BaseHead title={pageTitle + " | Ilir Tafa"} description="Fotografi" />
   
   </head>
@@ -54,7 +55,9 @@ const pageTitle = "Galeri";
   </div>
 </section>
 
-<script type="module">
+<Footer />
+
+<script is:inline>
   // JS fallback for browsers without view-timeline
   if (!CSS.supports('animation-timeline: view()')) {
     const io = new IntersectionObserver((es)=>{

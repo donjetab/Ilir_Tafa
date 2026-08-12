@@ -1,0 +1,31 @@
+:root {
+  /* Brand colors: edit these to recolor the whole site. */
+  --color-background: #070b10;
+  --color-surface: #0d131a;
+  --color-surface-deep: #05080c;
+  --color-gold: #c6a664;
+  --color-gold-bright: #d4b16a;
+  --color-text: #ffffff;
+  --color-text-muted: #cfd8e3;
+
+  /* Compatibility names used by existing components. */
+  --accent: var(--color-background);
+  --accent-dark: var(--color-surface);
+  --gold: var(--color-gold);
+  --black: 15, 18, 25;
+  --gray: 96, 115, 159;
+  --gray-light: 229, 233, 240;
+  --gray-dark: 34, 41, 57;
+  --gray-gradient: rgba(var(--gray-light), 50%), #fff;
+
+  /* Layout, shape, motion, and elevation. */
+  --content-width: 1180px;
+  --page-gutter: clamp(1rem, 4vw, 3rem);
+  --section-space: clamp(4rem, 9vw, 8rem);
+  --home-section-title-size: clamp(3.4rem, 4.2vw, 4.6rem);
+  --radius-card: 1rem;
+  --radius-pill: 9999px;
+  --dur: 0.3s;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);
+}

@@ -18,7 +18,12 @@ const NEWS_DIR = "src/content/news";
 const CACHE_DIR = ".cache/news-meta";
 
 async function fetchOG(url: string){
-  const res = await fetch(url, { redirect: "follow" });
+  const res = await fetch(url, {
+    redirect: "follow",
+    signal: AbortSignal.timeout(10_000),
+    headers: { "user-agent": "IlirTafaWebsite/1.0" },
+  });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   const html = await res.text();
   const $ = load(html);
   const pick = (s:string)=>$(s).attr("content")?.trim() ?? "";
@@ -43,7 +48,13 @@ async function run(){
     try { meta = JSON.parse(await fs.readFile(cachePath, "utf8")); } catch {}
 
     if(!meta){
-      const m = await fetchOG(card.sourceUrl);
+      let m;
+      try {
+        m = await fetchOG(card.sourceUrl);
+      } catch (error) {
+        console.warn(`Could not refresh ${card.sourceUrl}:`, error);
+        continue;
+      }
       meta = {
         title: m.title || null,
         cover: m.image || null,
@@ -67,4 +78,7 @@ async function run(){
     await fs.writeFile(p, JSON.stringify(merged, null, 2));
   }
 }
-run();
+run().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

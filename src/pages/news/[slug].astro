@@ -2,6 +2,7 @@
 import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import { localeFromPath, localizedUrl } from '../../i18n';
 
 type Post = {
   type?: "internal" | "external";
@@ -19,7 +20,7 @@ type Post = {
 };
 
 export async function getStaticPaths() {
-  const posts = await import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
+  const posts = import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
   return Object.entries(posts)
     .map(([file, p]) => {
       const post = p as Post;
@@ -33,7 +34,7 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 
-const entries = await import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
+const entries = import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
 const all = Object.entries(entries).map(([file, data]) => {
   const p = data as Post;
   const fileSlug = file.split("/").pop()?.replace(".json", "");
@@ -41,34 +42,24 @@ const all = Object.entries(entries).map(([file, data]) => {
 }) as (Post & { __file: string; __slug?: string })[];
 
 const item = all.find(x => x.type === "internal" && x.__slug === slug);
-if (!item) return Astro.redirect("/news");
-
-const internal = all
-  .filter(x => x.type === "internal")
-  .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
-
-const idx = internal.findIndex(x => x.__slug === slug);
-const prev = idx > 0 ? internal[idx - 1] : null;
-const next = idx >= 0 && idx < internal.length - 1 ? internal[idx + 1] : null;
-
-const urlFor = (x: any) => `/news/${x.__slug}`;
+const locale = localeFromPath(Astro.url.pathname);
+if (!item) return Astro.redirect(localizedUrl(locale, 'news'));
 const pageTitle = item.title ?? "News";
 const pageDesc = item.excerpt ?? "";
 ---
-<html lang="sq">
+<html lang={locale}>
   <head>
 
-    <BaseHead title={pageTitle} description={pageDesc} />
+    <BaseHead title={pageTitle} description={pageDesc} type="article" />
   </head>
   <body class="bg-[#0b1116] text-white">
-    <Header />
     <Header />
 
     <!-- Back to News -->
     <div class="bNews w-full flex justify-center px-6 mt-6">
       <div class="w-full max-w-3xl">
         <a
-          href="news"
+          href={localizedUrl(locale, 'news')}
           class="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
@@ -94,8 +85,7 @@ const pageDesc = item.excerpt ?? "";
               {item.author && <span>· {item.author}</span>}
             </div>
             <div class="flex items-center gap-3">
-              <a href="#" class="hover:text-white" aria-label="Share">↗</a>
-              <a href="#" class="hover:text-white" aria-label="Bookmark">★</a>
+              <button type="button" id="share-article" class="hover:text-white" aria-label="Shpërndaje artikullin">↗</button>
             </div>
           </div>
         </div>
@@ -155,6 +145,15 @@ const pageDesc = item.excerpt ?? "";
     </main>
 
     <Footer />
+    <script>
+      document.querySelector('#share-article')?.addEventListener('click', async () => {
+        if (navigator.share) {
+          await navigator.share({ title: document.title, url: window.location.href });
+        } else {
+          await navigator.clipboard.writeText(window.location.href);
+        }
+      });
+    </script>
   </body>
 </html>
 

@@ -3,13 +3,14 @@ import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import NewsCard from "../../components/NewsCard.astro";
+import { localeFromPath } from '../../i18n';
 
-const entries = await import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
+const entries = import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
 const items = Object.values(entries)
   .map((it:any)=>it)
   .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
 ---
-<html lang="sq">
+<html lang={localeFromPath(Astro.url.pathname)}>
   <head>
     <BaseHead title="Lajme | Ilir Tafa" description="Lajmet e fundit nga Ilir Tafa." />
   </head>

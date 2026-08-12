@@ -5,6 +5,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import EpisodesGrid from "../components/works/EpisodesGrid.astro";
+import { localeFromPath, localizedUrl } from '../i18n';
 
 type WorksData = CollectionEntry<'works'>['data'];
 const {
@@ -16,11 +17,11 @@ const isFilm = type === "film";
 
 ---
 
-<html lang="sq">
+<html lang={localeFromPath(Astro.url.pathname)}>
   <head>
 
 
-    <BaseHead title={title + " | Ilir Tafa"} description={description ?? `${title} — ${type} (${year})`} />
+    <BaseHead title={title + " | Ilir Tafa"} description={description ?? `${title} — ${type} (${year})`} image={poster} />
     <style>
       body { background:#0b1116; margin:0; }
       main { width:1100px; max-width:calc(100% - 2rem); margin:0 auto; padding:2.5rem 0 5rem; }
@@ -37,7 +38,7 @@ const isFilm = type === "film";
     <Header />
     <main>
       <p style="margin-bottom:1.5rem;">
-        <a href="works" style="color:#9aa4ad;text-decoration:none;">← Kthehu te Veprat</a>
+        <a href={localizedUrl(localeFromPath(Astro.url.pathname), 'works')} style="color:#9aa4ad;text-decoration:none;">← Kthehu te Veprat</a>
       </p>
 
       <section class="hero">

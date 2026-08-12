@@ -1,38 +1,50 @@
 ---
 import logo from "../assets/logo nobg.png";
+import { localeFromPath, localeNames, locales, localizedUrl, stripLocale, useTranslations } from '../i18n';
+const { overlay = false } = Astro.props as { overlay?: boolean };
 
-const path = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
-const is = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+const locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+const path = stripLocale(Astro.url.pathname);
+const url = (path = "") => localizedUrl(locale, path);
+const isActive = (href: string, exact = false) => exact ? path === href : path.startsWith(href);
 
 const links = [
-  { href: "", label: "Ballina", exact: true },
-  { href: "about", label: "Biografia" },
-  { href: "works", label: "Veprat" },
-  { href: "news", label: "Lajme" },
-  { href: "gallery", label: "Galeri" },
+  { href: "", label: t.home, exact: true },
+  { href: "about", label: t.about },
+  { href: "works", label: t.works },
+  { href: "news", label: t.news },
+  { href: "gallery", label: t.gallery },
 ];
 ---
 
-<header id="navbar" class="fixed inset-x-0 top-0 z-50 transition-colors duration-300" style="padding: 10px 50px !important;"> 
-  <nav class="w-full flex h-20 items-center justify-between px-6 md:px-12"> 
-<a href={import.meta.env.BASE_URL} class="block">
-  <img src={logo.src} alt="Logo" class="w-24 h-auto" />
+<header id="navbar" class:list={["fixed inset-x-0 top-0 z-50 transition-colors duration-300", overlay && "is-overlay"]}> 
+  <nav class="navbar-inner"> 
+<a href={url()} class="navbar-brand">
+  <img src={logo.src} alt="Ilir Tafa" />
 </a>
 
   <!-- Desktop --> 
-   <div class="hidden md:flex items-center gap-6"> 
+   <div class="navbar-links hidden md:flex"> 
     {links.map((l) => ( 
-      <a href={l.href} 
-        aria-current={(l.exact ? l.href === path : is(l.href)) ? "page" : undefined} 
-        class:list={[ "px-4 py-3 text-[17px] font-medium tracking-wide transition-colors text-white hover:text-[#d4b16a]", 
-        (l.exact ? l.href === path : is(l.href)) ? "font-semibold text-[#d4b16a] underline underline-offset-4" : "opacity-90", ]} > {l.label} 
+      <a href={url(l.href)} 
+        aria-current={isActive(l.href, l.exact) ? "page" : undefined} 
+        class:list={[ "navbar-link", 
+        isActive(l.href, l.exact) ? "font-semibold text-[#d4b16a] underline underline-offset-4" : "opacity-90", ]} > {l.label} 
       </a> ))} 
-    <!-- Language toggle --> 
-     <!-- <button type="button" class="ml-4 px-3 py-2 border border-[#d4b16a] rounded-md text-sm font-medium text-[#d4b16a] hover:bg-[#d4b16a] hover:text-black transition-colors" > 
-      🇦🇱 AL </button> -->
+      <details class="language-picker">
+        <summary aria-label={t.language}>{locale.toUpperCase()}<span aria-hidden="true">⌄</span></summary>
+        <div class="language-picker__menu">
+          {locales.filter((language) => language !== locale).map((language) => (
+            <a href={localizedUrl(language, path)} lang={language} hreflang={language} title={localeNames[language]}>
+              {language.toUpperCase()}
+            </a>
+          ))}
+        </div>
+      </details>
     </div> 
     <!-- Mobile toggle button -->
-    <button aria-label="menu" id="hamburger" class="md:hidden relative p-3 flex flex-col justify-center items-center gap-[6px] group" style="margin-right: 5%;">
+    <button type="button" aria-label={t.openMenu} aria-controls="navlinks" aria-expanded="false" id="hamburger" class="md:hidden relative p-3 flex flex-col justify-center items-center gap-[6px] group" style="margin-right: 5%;">
       <span class="block h-[2px] w-6 bg-white rounded transition-all duration-300 group-[.active]:rotate-45 group-[.active]:translate-y-[8px]"></span>
       <span class="block h-[2px] w-6 bg-white rounded transition-all duration-300 group-[.active]:opacity-0"></span>
       <span class="block h-[2px] w-6 bg-white rounded transition-all duration-300 group-[.active]:-rotate-45 group-[.active]:-translate-y-[8px]"></span>
@@ -50,13 +62,13 @@ const links = [
      class="invisible fixed top-20 left-0 z-[70] w-full origin-top-right translate-y-1 scale-95 flex-col gap-6
             rounded-3xl border border-white/10 bg-[#0b1116] p-7 opacity-0 shadow-2xl transition-all duration-300 md:hidden">
       <div class="flex items-center justify-center relative mb-6">
-        <a href={import.meta.env.BASE_URL} class="block">
+        <a href={url()} class="block">
           <img src={logo.src} alt="Logo" class="w-24 h-auto" />
         </a>
         <button
           id="closeMenu"
           type="button"
-          aria-label="close"
+          aria-label={t.closeMenu}
           class="absolute right-0 flex h-10 w-10 items-center justify-center rounded-full border border-white/20
                 text-white hover:text-[#d4b16a] hover:border-[#d4b16a] transition-colors duration-200"
           style="top: 7%; right: 3%;"
@@ -73,16 +85,25 @@ const links = [
     <nav id="links-group" class="flex flex-col items-center gap-8 tracking-wide">
       {links.map((l) => (
         <a
-          href={l.href}
+          href={url(l.href)}
           class:list={[
             'text-lg font-medium transition-colors hover:text-[#d4b16a]',
-            (l.exact ? l.href === path : is(l.href)) ? 'text-[#d4b16a]' : 'text-white/90',
+            isActive(l.href, l.exact) ? 'text-[#d4b16a]' : 'text-white/90',
           ]}
         >
           {l.label}
         </a>
       ))}
     </nav>
+
+    <div class="mt-8 flex items-center justify-center gap-3" aria-label={t.language}>
+      {locales.map((language) => (
+        <a href={localizedUrl(language, path)} lang={language} hreflang={language}
+          class:list={['rounded-full border px-4 py-2 text-sm uppercase', language === locale ? 'border-[#d4b16a] text-[#d4b16a]' : 'border-white/20 text-white/70']}>
+          {language}
+        </a>
+      ))}
+    </div>
 
     <!-- <div class="mt-8 flex justify-center">
       <button type="button"
@@ -93,7 +114,7 @@ const links = [
   </div>
 </header>
 
-<div class="h-20"></div>
+{!overlay && <div class="h-20"></div>}
 
 <script is:inline>
   const root  = document.getElementById('navbar');
@@ -107,6 +128,8 @@ const links = [
   const setOpen = (open) => {
     root?.setAttribute('data-state', open ? 'active' : '');
     btn?.classList.toggle('active', open);
+    btn?.setAttribute('aria-expanded', String(open));
+    layer?.setAttribute('aria-hidden', String(!open));
     document.documentElement.classList.toggle('overflow-hidden', open);
     layer?.classList.toggle('scale-y-100', open);
     panel?.classList.toggle('visible', open);
@@ -122,10 +145,7 @@ const links = [
   // Navbar background on scroll
   const applyScrollState = () => {
     const scrolled = window.scrollY > 10;
-    root?.classList.toggle('bg-[#0e141a]/90', scrolled);
-    root?.classList.toggle('backdrop-blur-md', scrolled);
-    root?.classList.toggle('border-b', scrolled);
-    root?.classList.toggle('border-white/10', scrolled);
+    root?.classList.toggle('is-scrolled', scrolled);
   };
   applyScrollState();
   addEventListener('scroll', applyScrollState, { passive: true });
@@ -135,6 +155,24 @@ const links = [
 
 
 <style>
+  #navbar { z-index:2147483000; background:rgba(7,11,16,.96); pointer-events:none; }
+  #navbar > * { pointer-events:auto; }
+  #navbar.is-overlay { background:transparent; }
+  #navbar.is-scrolled { background:transparent; }
+  .navbar-inner { width:100%; height:88px; margin:0 auto; padding:0 clamp(1.5rem,4vw,4.5rem); border:1px solid transparent; display:flex; align-items:center; justify-content:space-between; transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),padding .3s var(--ease),background .3s ease,border-color .3s ease,border-radius .3s ease,box-shadow .3s ease,backdrop-filter .3s ease; }
+  #navbar.is-scrolled .navbar-inner { width:min(calc(100% - 2rem),1440px); height:70px; margin-top:.75rem; padding:0 clamp(1.25rem,2.5vw,2.5rem); border-color:rgba(212,177,106,.28); border-radius:1rem; background:rgba(7,11,16,.86); box-shadow:0 14px 40px rgba(0,0,0,.38),0 0 18px rgba(212,177,106,.06); backdrop-filter:blur(16px) saturate(120%); -webkit-backdrop-filter:blur(16px) saturate(120%); }
+  .navbar-brand { display:flex; align-items:center; flex:0 0 auto; }
+  .navbar-brand img { display:block; width:auto; height:48px; object-fit:contain; }
+  #navbar.is-scrolled .navbar-brand img { height:43px; }
+  .navbar-links { align-items:center; gap:clamp(1rem,1.65vw,2rem); }
+  .navbar-link { padding:.7rem 0; color:#fff; font-size:1rem; font-weight:500; letter-spacing:.01em; transition:color .2s ease; white-space:nowrap; }
+  .navbar-link:hover { color:var(--color-gold-bright); }
+  .language-picker { position:relative; margin-left:.4rem; }
+  .language-picker summary { display:flex; align-items:center; gap:.3rem; padding:.28rem .45rem; border:1px solid rgba(255,255,255,.28); border-radius:.2rem; color:rgba(255,255,255,.9); font-size:.65rem; line-height:1; cursor:pointer; list-style:none; }
+  .language-picker summary::-webkit-details-marker { display:none; }
+  .language-picker__menu { position:absolute; top:calc(100% + .35rem); right:0; min-width:100%; overflow:hidden; border:1px solid rgba(212,177,106,.45); border-radius:.2rem; background:rgba(7,11,16,.97); box-shadow:0 10px 28px rgba(0,0,0,.35); }
+  .language-picker__menu a { display:block; padding:.5rem .7rem; color:rgba(255,255,255,.78); font-size:.65rem; text-align:center; }
+  .language-picker__menu a:hover { color:var(--color-gold-bright); background:rgba(255,255,255,.05); }
   #navlinks.visible {
     visibility: visible !important;
   }
@@ -147,5 +185,9 @@ const links = [
   #navLayer.scale-y-100 {
     transform: scaleY(1) !important;
     transform-origin: top;
+  }
+  @media(max-width:767px){
+    #navbar.is-scrolled .navbar-inner{width:calc(100% - 1rem);height:66px;margin-top:.5rem;padding:0 1rem;border-radius:.8rem}
+    #navbar.is-scrolled .navbar-brand img{height:40px}
   }
 </style>

@@ -118,6 +118,14 @@ const pageSubtitle = "Këtu mund të gjeni të gjithë veprimtarinë në film, t
       transform: translateY(-7px);
       box-shadow: 0 18px 42px rgba(0,0,0,.38), 0 0 22px rgba(39,75,105,.13);
     }
+    @media (min-width: 1024px) and (max-width: 1440px) {
+      main {
+        width: min(calc(100% - clamp(4rem, 10vw, 9rem)), 1120px);
+      }
+      .grid {
+        column-gap: clamp(2rem, 3.5vw, 3.25rem);
+      }
+    }
     .poster {
       position: absolute;
       inset: 0;

@@ -54,6 +54,22 @@ const backLabel = locale === "sq" ? "Kthehu te Veprat" : locale === "bs" ? "Naza
       .works-back { display:inline-flex; align-items:center; gap:.55rem; width:fit-content; margin:0 0 1.5rem; color:#c9a654; font-size:.9rem; text-decoration:none; transition:color 180ms ease,transform 180ms ease; }
       .works-back:hover { color:#fff; transform:translateX(-.25rem); }
       .works-back--bottom { margin:clamp(3rem,6vw,5rem) auto 0; }
+      @media(min-width:1024px) and (max-width:1440px){
+        main {
+          box-sizing:border-box;
+          width:min(calc(100% - clamp(4rem,8vw,8rem)),1120px);
+          max-width:none;
+          margin-inline:auto;
+        }
+        .hero {
+          grid-template-columns:minmax(280px,340px) minmax(0,1fr);
+          gap:clamp(3rem,5vw,4.5rem);
+          align-items:center;
+        }
+        .poster { justify-self:center; }
+        .hero__copy { width:100%; }
+        .body { width:100%; max-width:680px; }
+      }
       @media(max-width:900px){
         .work-header { height:18rem; }
         main.has-header { margin-top:-8rem; }

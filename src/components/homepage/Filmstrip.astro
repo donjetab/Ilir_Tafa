@@ -44,6 +44,7 @@ const galleryImageFor = (work:(typeof works)[number]) => galleryImages.get(work.
       ))}
     </div>
   </div>
+  <a href={localizedUrl(locale, 'works')} class="btn-gold journey__film-cta">{copy.cta}</a>
 </section>
 
 <script>
@@ -94,5 +95,23 @@ const galleryImageFor = (work:(typeof works)[number]) => galleryImages.get(work.
   .filmstrip__year { font-size:.7rem; opacity:.7; }
   .filmstrip__frame strong { margin:.4rem 1rem; font:400 1.15rem/1.15 'Cormorant Garamond',serif; }
   .filmstrip__frame small { font-size:.66rem; opacity:.72; }
+  .journey__film-cta { display:none; }
+  @media (min-width:761px) and (max-width:900px) {
+    .journey { padding-top:0; }
+    .journey__heading { margin-bottom:4rem; }
+    .journey__heading h2 { font-size:2.8rem; }
+    .journey__heading > .btn-gold { display:none; }
+    .journey__film-cta { display:block; align-self:center; margin-top:2rem; padding:.6rem 1.25rem; font-size:.75rem; }
+  }
   @media(max-width:700px){ .journey__heading{align-items:flex-start;flex-direction:column;margin-bottom:2.5rem}.journey__heading h2{white-space:normal}.filmstrip__track{gap:8px;padding:24px 4px}.filmstrip__frame{flex-basis:220px;height:145px}.journey__heading .btn-gold{margin-top:0} }
+  @media(max-width:760px) {
+    .journey__heading { margin-bottom:3.25rem; }
+    .journey__heading h2 { font-size:clamp(2.1rem,6vw,2.6rem); white-space:normal; }
+    .journey__heading > .btn-gold { display:none; }
+    .journey__film-cta { display:block; align-self:center; margin-top:1.75rem; padding:.6rem 1.25rem; font-size:.75rem; }
+  }
+  @media(max-width:390px) {
+    .journey { min-height:82svh; padding-bottom:3rem; }
+    .journey__film-cta { margin-top:2.75rem; }
+  }
 </style>

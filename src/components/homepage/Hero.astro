@@ -69,11 +69,26 @@ const copy = {
     .hero__content .btn-gold { min-width:145px; margin-top:1.4rem; padding:.68rem 1.35rem; }
     .hero-transition { height:120px; }
   }
+  @media (min-width: 768px) and (max-width: 800px) {
+    .hero__image { object-position: -30% 35%; }
+  }
   @media (max-width:800px) and (max-height:680px) {
     .hero__image { height:74%; object-position:30% 30%; }
     .hero__content { bottom:max(3.5%,env(safe-area-inset-bottom)); }
     .hero__title { font-size:clamp(3.5rem,16vw,4.8rem); }
     .hero__subtitle { margin-top:.65rem; }
     .hero__content .btn-gold { margin-top:1rem; }
+  }
+  @media (max-width:760px) {
+    .hero__image { object-position:-30% 35%; }
+  }
+  @media (max-width:635px) {
+    .hero__image { object-position:-5% 35%; }
+  }
+  @media (max-width:500px) {
+    .hero__image { object-position: 10% 35%; }
+  }
+  @media (max-width:390px) {
+    .hero__image { object-position: 17% 35%; }
   }
 </style>

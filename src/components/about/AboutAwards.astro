@@ -1,0 +1,175 @@
+---
+interface Award {
+  icon: ImageMetadata | string;
+  title: string;
+  festival: string;
+}
+
+interface Props {
+  heading?: string;
+  awards: Award[];
+}
+
+const { heading = "Çmimet", awards } = Astro.props;
+const src = (image: ImageMetadata | string) => typeof image === "string" ? image : image.src;
+---
+
+<section class="about-awards" aria-labelledby="about-awards-title">
+  <div class="about-awards__inner">
+    <h2 id="about-awards-title">{heading}</h2>
+
+    <div class="about-awards__grid">
+      {awards.map((award) => (
+        <article class="about-awards__item">
+          <img src={src(award.icon)} alt="" loading="lazy" />
+          <h3>{award.title}</h3>
+          <p>{award.festival}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const setupAwardsPreview = () => {
+    document.querySelectorAll<HTMLElement>('.about-awards').forEach((section) => {
+      if (section.dataset.previewReady === 'true') return;
+      section.dataset.previewReady = 'true';
+
+      const cards = [...section.querySelectorAll<HTMLElement>('.about-awards__item')];
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) return;
+
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+
+        cards.forEach((card, index) => {
+          window.setTimeout(() => {
+            card.classList.add('is-previewing');
+            window.setTimeout(() => card.classList.remove('is-previewing'), 1000);
+          }, index * 170);
+        });
+      }, { threshold: 0.32 });
+
+      observer.observe(section);
+    });
+  };
+
+  setupAwardsPreview();
+  document.addEventListener('astro:page-load', setupAwardsPreview);
+</script>
+
+<style>
+  .about-awards {
+    padding: clamp(3rem, 7vw, 6.5rem) clamp(1.25rem, 5vw, 5rem) clamp(6rem, 11vw, 10rem);
+  }
+
+  .about-awards__inner {
+    width: min(100%, 88rem);
+    margin-inline: auto;
+  }
+
+  .about-awards h2 {
+    margin: 0 0 clamp(4rem, 8vw, 7rem);
+    color: #d8ae5b;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .about-awards__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 5rem);
+  }
+
+  .about-awards__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 2vw, 1.75rem);
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    transform: translateY(0);
+    transition:
+      transform 280ms ease,
+      background-color 280ms ease,
+      border-color 280ms ease,
+      box-shadow 280ms ease;
+  }
+
+  .about-awards__item:hover,
+  .about-awards__item.is-previewing {
+    border-color: rgba(216, 174, 91, 0.27);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025));
+    box-shadow:
+      0 1.4rem 3.5rem rgba(0, 0, 0, 0.25),
+      0 0 2.25rem rgba(216, 174, 91, 0.09),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-0.75rem);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .about-awards__item img {
+    width: clamp(8rem, 11vw, 11rem);
+    height: clamp(7rem, 10vw, 10rem);
+    margin-bottom: 1.5rem;
+    object-fit: contain;
+    transition: transform 280ms ease, filter 280ms ease;
+  }
+
+  .about-awards__item:hover img,
+  .about-awards__item.is-previewing img {
+    filter: drop-shadow(0 0 0.9rem rgba(216, 174, 91, 0.28));
+    transform: scale(1.04);
+  }
+
+  .about-awards__item h3 {
+    margin: 0;
+    color: rgba(250, 250, 250, 0.9);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(1.15rem, 1.5vw, 1.55rem);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .about-awards__item p {
+    max-width: 18rem;
+    margin: 0.65rem 0 0;
+    color: #d8ae5b;
+    font-size: clamp(0.76rem, 0.9vw, 0.94rem);
+    font-weight: 500;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 850px) {
+    .about-awards__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 4.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .about-awards__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-awards__item,
+    .about-awards__item img {
+      transition: none;
+    }
+  }
+</style>

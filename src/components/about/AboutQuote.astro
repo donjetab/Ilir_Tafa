@@ -3,50 +3,123 @@ interface Props {
   quote: string;
   author?: string;
 }
+
 const { quote, author = "Ilir Tafa" } = Astro.props;
 ---
-<section class="quoteS flex items-center justify-center min-h-[60vh] px-6 py-20">
-  <figure class="quote text-center rounded-2xl bg-[#18222c] text-white p-10 md:p-14 shadow-lg">
-    <blockquote class="text-2xl md:text-4xl font-light leading-snug tracking-tight">
-      “{quote}”
-    </blockquote>
-    <figcaption class="mt-6 text-white/60 text-sm md:text-base">
-      — {author}
-    </figcaption>
+
+<section class="about-quote" aria-label="Citat për Ilir Tafën">
+  <figure class="about-quote__content">
+    <blockquote>“{quote}”</blockquote>
+    <figcaption>{author}</figcaption>
   </figure>
 </section>
 
+<script>
+  const setupQuoteParallax = () => {
+    document.querySelectorAll<HTMLElement>('.about-quote').forEach((section) => {
+      if (section.dataset.parallaxReady === 'true') return;
+      section.dataset.parallaxReady = 'true';
+
+      const content = section.querySelector<HTMLElement>('.about-quote__content');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!content || reduceMotion) return;
+      let frame = 0;
+
+      const update = () => {
+        frame = 0;
+        const rect = section.getBoundingClientRect();
+        const viewportCenter = window.innerHeight / 2;
+        const sectionCenter = rect.top + rect.height / 2;
+        const offset = Math.max(-32, Math.min(32, (viewportCenter - sectionCenter) * 0.09));
+        content.style.setProperty('--quote-shift', `${offset}px`);
+      };
+
+      const requestUpdate = () => {
+        if (!frame) frame = requestAnimationFrame(update);
+      };
+
+      update();
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', requestUpdate);
+    });
+  };
+
+  setupQuoteParallax();
+  document.addEventListener('astro:page-load', setupQuoteParallax);
+</script>
+
 <style>
-    .quote{
-      width: 55% !important;
-      padding: 60px !important;
+  .about-quote {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: clamp(13rem, 17vw, 17rem);
+    padding: clamp(2.75rem, 4vw, 4.25rem) clamp(1.5rem, 7vw, 7rem);
+    overflow: hidden;
+    border-top: 1px solid rgba(216, 174, 91, 0.58);
+    border-bottom: 1px solid rgba(216, 174, 91, 0.58);
+    border-radius: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(13, 14, 18, 0.55), transparent 70%),
+      #07080b;
+  }
+
+  .about-quote::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(circle at 50% 48%, rgba(216, 174, 91, 0.025), transparent 42%);
+    transform: translateY(calc(var(--quote-shift, 0px) * -0.35));
+  }
+
+  .about-quote__content {
+    --quote-shift: 0px;
+    position: relative;
+    z-index: 1;
+    width: min(100%, 76rem);
+    margin: 0;
+    text-align: center;
+    transform: translateY(var(--quote-shift));
+    will-change: transform;
+  }
+
+  .about-quote blockquote {
+    margin: 0;
+    color: rgba(250, 250, 250, 0.9);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(1.35rem, 1.95vw, 2rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.45;
+  }
+
+  .about-quote figcaption {
+    margin-top: clamp(1.15rem, 2vw, 1.65rem);
+    color: #d8ae5b;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(0.78rem, 0.95vw, 0.98rem);
+    font-style: italic;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 390px) {
+    .about-quote blockquote {
+      font-size: 1.05rem;
+      line-height: 1.4;
     }
 
-    @media (max-width:1024px){
-      .quoteS{
-        min-height: 60vh;
-      }
-      .quote{
-      width: 65% !important;
-    }
-      blockquote{
-        font-size: 20px;
-      }
-      figcaption{
-        font-size: 15px;
-      }
-    }
-    @media (max-width:640px){
-    .quote{
-      width: 85% !important;
-      padding: 30px !important;
-    }
-    blockquote{
-      font-size: 20px;
-    }
-    figcaption{
-      padding-top: 10px;
+    .about-quote figcaption {
+      margin-top: 0.9rem;
+      font-size: 0.68rem;
+      line-height: 1.35;
     }
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .about-quote__content,
+    .about-quote::before {
+      transform: none;
+    }
+  }
 </style>

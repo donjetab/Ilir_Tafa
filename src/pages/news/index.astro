@@ -3,100 +3,202 @@ import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import NewsCard from "../../components/NewsCard.astro";
+import sadSide from "../../assets/sad-side.png";
+import happySide from "../../assets/happy-side.png";
 import { localeFromPath } from '../../i18n';
 
-const entries = import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
-const items = Object.values(entries)
-  .map((it:any)=>it)
-  .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+const locale = localeFromPath(Astro.url.pathname);
+const copy = locale === 'en'
+  ? { title:'NEWS', subtitle:'News and articles about actor Ilir Tafa from external sources', search:'Search news…', empty:'No news matched your search.' }
+  : locale === 'bs'
+    ? { title:'VIJESTI', subtitle:'Vijesti i članci o glumcu Iliru Tafi iz vanjskih izvora', search:'Pretraži vijesti…', empty:'Nema rezultata za ovu pretragu.' }
+    : { title:'LAJME', subtitle:'Të gjitha lajmet dhe artikujt nga burime të jashtme për aktorin Tafa', search:'Kërko lajme…', empty:'Nuk u gjet asnjë lajm.' };
+const entries = import.meta.glob("../../content/news/*.json", { eager:true, import:"default" });
+const items = Object.values(entries).map((it:any)=>it).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
 ---
-<html lang={localeFromPath(Astro.url.pathname)}>
-  <head>
-    <BaseHead title="Lajme | Ilir Tafa" description="Lajmet e fundit nga Ilir Tafa." />
-  </head>
-  <body class="bg-[#0b1116] text-white">
+<html lang={locale}>
+  <head><BaseHead title={`${copy.title} | Ilir Tafa`} description={copy.subtitle} /></head>
+  <body class="news-list-page">
     <Header />
-    <main class="mx-auto px-4 md:px-6 py-10 space-y-6" style="margin-top: 3%;">
-      <!-- Top bar -->
-    <div class="mx-auto max-w-[100%] px-6 py-16 text-center">
-        <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight" style="font-size: 45px;">Lajme</h1>
+    <main class="news-page">
+      <header class="news-heading">
+        <img class="stage-mask stage-mask--left" src={sadSide.src} alt="" aria-hidden="true" />
+        <img class="stage-mask stage-mask--right" src={happySide.src} alt="" aria-hidden="true" />
+        <h1>{copy.title}</h1>
+        <div class="news-ornament" aria-hidden="true"></div>
+        <p>{copy.subtitle}</p>
+        <label class="news-search">
+          <span class="sr-only">{copy.search}</span>
+          <input id="news-search" type="search" placeholder={copy.search} autocomplete="off" />
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
+        </label>
+      </header>
 
-        <div class="flex justify-center mb-12" style="margin-top: 1.5%;">
-      <label class="relative w-full max-w-xl">
-        <span class="pointer-events-none absolute left-25 top-3 -translate-y-1/2 text-white/50 text-xl">⌕</span>
-
-        <input
-          id="news-search"
-          type="search"
-          placeholder="Kërko lajme…"
-          class="w-[70%] rounded-2xl bg-[#0f141a] pl !border-2 !border-white/30 px-5 py-4 text-lg outline-none focus:!border-white transition"
-        />
-      </label>
-    </div>
-    </div>
-
-
-      <!-- Grid -->
-      <main class="mainNews mx-auto max-w-[100%] px-4 md:px-6 py-10 space-y-6" style="margin: 4% 10% 10% 10%;">
-        <!-- Top bar unchanged -->
-        <!-- <section id="news-grid" class="grid gap-15 md:grid-cols-2 w-[95%] mx-auto justify-center"> -->
-          <section id="news-grid" class="grid gap-15 min-[1001px]:grid-cols-2 w-[95%] mx-auto justify-center">
-
-
-          {items.map((it:any)=>
-            <div
-              class="news-item w-full max-w-[700px]"
-              data-title={(it.title||"").toLowerCase()}
-              data-src={(it.sourceName||"").toLowerCase()}
-            >
-              <NewsCard item={it} />
-            </div>
-          )}
-        </section>
-
-      </main>
-
+      <section id="news-grid" class="news-grid">
+        {items.map((item:any) => (
+          <div class="news-item" data-search={`${item.title ?? ''} ${item.sourceName ?? ''} ${item.excerpt ?? ''}`.toLowerCase()}>
+            <NewsCard item={item} />
+          </div>
+        ))}
+      </section>
+      <p id="news-empty" class="news-empty" hidden>{copy.empty}</p>
+      <nav id="news-pagination" class="news-pagination" aria-label="News pagination"></nav>
     </main>
     <Footer />
 
-    <!-- Tiny client filter -->
     <script>
-      const q = document.querySelector('#news-search');
-      const items = Array.from(document.querySelectorAll('#news-grid .news-item'));
-      q?.addEventListener('input', () => {
-        const term = (q as HTMLInputElement).value.trim().toLowerCase();
-        for (const el of items) {
-          const hay = ((el as HTMLElement).dataset.title + ' ' + (el as HTMLElement).dataset.src).trim();
-          (el as HTMLElement).style.display = hay.includes(term) ? '' : 'none';
+      const perPage = 9;
+      const search = document.querySelector<HTMLInputElement>('#news-search');
+      const allItems = Array.from(document.querySelectorAll<HTMLElement>('.news-item'));
+      const pagination = document.querySelector<HTMLElement>('#news-pagination');
+      const empty = document.querySelector<HTMLElement>('#news-empty');
+      const initialPage = Number(new URLSearchParams(window.location.search).get('page'));
+      let page = Number.isInteger(initialPage) && initialPage > 0 ? initialPage : 1;
+
+      function normalizeSearch(value: string) {
+        return value
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/ë/g, 'e')
+          .replace(/ç/g, 'c')
+          .toLowerCase();
+      }
+
+      function rememberPage() {
+        const url = new URL(window.location.href);
+        if (page > 1) url.searchParams.set('page', String(page));
+        else url.searchParams.delete('page');
+        history.replaceState({ page }, '', url);
+      }
+
+      function render() {
+        const term = normalizeSearch(search?.value.trim() ?? '');
+        const matches = allItems.filter(item => normalizeSearch(item.dataset.search ?? '').includes(term));
+        const pages = Math.max(1, Math.ceil(matches.length / perPage));
+        page = Math.min(page, pages);
+        rememberPage();
+        allItems.forEach(item => item.hidden = true);
+        matches.slice((page - 1) * perPage, page * perPage).forEach(item => item.hidden = false);
+        if (empty) empty.hidden = matches.length > 0;
+        if (!pagination) return;
+        pagination.innerHTML = '';
+        if (pages <= 1 || matches.length === 0) return;
+        const addButton = (label: string, target: number, className = '', disabled = false) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = label;
+          button.className = className;
+          button.disabled = disabled;
+          button.addEventListener('click', () => { page = target; render(); document.querySelector('.news-grid')?.scrollIntoView({ behavior:'smooth', block:'start' }); });
+          pagination.append(button);
+        };
+        addButton('‹', page - 1, 'pagination-arrow', page === 1);
+        for (let number = 1; number <= pages; number++) {
+          addButton(String(number), number, number === page ? 'is-active' : '');
         }
+        addButton('›', page + 1, 'pagination-arrow', page === pages);
+      }
+      search?.addEventListener('input', () => { page = 1; render(); });
+      window.addEventListener('popstate', () => {
+        const restoredPage = Number(new URLSearchParams(window.location.search).get('page'));
+        page = Number.isInteger(restoredPage) && restoredPage > 0 ? restoredPage : 1;
+        render();
       });
+      render();
     </script>
   </body>
 </html>
 
 <style>
-  
-  #news-search {
-    border: 2px solid rgba(255,255,255,0.3) !important;
-    border-radius: 1.5rem !important;
+  :global(body) { min-height:100vh; margin:0; color:#fff; background:linear-gradient(180deg,#070b10 0%,#090e14 50%,#0d1722 100%); background-attachment:fixed; }
+  :global(body.news-list-page #navbar) { background:transparent; }
+  .news-page { width:100%; min-height:85vh; margin:auto; padding:0 0 clamp(7rem,10vw,10rem); }
+  .news-heading {
+    position:relative;
+    isolation:isolate;
+    min-height:518px;
+    margin-top:-88px;
+    overflow:hidden;
+    padding:calc(88px + clamp(3.25rem,6vw,5.5rem)) 1rem 3.5rem;
+    text-align:center;
+    background:transparent;
   }
-  #news-search:focus {
-    border-color: white !important;
+  .news-heading::before {
+    content:"";
+    position:absolute;
+    z-index:-1;
+    top:-150px;
+    left:50%;
+    width:min(1380px,135vw);
+    height:760px;
+    background:
+      radial-gradient(ellipse 17% 20% at 50% 4%,rgba(231,217,191,.24) 0%,rgba(204,202,192,.15) 34%,rgba(171,180,185,.07) 62%,transparent 100%),
+      radial-gradient(ellipse 45% 73% at 50% 3%,rgba(193,199,198,.10) 0%,rgba(159,173,181,.055) 48%,transparent 82%);
+    filter:blur(22px);
+    opacity:.92;
+    transform:translateX(-50%);
+    pointer-events:none;
   }
-
-  .pl{
-    padding-left: 2.5rem !important;
+  .stage-mask {
+    position:absolute;
+    z-index:-1;
+    top:52%;
+    width:clamp(205px,21vw,340px);
+    height:auto;
+    opacity:.055;
+    filter:blur(.5px);
+    pointer-events:none;
+    user-select:none;
   }
-
-  @media (max-width: 640px) {
-    h1{
-      margin-bottom: 5%;
+  .stage-mask--left {
+    left:clamp(-145px,-7vw,-70px);
+    transform:translateY(-50%) rotate(-4deg);
+    -webkit-mask-image:linear-gradient(90deg,#000 25%,rgba(0,0,0,.7) 62%,transparent 100%);
+    mask-image:linear-gradient(90deg,#000 25%,rgba(0,0,0,.7) 62%,transparent 100%);
+  }
+  .stage-mask--right {
+    right:clamp(-145px,-7vw,-70px);
+    transform:translateY(-50%) rotate(4deg);
+    -webkit-mask-image:linear-gradient(270deg,#000 25%,rgba(0,0,0,.7) 62%,transparent 100%);
+    mask-image:linear-gradient(270deg,#000 25%,rgba(0,0,0,.7) 62%,transparent 100%);
+  }
+  h1 { color:#d3ad60; margin:0; font-family:"Playfair Display",Georgia,serif; font-size:clamp(4rem,6vw,5.8rem); font-weight:400; line-height:1; text-shadow:0 4px 24px rgba(0,0,0,.45); }
+  .news-ornament { width:min(360px,64vw); height:1px; margin:1.5rem auto 1.25rem; background:linear-gradient(90deg,transparent,rgba(211,173,96,.78) 22%,rgba(211,173,96,.78) 78%,transparent); }
+  .news-heading p { width:min(100%,750px); margin:0 auto 2rem; color:rgba(255,255,255,.9); font-size:clamp(1rem,1.3vw,1rem); font-style:italic; line-height:1.45; text-wrap:balance; }
+  .news-search { position:relative; display:block; width:min(100%,390px); margin:auto; }
+  .news-search input { box-sizing:border-box; width:100%; height:3rem; padding:.35rem 3rem .35rem 1.2rem; border:1px solid rgba(211,173,96,.88); border-radius:999px; outline:0; color:#fff; background:rgba(4,10,16,.34); }
+  .news-search input:focus { border-color:#c9aa69; box-shadow:0 0 0 3px rgba(201,170,105,.12); }
+  .news-search svg { color: #c6a664; position:absolute; top:50%; right:1rem; width:1.25rem; transform:translateY(-50%); fill:none; stroke:currentColor; stroke-width:1.5; }
+  .news-grid { 
+    width:min(calc(100% - 2rem),1280px); 
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); 
+    gap:clamp(2rem,4vw,3.2rem); 
+    margin:0 auto; scroll-margin-top:7rem; }
+  .news-item[hidden] { display:none; }
+  .news-empty { margin:5rem 0; text-align:center; color:rgba(255,255,255,.65); }
+  .news-pagination { display:flex; justify-content:center; flex-wrap:wrap; gap:.7rem; margin-top:clamp(4rem,7vw,6rem); }
+  .news-pagination :global(button) { min-width:2.45rem; height:2.45rem; padding:0 .7rem; border:1px solid rgba(201,170,105,.72); border-radius:.2rem; color:#c9aa69; background:#090e14; cursor:pointer; transition:.2s ease; }
+  .news-pagination :global(button:hover),.news-pagination :global(button.is-active) { color:#070b10; background:#c9aa69; }
+  .news-pagination :global(button:disabled) { opacity:.32; cursor:not-allowed; color:#c9aa69; background:#090e14; }
+  .news-pagination :global(.pagination-arrow) { font-size:1.35rem; }
+  .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+  @media(max-width:900px){ .news-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(min-width:521px) and (max-width:900px){
+    .news-heading { min-height:450px; padding-bottom:2rem; }
+    .news-grid { width:min(calc(100% - 5rem),760px); gap:1.5rem; }
+  }
+  @media(max-width:600px){ .news-heading{min-height:478px;margin-top:-88px;padding-top:calc(88px + 3rem)}.news-heading::before{top:-110px;width:180vw;height:620px;opacity:.78}.stage-mask{width:185px;opacity:.04}.stage-mask--left{left:-110px}.stage-mask--right{right:-110px}.news-grid { grid-template-columns:1fr; gap:1.5rem; margin-top:3rem; } }
+  @media(max-width:500px){
+      .news-heading { min-height:390px; margin-bottom:0; padding-bottom:1rem; }
+      .news-grid { width:min(calc(100% - 3rem),350px); margin-top:1rem; }
+    /* .stage-mask { top:50%; width:170px; opacity:.035; } */
+      .stage-mask--left{
+        top: 11rem;
+        left: -5rem;
+      }
+      .stage-mask--right{
+        top: 22rem;
+        right: -5rem;
+      }
     }
-    .pl{
-    padding-left: 3.5rem !important;
-  }
-  .mainNews {
-      justify-items: center;
-    }
-  }
 </style>

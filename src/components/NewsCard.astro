@@ -1,5 +1,6 @@
 ---
 import { localeFromPath, localizedUrl } from '../i18n';
+
 interface Item {
   slug: string;
   type: "internal" | "external";
@@ -10,62 +11,49 @@ interface Item {
   sourceUrl?: string | null;
   sourceName?: string | null;
 }
+
 const { item } = Astro.props as { item: Item };
 const isExternal = item.type === "external";
-const href = isExternal ? item.sourceUrl! : localizedUrl(localeFromPath(Astro.url.pathname), `news/${item.slug}`);
+const internalHref = localizedUrl(localeFromPath(Astro.url.pathname), `news/${item.slug}`);
+const href = isExternal ? item.sourceUrl! : `${internalHref.replace(/\/$/, '')}/`;
+const formattedDate = item.date
+  ? new Intl.DateTimeFormat('sq-AL', { day:'2-digit', month:'2-digit', year:'numeric' }).format(new Date(item.date))
+  : null;
 ---
-<article
-  class="group grid grid-cols-1 md:grid-cols-[220px_1fr] gap-3 md:gap-4 p-3 md:p-4 rounded-xl bg-[#10161d] hover:bg-[#0f141a] border border-white/5"
->
-  <!-- Thumbnail -->
-  <a
-    href={href}
-    target={isExternal ? "_blank" : undefined}
-    rel={isExternal ? "noopener nofollow" : undefined}
-    class="block aspect-[16/9] w-full md:w-[220px] overflow-hidden rounded-lg"
-  >
-    {item.cover ? (
-      <img
-        src={item.cover}
-        alt={item.title}
-        class="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
-      />
-    ) : (
-      <div class="h-full w-full bg-white/5" />
-    )}
-  </a>
 
-  <!-- Info -->
-  <div class="flex flex-col gap-2">
-    <div class="flex flex-wrap items-center gap-2 text-[11px] md:text-xs text-white/60">
-      <span class="inline-flex items-center rounded-full border border-white/10 px-2 py-0.5">
-        {isExternal ? "External" : "On site"}
-      </span>
-      {item.sourceName && <span>· {item.sourceName}</span>}
-      {item.date && <time datetime={item.date}>{new Date(item.date).toLocaleDateString("sq-AL")}</time>}
+<article class="news-card">
+  <a class="news-card__link" href={href} target={isExternal ? "_blank" : undefined} rel={isExternal ? "noopener nofollow" : undefined}>
+    <div class="news-card__media">
+      {item.cover ? <img src={item.cover} alt={item.title} loading="lazy" /> : <div class="news-card__placeholder"></div>}
     </div>
-
-    <a
-      href={href}
-      target={isExternal ? "_blank" : undefined}
-      rel={isExternal ? "noopener nofollow" : undefined}
-      class="text-base sm:text-lg md:text-xl font-semibold leading-snug hover:underline line-clamp-2"
-    >
-      {item.title}
-    </a>
-
-    {item.excerpt && (
-      <p class="text-sm text-white/70 line-clamp-2 sm:line-clamp-3">{item.excerpt}</p>
-    )}
-  </div>
+    <div class="news-card__content">
+      <div class="news-card__meta">
+        {formattedDate && <time datetime={item.date!}>{formattedDate}</time>}
+        <span>{isExternal ? 'External' : 'Në faqe'}</span>
+      </div>
+      <h2>{item.title}</h2>
+      {item.excerpt && <p>{item.excerpt}</p>}
+    </div>
+  </a>
 </article>
 
-
 <style>
-  @media (max-width: 640px) {
-    article{
-      background-color: #121a21;
-    }
-    
+  .news-card { height:100%; overflow:hidden; border:1px solid rgba(201,170,105,.72); border-radius:1.2rem; background:#0b0e13; color:#f5f5f3; box-shadow:inset 0 1px 0 rgba(255,255,255,.025); transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease; }
+  .news-card:hover { transform:translateY(-6px); border-color:#c9aa69; box-shadow:0 16px 38px rgba(0,0,0,.38),0 0 22px rgba(201,170,105,.11); }
+  .news-card__link { display:flex; flex-direction:column; height:100%; padding:.45rem; color:inherit; text-decoration:none; }
+  .news-card__media { aspect-ratio:16/9; overflow:hidden; border-radius:.9rem .9rem .25rem .25rem; background:#111821; }
+  .news-card__media img { width:100%; height:100%; object-fit:cover; transition:transform .45s ease; }
+  .news-card:hover .news-card__media img { transform:scale(1.035); }
+  .news-card__placeholder { width:100%; height:100%; background:linear-gradient(145deg,#17212c,#0d141c); }
+  .news-card__content { display:flex; flex:0 0 10.5rem; min-height:0; flex-direction:column; padding:.75rem .65rem 1rem; }
+  .news-card__meta { display:flex; gap:.45rem; align-items:center; margin-bottom:.45rem; color:#c9aa69; font-size:.67rem; }
+  .news-card__meta span::before { content:'·'; margin-right:.45rem; }
+  h2 { display:-webkit-box; overflow:hidden; margin:0; font-family:"Playfair Display",Georgia,serif; font-size:clamp(1rem,1.25vw,1.22rem); font-weight:700; line-height:1.18; text-transform:uppercase; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  p { display:-webkit-box; overflow:hidden; margin:.55rem 0 0; color:rgba(255,255,255,.72); font-size:.82rem; line-height:1.38; -webkit-line-clamp:3; -webkit-box-orient:vertical; }
+  @media(max-width:500px) {
+    .news-card { border-radius:1rem; }
+    .news-card__content { flex-basis:9rem; padding:.65rem .55rem .8rem; }
+    h2 { font-size:.9rem; }
+    p { font-size:.72rem; -webkit-line-clamp:2; }
   }
 </style>

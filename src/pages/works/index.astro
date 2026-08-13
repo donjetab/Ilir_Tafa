@@ -5,6 +5,8 @@ import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import { localeFromPath, localizedUrl } from '../../i18n';
+import sadSide from "../../assets/sad-side.png";
+import happySide from "../../assets/happy-side.png";
 const locale = localeFromPath(Astro.url.pathname);
 
 const entries = await getCollection("works"); // ← include drafts so they show in grid
@@ -21,30 +23,190 @@ const items = entries
   .sort((a, b) => b.year - a.year);
 
 const pageTitle = "Veprimtaria Artistike";
+const pageSubtitle = "Këtu mund të gjeni të gjithë veprimtarinë në film, televizion dhe teatër të aktorit Ilir Tafa";
 ---
 <!doctype html>
 <html lang={locale}>
   <head>
    <BaseHead title={pageTitle + " | Ilir Tafa"} description="Filma, Seri, dhe Shfaqje Teatrale" /> 
-   <style> :root { --gold: #f5d779; } 
-   html, body { height: 100%; } 
-   body { background: #0b1116; margin: 0; } 
-   main { min-height: 70vh; width: 70%; max-width: calc(100% - 2rem); margin: 0 auto; padding-bottom: 5rem; /* space before footer */ } 
-   .head { padding: 3rem 0 1rem; text-align: left; position: relative; z-index: 5; } .title { font-size: 3.2rem; margin: 0; color: #e7ecef; line-height: 1; } .sub { color: #9aa4ad; margin: .4rem 0 0; } /* Filter buttons */ .filter { display: flex; gap: .5rem; margin-top: 1rem; flex-wrap: wrap; position: relative; z-index: 5; } .chip { background: transparent; border: 1px solid rgba(255,215,0,.25); color: var(--gold); padding: .4rem .9rem; border-radius: 999px; cursor: pointer; font-size: .9rem; transition: all .15s ease; width: auto; } 
-   .chip.active { background: rgba(255,215,0,.12); border-color: var(--gold); } .chip:hover { background: rgba(255,215,0,.08); } /* Grid */ .grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(3, 1fr); margin-top: 2rem; } @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } } @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } } /* Cards */ .card { background: #0f141a; border: 1px solid rgba(255,255,255,.06); border-radius: 14px; overflow: hidden; text-decoration: none; color: inherit; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; display: block; } .card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0,0,0,.35); border-color: rgba(245,215,121,.35); } 
-   .poster { width: 100%; aspect-ratio: 16/20; object-fit: cover; display: block; background: #111821; } .meta { padding: .9rem; } .row { display: flex; justify-content: space-between; align-items: center; gap: .75rem; } .badge { font-size: .75rem; letter-spacing: .02em; padding: .25rem .5rem; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; text-transform: uppercase; color: #c9c9c9; } .title2 { margin: .35rem 0 0; color: #e7ecef; font-weight: 600; font-size: 1.08rem; } .role { margin: .15rem 0 0; color: #9aa4ad; font-size: .92rem; } 
-   </style> 
+   <style>
+    :root { --works-gold: #d4b16a; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background: linear-gradient(180deg, #070b10 0%, #070b10 50%, #090e14 100%);
+      background-attachment: fixed;
+    }
+    main {
+      width: min(calc(100% - 2rem), 1220px);
+      min-height: clamp(76rem, 210vh, 150rem);
+      margin-inline: auto;
+      padding: clamp(5rem,12vw,6rem) 0 8rem;
+    }
+    .head { position: relative; z-index: 5; text-align: center; }
+    .page-figure { position:absolute; z-index:-1; top:50%; width:clamp(190px,20vw,320px); height:auto; opacity:.05; filter:blur(.5px); pointer-events:none; user-select:none; }
+    .page-figure--left { left:calc(50% - 50vw - 5rem); transform:translateY(-50%) rotate(-4deg); -webkit-mask-image:linear-gradient(90deg,#000 25%,rgba(0,0,0,.7) 62%,transparent); mask-image:linear-gradient(90deg,#000 25%,rgba(0,0,0,.7) 62%,transparent); }
+    .page-figure--right { right:calc(50% - 50vw - 5rem); transform:translateY(-50%) rotate(4deg); -webkit-mask-image:linear-gradient(270deg,#000 25%,rgba(0,0,0,.7) 62%,transparent); mask-image:linear-gradient(270deg,#000 25%,rgba(0,0,0,.7) 62%,transparent); }
+    .title {
+      margin: 0;
+      color: #f5f5f5;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(3rem, 5vw, 4.8rem);
+      font-weight: 400;
+      line-height: 1.08;
+    }
+    .sub {
+      margin: 1.1rem auto 0;
+      color: rgba(255,255,255,.72);
+      font-size: clamp(.82rem, 1vw, .98rem);
+      font-style: italic;
+    }
+    .filter {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    .chip {
+      min-width: 5rem;
+      padding: .48rem 1.2rem;
+      border: 1px solid rgba(212,177,106,.62);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--works-gold);
+      cursor: pointer;
+      font-size: .78rem;
+      transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .chip.active,
+    .chip:hover {
+      border-color: var(--works-gold);
+      background: rgba(212,177,106,.11);
+      color: #f0d493;
+      transform: translateY(-1px);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(2.5rem, 5vw, 5rem) clamp(2rem, 4vw, 4rem);
+      margin-top: clamp(5rem, 8vw, 7rem);
+    }
+    .card {
+      position: relative;
+      display: block;
+      min-width: 0;
+      aspect-ratio: .72;
+      overflow: hidden;
+      border-radius: 1.35rem;
+      background: #101923;
+      color: inherit;
+      text-decoration: none;
+      isolation: isolate;
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(16,28,41,.18) 15%,rgba(19,36,53,.8) 67%,#0b1520 100%);
+    }
+    .card:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 18px 42px rgba(0,0,0,.38), 0 0 22px rgba(39,75,105,.13);
+    }
+    .poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      background: #101923;
+      transition: transform .5s ease, filter .4s ease;
+    }
+    .card:hover .poster { transform: scale(1.025); filter: brightness(1.06); }
+    .meta {
+      position: absolute;
+      z-index: 2;
+      inset: auto 0 0;
+      padding: 1.25rem 1.35rem 1.45rem;
+    }
+    .row { display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
+    .badge {
+      padding: .2rem .55rem;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 999px;
+      color: rgba(255,255,255,.86);
+      font-size: .62rem;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+    .title2 {
+      margin: .45rem 0 0;
+      color: #fff;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.55rem, 2.15vw, 2.25rem);
+      font-weight: 500;
+      line-height: 1.08;
+    }
+    .role { margin: .35rem 0 0; color: rgba(255,255,255,.72); font-size: .72rem; }
+    @media (max-width: 900px) {
+      main { min-height: auto; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (min-width: 521px) and (max-width: 900px) {
+      main { padding-top: 3.25rem; }
+      .grid {
+        width: min(100%, 620px);
+        margin: 4rem auto 0;
+        gap: 2rem 1.5rem;
+      }
+      .card { aspect-ratio: .76; border-radius: 1rem; }
+      .meta { padding: 1rem 1.1rem 1.2rem; }
+      .title2 { font-size: 1.55rem; }
+    }
+    @media (max-width: 580px) {
+      main { width: min(calc(100% - 2rem), 30rem); padding-top: 7.5rem; }
+      .grid { grid-template-columns: 1fr; gap: 2rem; margin-top: 3.75rem; }
+      .card { aspect-ratio: .8; }
+      .filter { gap: .65rem; }
+      .chip { min-width: auto; padding-inline: .9rem; }
+      .page-figure { width:170px; opacity:.035; }
+      .page-figure--left { left:-8rem; }
+      .page-figure--right { right:-8rem; }
+    }
+    @media (max-width: 500px) {
+      main { padding-top:4rem; }
+      .grid { width:min(100%,330px); margin:3.25rem auto 0; }
+      .card { aspect-ratio:.82; border-radius:1rem; }
+      .page-figure--right{
+        right:-5rem;
+        top : 11rem;
+      }
+      .page-figure--left{
+        left:-5rem;
+        top : 1rem;
+      }
+    }
+   </style>
    </head>
   <body>
     <Header />
     <main>
       <header class="head">
+        <img class="page-figure page-figure--left" src={sadSide.src} alt="" aria-hidden="true" />
+        <img class="page-figure page-figure--right" src={happySide.src} alt="" aria-hidden="true" />
         <h1 class="title">{pageTitle}</h1>
+        <p class="sub">{pageSubtitle}</p>
         <div class="filter">
-          <button type="button" class="chip active" data-type="all">All</button>
+          <button type="button" class="chip active" data-type="all">Të Gjitha</button>
           <button type="button" class="chip" data-type="film">Film</button>
           <button type="button" class="chip" data-type="tv">TV</button>
-          <button type="button" class="chip" data-type="theatre">Theatre</button>
+          <button type="button" class="chip" data-type="theatre">Teatër</button>
         </div>
       </header>
 
@@ -61,7 +223,7 @@ const pageTitle = "Veprimtaria Artistike";
                 ? (typeof it.poster === 'string'
                     ? <img class="poster" src={it.poster} alt={it.title} loading="lazy" />
                     : <Image class="poster" src={it.poster} alt={it.title} width={720} height={405} loading="lazy" />)
-                : <div class="poster" style="background: rgba(255,255,255,.04);"></div>}
+                : <div class="poster"></div>}
               <div class="meta">
                 <div class="row">
                   <span class="badge">{it.type}</span>
@@ -83,7 +245,7 @@ const pageTitle = "Veprimtaria Artistike";
                 ? (typeof it.poster === 'string'
                     ? <img class="poster" src={it.poster} alt={it.title} loading="lazy" />
                     : <Image class="poster" src={it.poster} alt={it.title} width={720} height={405} loading="lazy" />)
-                : <div class="poster" style="background: rgba(255,255,255,.04);"></div>}
+                : <div class="poster"></div>}
               <div class="meta">
                 <div class="row">
                   <span class="badge">{it.type}</span>

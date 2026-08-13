@@ -48,18 +48,17 @@ const galleryItems = g ? g.data.photos.map(p => {
   const src = resolveImage(g.data.workSlug, p.image);
   return src && { src, alt: p.alt, caption: p.caption };
 }).filter(Boolean) : [];
-
-
-const hasCounts =
-  (typeof filmCount === "number" && filmCount > 0) ||
-  (typeof episodeCount === "number" && episodeCount > 0);
+const selectedHeaderImage = g?.data.headerImage?.trim();
+const headerImage = selectedHeaderImage
+  ? resolveImage(g?.data.workSlug, selectedHeaderImage)
+  : null;
 
 ---
-<WorkPost {...work.data}>
+<WorkPost {...work.data} headerImage={headerImage}>
   <Content />
 
   <div slot="afterContent">
-    {hasCounts && (
+    {false && (
         <div style="margin:1rem 0 1.25rem; display:flex; gap:.75rem; flex-wrap:wrap">
           {typeof filmCount === "number" && filmCount > 0 && (
             <span style="border:1px solid rgba(255,255,255,.15); padding:.35rem .6rem; border-radius:999px; font-size:.85rem; color:#cfd8e3">
@@ -79,8 +78,8 @@ const hasCounts =
 
     {ytId
       ? (
-        <div style="margin: 6rem 0 2rem">
-          <div style="position:relative; width:100%; max-width:1100px; aspect-ratio:16/9; border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.08); box-shadow:0 12px 28px rgba(0,0,0,.35);">
+        <div style="margin:clamp(3.5rem,6vw,6rem) auto 2rem; display:flex; justify-content:center;">
+          <div style="position:relative; width:min(100%,1100px); aspect-ratio:16/9; border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.08); box-shadow:0 12px 28px rgba(0,0,0,.35);">
             <iframe
               src={`https://www.youtube.com/embed/${ytId}`}
               title="Trailer"
@@ -93,7 +92,7 @@ const hasCounts =
         </div>
       )
       : (isFileTrailer && trailerSrc) ? (
-        <div style="margin: 6rem 0 2rem;">
+        <div style="margin:clamp(3.5rem,6vw,6rem) auto 2rem; display:flex; justify-content:center;">
           <video
               src={trailerSrc}
               autoplay
@@ -102,7 +101,7 @@ const hasCounts =
               playsinline
               controls
               preload="metadata"
-              style="width:100%; max-width:1100px; aspect-ratio:16/9; background:#111821; border-radius:16px; border:1px solid rgba(255,255,255,.08); box-shadow:0 12px 28px rgba(0,0,0,.35);"
+              style="display:block; width:min(100%,1100px); aspect-ratio:16/9; object-fit:contain; background:#111821; border-radius:16px; border:1px solid rgba(255,255,255,.08); box-shadow:0 12px 28px rgba(0,0,0,.35);"
             />
 
     </div>

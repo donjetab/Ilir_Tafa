@@ -3,176 +3,122 @@ import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import { localeFromPath, localizedUrl } from '../../i18n';
+import sadSide from "../../assets/sad-side.png";
+import happySide from "../../assets/happy-side.png";
 
 type Post = {
-  type?: "internal" | "external";
-  slug?: string;
-  title: string;
-  excerpt?: string;
-  date?: string;
-  cover?: string;
-  contentHtml?: string;
-  sourceName?: string;
-  dek?: string;
-  author?: string;
-  videoUrl?: string;
-  showVideoOnly?: boolean;
+  type?: "internal" | "external"; slug?: string; title: string; excerpt?: string;
+  date?: string; cover?: string; contentHtml?: string; sourceName?: string;
+  dek?: string; author?: string; videoUrl?: string; showVideoOnly?: boolean;
 };
 
 export async function getStaticPaths() {
-  const posts = import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
-  return Object.entries(posts)
-    .map(([file, p]) => {
-      const post = p as Post;
-      if (post.type !== "internal") return null;
-      const fileSlug = file.split("/").pop()?.replace(".json", "");
-      const slug = post.slug ?? fileSlug!;
-      return { params: { slug }, props: { post, __file: file } };
-    })
-    .filter(Boolean) as { params: { slug: string }, props: { post: Post, __file: string } }[];
+  const posts = import.meta.glob("../../content/news/*.json", { eager:true, import:"default" });
+  return Object.entries(posts).map(([file,value]) => {
+    const post = value as Post;
+    if (post.type !== "internal") return null;
+    const fileSlug = file.split("/").pop()?.replace(".json", "");
+    return { params:{ slug:post.slug ?? fileSlug! }, props:{ post } };
+  }).filter(Boolean);
 }
 
-const { slug } = Astro.params;
-
-const entries = import.meta.glob("../../content/news/*.json", { eager: true, import: "default" });
-const all = Object.entries(entries).map(([file, data]) => {
-  const p = data as Post;
-  const fileSlug = file.split("/").pop()?.replace(".json", "");
-  return { ...p, __file: file, __slug: p.slug ?? fileSlug };
-}) as (Post & { __file: string; __slug?: string })[];
-
-const item = all.find(x => x.type === "internal" && x.__slug === slug);
+const { post:item } = Astro.props as { post:Post };
 const locale = localeFromPath(Astro.url.pathname);
-if (!item) return Astro.redirect(localizedUrl(locale, 'news'));
-const pageTitle = item.title ?? "News";
-const pageDesc = item.excerpt ?? "";
+const newsUrl = localizedUrl(locale, 'news');
+const backLabel = locale === 'en' ? 'Back to News' : locale === 'bs' ? 'Nazad na vijesti' : 'Kthehu te lajmet';
+const pageTitle = item.title ?? 'News';
+const pageDesc = item.excerpt ?? '';
+const formattedDate = item.date
+  ? new Intl.DateTimeFormat(locale === 'sq' ? 'sq-AL' : locale === 'bs' ? 'bs-BA' : 'en-GB', { day:'2-digit', month:'2-digit', year:'numeric' }).format(new Date(item.date))
+  : null;
 ---
+
 <html lang={locale}>
-  <head>
-
-    <BaseHead title={pageTitle} description={pageDesc} type="article" />
-  </head>
-  <body class="bg-[#0b1116] text-white">
+  <head><BaseHead title={`${pageTitle} | Ilir Tafa`} description={pageDesc} type="article" image={item.cover} /></head>
+  <body>
     <Header />
+    <main class="article-page">
+      <a class="back-link" href={newsUrl}>&larr; {backLabel}</a>
 
-    <!-- Back to News -->
-    <div class="bNews w-full flex justify-center px-6 mt-6">
-      <div class="w-full max-w-3xl">
-        <a
-          href={localizedUrl(locale, 'news')}
-          class="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" class="w-5 h-5">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-          Kthehu te lajmet
-        </a>
-      </div>
-    </div>
-
-
-    <main class="w-full px-0 py-10 min-h-[90vh]">
-            <!-- Title + meta -->
-      <header class="w-full flex justify-center px-6">
-        <div class="w-full max-w-3xl">
-          <h1 class="text-3xl md:text-4xl font-semibold tracking-tight" style="font-size: 2rem">{pageTitle}</h1>
-          <div class="mt-3 flex items-center justify-between text-s text-white/60">
-            <div class="flex items-center gap-3" style="margin-bottom: 5%;">
-              {item.date ? <time datetime={item.date}>{new Date(item.date).toLocaleDateString("sq-AL")}</time> : null}
-              {item.sourceName && <span>· {item.sourceName}</span>}
-              {item.author && <span>· {item.author}</span>}
-            </div>
-            <div class="flex items-center gap-3">
-              <button type="button" id="share-article" class="hover:text-white" aria-label="Shpërndaje artikullin">↗</button>
-            </div>
-          </div>
-        </div>
+      <header class="article-heading">
+        <img class="article-figure article-figure--left" src={sadSide.src} alt="" aria-hidden="true" />
+        <img class="article-figure article-figure--right" src={happySide.src} alt="" aria-hidden="true" />
+        <h1>{pageTitle}</h1>
+        {formattedDate && <time datetime={item.date}>{formattedDate}</time>}
       </header>
-      <!-- Hero media -->
+
       {item.showVideoOnly && item.videoUrl ? (
-        <!-- Video instead of picture -->
-        <div class="mt-6 w-full flex justify-center">
-          <div class="w-full max-w-3xl aspect-video overflow-hidden rounded-xl border border-white/10 shadow-md">
-            <iframe
-              src={item.videoUrl}
-              title="Video"
-              allowfullscreen
-              class="w-full h-full"
-            ></iframe>
-          </div>
+        <div class="article-media article-video">
+          <video src={item.videoUrl} poster={item.cover} controls preload="metadata"></video>
         </div>
       ) : item.cover ? (
-        <figure class="mt-6 w-full flex justify-center">
-          <div class="w-full max-w-3xl h-[380px] md:h-[450px] overflow-hidden rounded-xl border border-white/10 shadow-md">
-            <img
-              src={item.cover}
-              alt={pageTitle}
-              class="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]"
-              loading="lazy"
-            />
-          </div>
+        <figure class="article-media">
+          <img src={item.cover} alt={pageTitle} loading="eager" />
         </figure>
       ) : null}
 
-      <!-- Standfirst -->
-      {item.dek && (
-        <div class="w-full flex justify-center px-6">
-          <p class="w-full max-w-3xl mt-6 text-lg font-medium text-white/90">
-            {item.dek}
-          </p>
-        </div>
+      {(item.dek || item.excerpt || item.contentHtml) && (
+        <section class="article-copy">
+          {item.dek && <p class="article-dek">{item.dek}</p>}
+          {!item.contentHtml && item.excerpt && <p>{item.excerpt}</p>}
+          {item.contentHtml && <article set:html={item.contentHtml}></article>}
+        </section>
       )}
 
-      <!-- Body -->
-      <section class="w-full flex justify-center px-6">
-        <div class="w-full max-w-3xl">
-          {item.contentHtml
-            ? (
-              <article
-                class="mt-6 prose prose-invert text-white/80 leading-relaxed text-lg"
-                set:html={item.contentHtml}
-              ></article>
-            )
-            : (
-              <article class="mt-6 text-white/70"></article>
-            )
-          }
-        </div>
-      </section>
-
+      <a class="back-link back-link--bottom" href={newsUrl}>&larr; {backLabel}</a>
     </main>
-
     <Footer />
-    <script>
-      document.querySelector('#share-article')?.addEventListener('click', async () => {
-        if (navigator.share) {
-          await navigator.share({ title: document.title, url: window.location.href });
-        } else {
-          await navigator.clipboard.writeText(window.location.href);
-        }
-      });
-    </script>
   </body>
 </html>
 
 <style>
-  @media (max-width: 640px) {
-    .bNews{
-      margin: 0 1.5rem;
-    }
-    main {
-      max-width: 90%;
-      margin: 1.5rem auto;
-      border-radius: 0.75rem;
-      min-height: 60vh;
-    }
-
-    iframe {
-      border-radius: 0.75rem;
-    }
-
+  :global(body) { min-height:100vh; margin:0; overflow-x:hidden; color:#f5f5f3; background:linear-gradient(180deg,#070b10 0%,#090e14 50%,#0d1722 100%); background-attachment:fixed; }
+  .article-page { width:min(calc(100% - 2rem),1240px); 
+    min-height:80vh; margin:auto; 
+    padding:clamp(2rem,6vw,3rem) 0 clamp(7rem,10vw,10rem); }
+  .back-link { display:inline-flex; gap:.5rem; align-items:center; color:#c9aa69; font-size:.9rem; text-decoration:none; transition:color .2s ease,transform .2s ease; }
+  .back-link:hover { color:#fff; transform:translateX(-.25rem); }
+  .article-heading { position:relative; isolation:isolate; width:min(100%,1220px); 
+  margin:clamp(2rem,6vw,2rem) auto clamp(3rem,5vw,4rem); text-align:center; }
+  .article-figure { position:absolute; z-index:-1; top:50%; width:clamp(190px,20vw,320px); height:auto; opacity:.05; filter:blur(.5px); pointer-events:none; user-select:none; }
+  .article-figure--left { left:calc(50% - 50vw - 4rem); transform:translateY(-50%) rotate(-4deg); -webkit-mask-image:linear-gradient(90deg,#000 25%,rgba(0,0,0,.7) 62%,transparent); mask-image:linear-gradient(90deg,#000 25%,rgba(0,0,0,.7) 62%,transparent); }
+  .article-figure--right { right:calc(50% - 50vw - 4rem); transform:translateY(-50%) rotate(4deg); -webkit-mask-image:linear-gradient(270deg,#000 25%,rgba(0,0,0,.7) 62%,transparent); mask-image:linear-gradient(270deg,#000 25%,rgba(0,0,0,.7) 62%,transparent); }
+  .article-heading h1 { margin:0; font-family:"Playfair Display",Georgia,serif; font-size:clamp(2.35rem,4vw,4.15rem); font-weight:400; line-height:1.08; text-wrap:balance; }
+  .article-heading time { display:block; margin-top:1rem; font-size:clamp(1.05rem,1.6vw,1.45rem); font-style:italic; color:#c9aa69; }
+  .article-media { width:min(100%,1100px); margin:0 auto; overflow:hidden; border:1px solid #c9aa69; border-radius:1.4rem; background:#0b0e13; box-shadow:0 20px 50px rgba(0,0,0,.28); }
+  .article-media img { display:block; width:100%; max-height:650px; object-fit:cover; }
+  .article-video { aspect-ratio:16/9; }
+  .article-video video { display:block; width:100%; height:100%; object-fit:contain; background:#05070a; }
+  .article-copy { width:min(100%,1100px); margin:clamp(3rem,5vw,4.5rem) auto 0; color:rgba(255,255,255,.82); font-size:clamp(1rem,1.35vw,1.2rem); line-height:1.58; }
+  .article-copy :global(p) { margin:0 0 1.5rem; }
+  .article-copy :global(h2),.article-copy :global(h3) { margin:2.5rem 0 1rem; font-family:"Playfair Display",Georgia,serif; color:#fff; }
+  .article-dek { color:#fff; font-size:1.1em; font-weight:500; }
+  .back-link--bottom { margin-top:clamp(3rem,6vw,5rem); }
+  @media(min-width:761px) and (max-width:900px){
+    .article-heading h1 { width:min(100%,720px); margin-inline:auto; font-size:2.15rem; }
+    .article-figure--left { left:-7rem; }
+    .article-figure--right { right:-7rem; }
+    .article-media { width:min(100%,780px); }
   }
+  @media(max-width:600px){
+    .article-page { padding-top:2.5rem; }
+    .article-heading { margin-top:2.5rem; }
+    .article-heading h1 { font-size:clamp(2.4rem,12vw,3.5rem); }
+    .article-media { border-radius:.9rem; }
+    .article-figure { width:165px; opacity:.035; }
+    .article-figure--left { left:-8rem; }
+    .article-figure--right { right:-8rem; }
+  }
+  @media(max-width:500px){
+        .article-heading h1 { 
+          font-size:clamp(2.4rem,12vw,2.5rem); }
 
+    .article-figure { top:50%; width:170px; opacity:.035; }
+    .article-figure--left { 
+      top: -1rem;
+      left: -5rem; }
+    .article-figure--right { 
+      top: 15rem;
+      right: -5rem;}
+  }
 </style>

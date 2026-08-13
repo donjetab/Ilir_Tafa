@@ -36,9 +36,10 @@ trailer: z.string().optional(),   // not .url()
 const gallery = defineCollection({
   type: "data",
   schema: z.object({
-    title: z.string(),
-    workSlug: z.string().optional(),
-    photos: z.array(
+      title: z.string(),
+      workSlug: z.string().optional(),
+      headerImage: z.string().optional().default(""),
+      photos: z.array(
       z.object({
         image: z.string(),
         alt: z.string().optional(),

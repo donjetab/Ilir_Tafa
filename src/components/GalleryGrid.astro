@@ -10,26 +10,22 @@ interface Item {
   workSlug?: string;
 }
 
-const { items = [] as Item[] } = Astro.props;
+const { items = [] as Item[], moreLabel = "MË SHUMË" } = Astro.props;
 ---
 <!-- Centering wrapper -->
-<div class="w-full flex justify-center">
+<div id="gallery-viewport" class="gallery-viewport">
+<div class="gallery-wrap">
   <!-- Columns box with explicit widths -->
   <div
     id="gallery-grid"
-    class="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:_balance]"
-    class:list={{}}  
-    style="
-      width: 100%;            /* 1 col ~320px + 24px gap */
-      margin: 3% 5%; 
-    "
+    class="gallery-grid columns-1 sm:columns-2 lg:columns-3 [column-fill:_balance]"
   >
     {
       items.map((it: Item, i: number) => {
         return (
           <button
             type="button"
-            class="mb-6 w-full break-inside-avoid relative group focus:outline-none cursor-pointer"
+            class="gallery-item w-full break-inside-avoid relative group focus:outline-none cursor-pointer"
             data-index={i}
             aria-label={`Open ${it.alt ?? 'image'}`}
           >
@@ -59,6 +55,9 @@ const { items = [] as Item[] } = Astro.props;
     }
   </div>
 </div>
+</div>
+
+{items.length > 6 && <button type="button" id="gallery-more" class="gallery-more">{moreLabel}</button>}
 
 
 <!-- Lightbox -->
@@ -79,15 +78,21 @@ const { items = [] as Item[] } = Astro.props;
   // Ensure DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('gallery-grid');
+    const viewport = document.getElementById('gallery-viewport');
     const lb = document.getElementById('lightbox');
     const lbImg = document.getElementById('lb-img');
     const lbCap = document.getElementById('lb-cap');
     const btnClose = document.getElementById('lb-close');
     const btnPrev  = document.getElementById('lb-prev');
     const btnNext  = document.getElementById('lb-next');
+    const btnMore = document.getElementById('gallery-more');
 
     // Build state from rendered buttons
     const buttons = Array.from(grid?.querySelectorAll('button[data-index]') ?? []);
+    const phoneGallery = window.matchMedia('(max-width: 520px)').matches;
+    const tabletGallery = window.matchMedia('(min-width: 521px) and (max-width: 900px)').matches;
+    const galleryBatchSize = phoneGallery ? 4 : tabletGallery ? 6 : 9;
+    let visibleCount = Math.min(galleryBatchSize, buttons.length);
     const state = {
       items: buttons.map((btn) => {
         const img = btn.querySelector('img');
@@ -143,11 +148,71 @@ const { items = [] as Item[] } = Astro.props;
       if (e.key === 'ArrowLeft') show(state.i - 1);
       if (e.key === 'ArrowRight') show(state.i + 1);
     });
+    function heightForVisibleItems(count) {
+      if (!grid || !buttons.length) return 0;
+      const gridTop = grid.getBoundingClientRect().top;
+      return Math.max(...buttons.slice(0, count).map((item) => item.getBoundingClientRect().bottom - gridTop));
+    }
+
+    function setGalleryHeight(animate = false) {
+      if (!viewport || !grid || buttons.length <= visibleCount) return;
+      if (!animate) viewport.style.transition = 'none';
+      viewport.style.height = `${heightForVisibleItems(visibleCount)}px`;
+      if (!animate) requestAnimationFrame(() => viewport.style.removeProperty('transition'));
+    }
+
+    if (buttons.length > visibleCount) {
+      const images = Array.from(grid?.querySelectorAll('img') ?? []);
+      Promise.all(images.map((image) => image.complete
+        ? Promise.resolve()
+        : new Promise((resolve) => {
+            image.addEventListener('load', resolve, { once: true });
+            image.addEventListener('error', resolve, { once: true });
+          })
+      )).then(() => setGalleryHeight(false));
+      window.addEventListener('resize', () => setGalleryHeight(false));
+    } else {
+      btnMore?.remove();
+    }
+
+    btnMore?.addEventListener('click', () => {
+      if (!viewport || !grid) return;
+      visibleCount = Math.min(visibleCount + galleryBatchSize, buttons.length);
+      viewport.style.height = `${heightForVisibleItems(visibleCount)}px`;
+      if (visibleCount === buttons.length) {
+        viewport.addEventListener('transitionend', () => {
+          viewport.style.height = 'auto';
+          btnMore.remove();
+        }, { once: true });
+      }
+    });
   });
 </script>
 
 
 <style>
+  #lightbox { z-index:2147483647!important; }
+  .gallery-viewport {
+    width: 100%;
+    overflow: hidden;
+    transition: height .75s cubic-bezier(.22, 1, .36, 1);
+  }
+  .gallery-wrap { display: flex; justify-content: center; width: 100%; }
+  .gallery-grid { width: 100%; column-gap: clamp(1rem, 2vw, 1.75rem); text-align: left; }
+  .gallery-item { margin-bottom: clamp(1rem, 2vw, 1.75rem); }
+  .gallery-more {
+    min-width: 190px;
+    margin-top: clamp(2.5rem, 5vw, 4.5rem);
+    padding: .8rem 2.4rem;
+    border: 1px solid #cda94f;
+    border-radius: 5px;
+    color: #d9b75c;
+    background: transparent;
+    font-size: .82rem;
+    letter-spacing: .04em;
+    transition: color .2s ease, background-color .2s ease, transform .2s ease;
+  }
+  .gallery-more:hover { color: #070b10; background: #d9b75c; transform: translateY(-2px); }
   .lightboxButton{
     font-size: 2.5rem !important;
   }

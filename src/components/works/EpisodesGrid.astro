@@ -67,15 +67,28 @@ const normalized = episodes
 </section>
 
 <style>
-  .eps { margin-top: 2rem; }
-  .eps__head { display:flex; gap:1rem; align-items:center; justify-content:space-between; margin-bottom:1rem; }
-  .eps__title { color:#e7ecef; font-size:1.4rem; margin:0; }
+  .eps { margin-top: clamp(3.5rem,6vw,6rem); }
+  .eps__head { display:flex; gap:1rem; align-items:center; justify-content:space-between; margin-bottom:2rem; }
+  .eps__title { margin:0; color:#fff; font-family:"Playfair Display",Georgia,serif; font-size:clamp(2.4rem,3.4vw,3.35rem); font-weight:400; line-height:1; }
   .eps__count { color:#9aa4ad; font-weight:400; }
-  .eps__search { background:#0f141a; border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:.55rem .75rem; color:#dbe3e8; min-width:220px; }
+  .eps__search { background:transparent; border:1px solid rgba(255,255,255,.58); border-radius:999px; padding:.5rem 1rem; color:#dbe3e8; min-width:190px; }
   .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
   @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr);} }
   @media (max-width:800px){ .grid{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:520px){ .grid{grid-template-columns:1fr;} }
+  @media (max-width:620px){ .eps__head{align-items:flex-start;flex-direction:column}.eps__search{width:100%} }
+  @media (max-width:760px){
+    .eps { width:calc(100% - 3rem); margin-inline:auto; }
+  }
+  @media (max-width:500px){
+    .eps { width:min(calc(100% - 3rem),350px); }
+    .eps__title { font-size:2.15rem; }
+    .grid { gap:.85rem; }
+    .card { border-radius:11px; }
+    .overlay { padding:.45rem .55rem; }
+    .chip { width:3rem; font-size:.7rem; }
+    .t { font-size:.78rem; }
+  }
 
 .card {
   position:relative;

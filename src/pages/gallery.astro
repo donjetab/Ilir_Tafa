@@ -4,24 +4,21 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import GalleryGrid from "../components/GalleryGrid.astro";
 import { getCollection } from "astro:content";
-import { localeFromPath } from '../i18n';
+import { localeFromPath } from "../i18n";
+import sadSide from "../assets/sad-side.png";
+import happySide from "../assets/happy-side.png";
 
-// Load all gallery JSON files
 const galleries = await getCollection("gallery");
-
-// Import all images from /assets/gallery
 const imageMap = import.meta.glob("../assets/gallery/**/*.{jpg,png,jpeg,webp}", {
   eager: true,
   import: "default",
 }) as Record<string, ImageMetadata>;
 
-// Helper to match each image name to the imported metadata
 function resolveImage(file: string) {
   const entry = Object.entries(imageMap).find(([path]) => path.endsWith("/" + file));
   return entry ? entry[1] : null;
 }
 
-// Flatten all photos into a single array for GalleryGrid
 const items = galleries.flatMap((g) =>
   g.data.photos.map((p) => {
     const src = resolveImage(`${g.id}/${p.image}`) || resolveImage(p.image);
@@ -36,42 +33,103 @@ const items = galleries.flatMap((g) =>
   }).filter(Boolean)
 );
 
-const pageTitle = "Galeri";
+const locale = localeFromPath(Astro.url.pathname);
+const copy = locale === "en"
+  ? { title: "Gallery", subtitle: "Selected photographs from his work and personal portraits", more: "SHOW MORE" }
+  : locale === "bs"
+    ? { title: "Galerija", subtitle: "Odabrane fotografije iz umjetničkog rada i ličnih portreta", more: "PRIKAŽI VIŠE" }
+    : { title: "Galeria", subtitle: "Foto të përzgjedhura nga veprat dhe portretet personale", more: "MË SHUMË" };
 ---
-<html lang={localeFromPath(Astro.url.pathname)}>
-  <head><BaseHead title={pageTitle + " | Ilir Tafa"} description="Fotografi" />
-  
+<html lang={locale}>
+  <head>
+    <BaseHead title={`${copy.title} | Ilir Tafa`} description={copy.subtitle} />
   </head>
-  <body class="bg-[#0e141a] text-white">
+  <body class="gallery-list-page text-white">
     <Header />
-    <div class="h-15 md:h-15"></div>
-<section class="w-full">
-  <div class="mx-auto max-w-[100%] px-6 py-16 text-center">
-    <h1 class="galleryTitle md:text-7xl font-bold mb-6 reveal" style="--delay:.1s">Galeri</h1>
-<p class="text-lg text-white/70 mb-12 reveal" style="--delay:.18s">
-      Foto të përzgjedhura nga veprat dhe portretet personale
-    </p>
-    <GalleryGrid items={items} />
-  </div>
-</section>
+    <section class="gallery-page">
+      <div class="gallery-shell">
+        <header class="gallery-heading">
+          <img class="stage-mask stage-mask--left" src={sadSide.src} alt="" aria-hidden="true" />
+          <img class="stage-mask stage-mask--right" src={happySide.src} alt="" aria-hidden="true" />
+          <h1 class="galleryTitle reveal" style="--delay:.1s">{copy.title}</h1>
+          <div class="gallery-ornament" aria-hidden="true"></div>
+          <p class="gallerySubtitle reveal" style="--delay:.18s">{copy.subtitle}</p>
+        </header>
+        <GalleryGrid items={items} moreLabel={copy.more} />
+      </div>
+    </section>
+    <Footer />
 
-<Footer />
-
-<script is:inline>
-  // JS fallback for browsers without view-timeline
-  if (!CSS.supports('animation-timeline: view()')) {
-    const io = new IntersectionObserver((es)=>{
-      for (const e of es) if (e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); }
-    }, { threshold:0.15, rootMargin:"0px 0px -10% 0px" });
-    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  }
-</script>
+    <script is:inline>
+      if (!CSS.supports('animation-timeline: view()')) {
+        const io = new IntersectionObserver((entries) => {
+          for (const entry of entries) if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            io.unobserve(entry.target);
+          }
+        }, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" });
+        document.querySelectorAll('.reveal').forEach((element) => io.observe(element));
+      }
+    </script>
+  </body>
+</html>
 
 <style>
-  .galleryTitle{
-    font-size: 2.5rem;
-    line-height: 1.1;
-    color: #f3f4f6;
-    padding-bottom: 10px;
+  :global(body.gallery-list-page) { min-height:100vh; margin:0; color:#fff; background:linear-gradient(180deg,#070b10 0%,#090e14 50%,#0d1722 100%); background-attachment:fixed; }
+  :global(body.gallery-list-page #navbar) { background:transparent; }
+  .gallery-page { width: 100%; }
+  .gallery-shell {
+    width: 100%;
+    margin-inline: auto;
+    padding: 0 0 clamp(6rem,9vw,9rem);
+    text-align: center;
+  }
+  .gallery-heading { position:relative; isolation:isolate; min-height:518px; margin:-88px 0 ; padding:calc(88px + clamp(3.25rem,6vw,5.5rem)) 1rem 3.5rem; overflow:hidden; box-sizing:border-box; }
+  .gallery-heading::before { content:""; position:absolute; z-index:-1; top:-150px; left:50%; width:min(1380px,135vw); height:760px; background:radial-gradient(ellipse 17% 20% at 50% 4%,rgba(231,217,191,.24) 0%,rgba(204,202,192,.15) 34%,rgba(171,180,185,.07) 62%,transparent 100%),radial-gradient(ellipse 45% 73% at 50% 3%,rgba(193,199,198,.10) 0%,rgba(159,173,181,.055) 48%,transparent 82%); filter:blur(22px); opacity:.92; transform:translateX(-50%); pointer-events:none; }
+  .stage-mask { position:absolute; z-index:-1; top:52%; width:clamp(205px,21vw,340px); height:auto; opacity:.055; filter:blur(.5px); pointer-events:none; user-select:none; }
+  .stage-mask--left { left:clamp(-145px,-7vw,-70px); transform:translateY(-50%) rotate(-4deg); -webkit-mask-image:linear-gradient(90deg,#000 25%,rgba(0,0,0,.7) 62%,transparent 100%); mask-image:linear-gradient(90deg,#000 25%,rgba(0,0,0,.7) 62%,transparent 100%); }
+  .stage-mask--right { right:clamp(-145px,-7vw,-70px); transform:translateY(-50%) rotate(4deg); -webkit-mask-image:linear-gradient(270deg,#000 25%,rgba(0,0,0,.7) 62%,transparent 100%); mask-image:linear-gradient(270deg,#000 25%,rgba(0,0,0,.7) 62%,transparent 100%); }
+  .galleryTitle {
+    margin: 0;
+    font-family: var(--font-display, "Playfair Display", serif);
+    font-size: clamp(4rem, 7vw, 5rem);
+    font-weight: 400;
+    line-height: 1;
+    color: #c9aa69;
+  }
+  .gallerySubtitle {
+    width:min(100%,610px);
+    margin: 0 auto;
+    color: rgb(255 255 255 / 72%);
+    font-size: clamp(1rem, 1.35vw, 1rem);
+    font-style: italic;
+  }
+  .gallery-ornament { width:min(360px,64vw); height:1px; margin:1.5rem auto 1.25rem; background:linear-gradient(90deg,transparent,rgba(211,173,96,.78) 22%,rgba(211,173,96,.78) 78%,transparent); }
+  :global(.gallery-list-page .gallery-grid) { width:min(calc(100% - 2rem),1380px); margin-inline:auto; }
+  @media (min-width: 635px) and (max-width: 900px) {
+    .gallery-heading { min-height:450px; padding-bottom:2rem; }
+  }
+  @media (max-width: 640px) {
+    .gallery-heading { min-height:478px; margin-top:-88px; padding-top:calc(88px + 3rem); }
+    .gallery-heading::before { top:-110px; width:180vw; height:620px; opacity:.78; }
+    .stage-mask { width:185px; opacity:.04; }
+    .stage-mask--left { left:-110px; }
+    .stage-mask--right { right:-110px; }
+    .gallery-heading { margin-bottom: 2.75rem; }
+  }
+  @media (max-width: 635px) {
+    .gallery-heading { min-height:400px; margin-bottom:1rem; padding-bottom:1.5rem; }
+    :global(.gallery-list-page .gallery-grid) { width:calc(100% - 5rem); }
+  }
+  @media (max-width: 500px) {
+    .gallery-heading { min-height:340px; margin-bottom:.5rem; padding-bottom:.5rem; }
+    .stage-mask { top:50%; width:170px; opacity:.035; }
+    .stage-mask--left {        
+      left: -4rem;
+      top: 9rem;}
+    .stage-mask--right { 
+      right:-4rem; 
+      top: 16rem; 
+    }
   }
 </style>

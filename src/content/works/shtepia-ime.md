@@ -22,3 +22,9 @@ episodes:
   - { n: 11, url: "https://www.youtube.com/watch?v=GDmwPo8b6rY", title: "Shtëpia ime - Episodi 11" }
   - { n: 12, url: "https://www.youtube.com/watch?v=VZ8rZ4XilX4", title: "Shtëpia ime - Episodi 12" }
 ---
+
+"Shtëpia ime" është një serial dramatik kosovar i prodhuar në vitet 2011–2012 nga Arenafilm dhe i shfaqur në RTK.
+
+Me skenar dhe regji nga Sunaj Raça, ky projekt trajton një dramë të fortë sociale mbi sfidat, vështirësitë ekonomike dhe realitetin e jetës në Kosovën e pasluftës. 
+
+Seriali sjell bashkë disa nga emrat më të njohur të aktrimit shqiptar si Enver Petrovci, Ilir Tafa, Selman Jusufi dhe vetë Sunaj Raça.

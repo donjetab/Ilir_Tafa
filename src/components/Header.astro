@@ -190,4 +190,78 @@ const links = [
     #navbar.is-scrolled .navbar-inner{width:calc(100% - 1rem);height:66px;margin-top:.5rem;padding:0 1rem;border-radius:.8rem}
     #navbar.is-scrolled .navbar-brand img{height:40px}
   }
+  @media(max-width:760px){
+    #navLayer {
+      background:rgba(3,6,9,.72);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+    }
+    #navlinks {
+      top:0;
+      right:0;
+      left:auto;
+      display:flex;
+      width:min(88vw,390px);
+      height:100svh;
+      padding:1.75rem 2rem 2rem;
+      overflow-y:auto;
+      border:0;
+      border-left:1px solid rgba(212,177,106,.3);
+      border-radius:0;
+      background:linear-gradient(155deg,rgba(13,20,27,.99),rgba(6,10,14,.99));
+      box-shadow:-24px 0 70px rgba(0,0,0,.5);
+      transform:translateX(1rem);
+    }
+    #navlinks > div:first-child {
+      justify-content:flex-start;
+      margin-bottom:2.25rem;
+      padding-bottom:1.25rem;
+      border-bottom:1px solid rgba(212,177,106,.22);
+    }
+    #navlinks > div:first-child img { width:64px; }
+    #closeMenu {
+      top:.15rem!important;
+      right:0!important;
+      width:2.5rem;
+      height:2.5rem;
+      border-color:rgba(212,177,106,.35);
+    }
+    #closeMenu svg { width:1.25rem; height:1.25rem; stroke-width:2; }
+    #links-group {
+      counter-reset:nav-item;
+      align-items:stretch;
+      gap:0;
+    }
+    #links-group a {
+      counter-increment:nav-item;
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      padding:1rem .15rem;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      font-size:1rem;
+      font-weight:500;
+      letter-spacing:.02em;
+    }
+    #links-group a::before {
+      content:"0" counter(nav-item);
+      color:rgba(212,177,106,.72);
+      font-size:.65rem;
+      letter-spacing:.08em;
+    }
+    #navlinks > div:last-of-type {
+      justify-content:flex-start;
+      gap:.55rem;
+      margin-top:auto;
+      padding-top:2rem;
+    }
+    #navlinks > div:last-of-type a {
+      min-width:2.75rem;
+      padding:.45rem .7rem;
+      border-color:rgba(255,255,255,.14);
+      border-radius:.3rem;
+      font-size:.7rem;
+      text-align:center;
+    }
+  }
 </style>

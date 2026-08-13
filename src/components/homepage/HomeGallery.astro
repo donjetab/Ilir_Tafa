@@ -29,5 +29,37 @@ const images=[portrait,cast,interview,stage,press];
   .gallery-home__item img { width:100%;height:100%;object-fit:cover;transition:transform .55s var(--ease),filter .4s; }
   .gallery-home__item:hover img { transform:scale(1.035); filter:brightness(1.08); }
   .item-1 { grid-row:span 2; }.item-5{grid-column:3}.gallery-home .btn-gold{min-width:190px;margin-top:2.5rem}
+  @media(max-width:900px) {
+    .gallery-home h2 { font-size:2.8rem; }
+    .gallery-home__grid { height:390px; gap:.85rem; }
+    .gallery-home__item {
+      position:relative;
+      border:1px solid rgba(212,177,106,.55);
+      border-radius:.55rem;
+      box-shadow:0 8px 24px rgba(0,0,0,.28), inset 0 0 14px rgba(212,177,106,.04);
+    }
+    .gallery-home__item::after {
+      content:'';
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      background:linear-gradient(180deg,transparent 65%,rgba(7,11,16,.22));
+      pointer-events:none;
+    }
+  }
   @media(max-width:700px){.gallery-home__grid{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,180px)}.item-1{grid-row:span 2}.item-5{grid-column:auto}.gallery-home h2{text-align:center}}
+  @media(max-width:390px) {
+    .gallery-home__inner { padding-top:2.5rem; }
+    .gallery-home h2 { margin-bottom:1.5rem; font-size:2.7rem; }
+    .gallery-home__grid {
+      width:min(100%,320px);
+      margin-inline:auto;
+      grid-template-columns:1fr 1fr;
+      grid-template-rows:180px 115px 115px;
+      gap:.65rem;
+    }
+    .gallery-home__item { border-radius:.5rem; }
+    .item-1 { grid-column:1 / -1; grid-row:auto; }
+    .item-5 { grid-column:auto; }
+  }
 </style>

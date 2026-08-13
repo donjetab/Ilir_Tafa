@@ -65,6 +65,14 @@ const copy = {
   .about-home__copy h2 { font-size:var(--home-section-title-size); font-weight:400; margin-bottom:1.4rem; }
   .about-home__copy p { max-width:none; color:rgba(255,255,255,.76); font-size:.96rem; line-height:1.8; }
   .about-home__copy .btn-gold { margin-top:1.8rem; }
+  @media (min-width: 761px) and (max-width: 900px) {
+    .about-home__inner { gap:2.25rem; }
+    .about-home__portrait { left:0; width:min(100%, 285px); }
+    .about-home__copy { width:100%; }
+    .about-home__copy h2 { margin-bottom:1rem; font-size:2.8rem; }
+    .about-home__copy p { font-size:.82rem; line-height:1.65; }
+    .about-home__copy .btn-gold { margin-top:1.25rem; padding:.6rem 1.25rem; font-size:.75rem; }
+  }
   @media (max-width: 760px) {
     .about-home { min-height:auto; margin-top:-100px; padding-top:3rem; }
     .about-home__inner { grid-template-columns:1fr; gap:2.6rem; }
@@ -72,5 +80,35 @@ const copy = {
     .about-home__script { display:none; }
     .about-home__copy { width:100%; text-align:center; }
     .about-home__copy p { text-align:left; }
+
+    .about-home__copy { padding-inline:1rem; }
+    .about-home__script {
+      display: block;
+      top: 11%;
+      left: 50%;
+      width: min(92vw, 515px);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+    @media (max-width: 500px) {
+      .about-home__portrait{
+        width: min(88vw, 300px);
+      }
+          .about-home__script {
+      display: block;
+      top: 4%;
+      left: 50%;
+      width: min(92vw, 600px);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+    @media (max-width:390px) {
+      .about-home__inner { gap:2rem; }
+      .about-home__portrait { width:min(70vw,250px); }
+      .about-home__copy { padding-inline:.75rem; }
+      .about-home__copy h2 { margin-bottom:1rem; font-size:2.5rem; }
+      .about-home__copy p { font-size:.78rem; line-height:1.65; }
+      .about-home__copy .btn-gold { margin-top:1.25rem; padding:.55rem 1.15rem; font-size:.7rem; }
+    }
   }
 </style>

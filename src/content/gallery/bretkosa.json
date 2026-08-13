@@ -1,88 +1,15 @@
 {
   "workSlug": "bretkosa",
   "title": "Bretkosa",
+  "headerImage": "PITF-2024-5.jpg",
   "photos": [
     {
-      "image": "1.jpg",
-      "alt": "Në skenë",
-      "caption": "Gjatë shfaqjes.",
-      "tags": ["Bretkosa", "On set"]
+      "image": "PITF-2024-5.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2024 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2024 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2024", "During festival"]
     },
-    {
-      "image": "2.jpg",
-      "alt": "Në skenë",
-      "caption": "Gjatë shfaqjes.",
-      "tags": ["Bretkosa", "On set"]
-    },
-    {
-      "image": "3.jpg",
-      "alt": "Në skenë",
-      "caption": "Gjatë shfaqjes.",
-      "tags": ["Bretkosa", "On set"]
-    },
-    {
-      "image": "4.jpg",
-      "alt": "Në skenë",
-      "caption": "Gjatë shfaqjes.",
-      "tags": ["Bretkosa", "On set"]
-    },
-    
-    {
-      "image": "PITF-2019.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2019 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2019 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2019", "During festival"]
-    },
-    {
-      "image": "PITF-2019-1.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2019 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2019 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2019", "During festival"]
-    },
-    {
-      "image": "PITF-2019-2.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2019 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2019 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2019", "During festival"]
-    },
-    {
-      "image": "PITF-2019-3.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2019 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2019 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2019", "During festival"]
-    },
-
-    {
-      "image": "PITF-2020.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2020", "During festival"]
-    },
-    {
-      "image": "PITF-2020-1.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2020", "During festival"]
-    },
-    {
-      "image": "PITF-2020-2.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2020", "During festival"]
-    },
-    {
-      "image": "PITF-2020-3.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2020", "During festival"]
-    },
-    {
-      "image": "PITF-2020-4.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2020", "During festival"]
-    },
-    {
+        {
       "image": "PITF-2024.jpg",
       "alt": "Pamje gjatë festivalit PITF 2024 me shfaqjen Bretkosa",
       "caption": "Performancë gjatë festivalit teatror PITF 2024 me shfaqjen Bretkosa.",
@@ -113,16 +40,89 @@
       "tags": ["Bretkosa", "PITF 2024", "During festival"]
     },
     {
-      "image": "PITF-2024-5.jpg",
-      "alt": "Pamje gjatë festivalit PITF 2024 me shfaqjen Bretkosa",
-      "caption": "Performancë gjatë festivalit teatror PITF 2024 me shfaqjen Bretkosa.",
-      "tags": ["Bretkosa", "PITF 2024", "During festival"]
-    },
-    {
       "image": "PITF-2024-6.jpg",
       "alt": "Pamje gjatë festivalit PITF 2024 me shfaqjen Bretkosa",
       "caption": "Performancë gjatë festivalit teatror PITF 2024 me shfaqjen Bretkosa.",
       "tags": ["Bretkosa", "PITF 2024", "During festival"]
+    },
+    
+    {
+      "image": "PITF-2020.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2020", "During festival"]
+    },
+    {
+      "image": "PITF-2020-1.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2020", "During festival"]
+    },
+    {
+      "image": "PITF-2020-2.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2020", "During festival"]
+    },
+    {
+      "image": "PITF-2020-3.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2020", "During festival"]
+    },
+    {
+      "image": "PITF-2020-4.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2020 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2020 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2020", "During festival"]
+    },
+        {
+      "image": "PITF-2019.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2019 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2019 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2019", "During festival"]
+    },
+    {
+      "image": "PITF-2019-1.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2019 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2019 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2019", "During festival"]
+    },
+    {
+      "image": "PITF-2019-2.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2019 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2019 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2019", "During festival"]
+    },
+    {
+      "image": "PITF-2019-3.jpg",
+      "alt": "Pamje gjatë festivalit PITF 2019 me shfaqjen Bretkosa",
+      "caption": "Performancë gjatë festivalit teatror PITF 2019 me shfaqjen Bretkosa.",
+      "tags": ["Bretkosa", "PITF 2019", "During festival"]
+    },
+    {
+      "image": "1.jpg",
+      "alt": "Në skenë",
+      "caption": "Gjatë shfaqjes.",
+      "tags": ["Bretkosa", "On set"]
+    },
+    {
+      "image": "2.jpg",
+      "alt": "Në skenë",
+      "caption": "Gjatë shfaqjes.",
+      "tags": ["Bretkosa", "On set"]
+    },
+    {
+      "image": "3.jpg",
+      "alt": "Në skenë",
+      "caption": "Gjatë shfaqjes.",
+      "tags": ["Bretkosa", "On set"]
+    },
+    {
+      "image": "4.jpg",
+      "alt": "Në skenë",
+      "caption": "Gjatë shfaqjes.",
+      "tags": ["Bretkosa", "On set"]
     }
   ]
 }

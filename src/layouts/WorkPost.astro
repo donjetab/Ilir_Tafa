@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
 import type { CollectionEntry } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
@@ -9,99 +10,121 @@ import { localeFromPath, localizedUrl } from '../i18n';
 
 type WorksData = CollectionEntry<'works'>['data'];
 const {
-  title, description, year, type, role, poster, director, venue, episodes, films
-} = Astro.props as WorksData;
+  title, description, year, type, role, poster, director, venue, episodes, films, headerImage
+} = Astro.props as WorksData & { headerImage?: ImageMetadata | null };
 
 const eps = Array.isArray(episodes) ? episodes : [];
 const isFilm = type === "film";
-
+const locale = localeFromPath(Astro.url.pathname);
+const worksUrl = localizedUrl(locale, "works");
+const backLabel = locale === "sq" ? "Kthehu te Veprat" : locale === "bs" ? "Nazad na djela" : "Back to Works";
 ---
 
-<html lang={localeFromPath(Astro.url.pathname)}>
+<html lang={locale}>
   <head>
-
-
-    <BaseHead title={title + " | Ilir Tafa"} description={description ?? `${title} — ${type} (${year})`} image={poster} />
+    <BaseHead title={`${title} | Ilir Tafa`} description={description ?? `${title} — ${type} (${year})`} image={poster} />
     <style>
-      body { background:#0b1116; margin:0; }
-      main { width:1100px; max-width:calc(100% - 2rem); margin:0 auto; padding:2.5rem 0 5rem; }
-      .hero { display:grid; grid-template-columns: 360px 1fr; gap:1.5rem; }
-      @media (max-width:900px){ .hero { grid-template-columns:1fr; } }
-      .poster { width:100%; aspect-ratio:2/3; object-fit:cover; border-radius:14px; border:1px solid rgba(255,255,255,.08); background:#111821; }
-      .title { margin:.25rem 0 0; color:#e7ecef; font-size:2.2rem; line-height:1.15; }
-      .row { display:flex; gap:.5rem; margin-top:1rem !important; margin-bottom:1rem; flex-wrap:wrap; }
-      .badge { font-size:.78rem; padding:.28rem .6rem; border:1px solid rgba(255,255,255,.14); border-radius:999px; color:#c9c9c9; text-transform:uppercase; }
-      .body { margin-top:2rem; color:#d6dde3; line-height:1.65; }
+      body { margin:0; background:linear-gradient(180deg,#070b10 0%,#070b10 50%,#090e14 100%); background-attachment:fixed; }
+      .work-header { position:relative; height:clamp(17rem,25vw,22rem); overflow:hidden; }
+      .work-header img { 
+        width:100%; 
+        height:100%; 
+        object-fit:cover; 
+        object-position:center 25%; filter:brightness(.48) saturate(.72); }
+      .work-header::after { content:""; position:absolute; inset:0; 
+      background:linear-gradient(180deg,rgba(7,11,16,0.12),rgba(7,11,16,0.5) 52%,#070b10 85%),linear-gradient(90deg,rgba(7,11,16,0.25),transparent 22%,transparent 78%,rgba(7,11,16,0.25));}
+      main { 
+        width:auto; 
+        max-width:1400px; 
+        margin-left:max(1rem,calc((100% - 1240px)/2)); 
+        margin-right:1rem; 
+        padding:0 0 clamp(6rem,9vw,9rem); }
+      main.has-header { position:relative; z-index:2; margin-top:clamp(-10.5rem,-9vw,-6rem); }
+      main:not(.has-header) { padding-top:clamp(8rem,11vw,10rem); }
+      .hero { display:grid; grid-template-columns:minmax(260px,360px) minmax(0,1fr); gap:clamp(2rem,4vw,4rem); align-items:start; }
+      .poster { width:100%; aspect-ratio:2/3; object-fit:cover; border:1px solid rgba(255,255,255,.08); border-radius:1.6rem; background:#111821; box-shadow:0 18px 45px rgba(0,0,0,.28); }
+      .hero__copy { padding-top:0; }
+      .title { margin:0; color:#fff; font-family:"Playfair Display",Georgia,serif; font-size:clamp(3rem,4.5vw,4.8rem); font-weight:400; line-height:1.04; white-space:nowrap; }
+      .row { display:flex; gap:1rem; margin:1.6rem 0 1.25rem; flex-wrap:wrap; }
+      .badge { min-width:5.5rem; padding:.42rem .95rem; border:1px solid rgba(255,255,255,.58); border-radius:999px; color:#f2f2f2; font-size:.75rem; text-align:center; text-transform:uppercase; }
+      .facts { color:#d5d8dc; font-family:"Playfair Display",Georgia,serif; font-size:1.05rem; }
+      .facts p { margin:.45rem 0; }
+      .body { margin-top:1.5rem;width:85%; color:rgba(255,255,255,.86); font-size:clamp(.95rem,1.15vw,1.08rem); line-height:1.62; }
+      .body :global(p) {  margin:0 0 1.2rem; }
+      .works-back { display:inline-flex; align-items:center; gap:.55rem; width:fit-content; margin:0 0 1.5rem; color:#c9a654; font-size:.9rem; text-decoration:none; transition:color 180ms ease,transform 180ms ease; }
+      .works-back:hover { color:#fff; transform:translateX(-.25rem); }
+      .works-back--bottom { margin:clamp(3rem,6vw,5rem) auto 0; }
+      @media(max-width:900px){
+        .work-header { height:18rem; }
+        main.has-header { margin-top:-8rem; }
+        .hero { grid-template-columns:1fr; }
+        .poster { width:min(78%,22rem); margin-inline:auto; }
+        .hero__copy { padding-top:0; }
+        .title { text-align:center; white-space:normal; }
+        .row { justify-content:center; }
+      }
+      @media(min-width:521px) and (max-width:900px){
+        .hero__copy { width:min(100%,700px); margin-inline:auto; }
+        .body { width:100%; }
+      }
+      @media(max-width:560px){
+        .work-header { height:15rem; }
+        main.has-header { margin-top:-3.5rem; }
+        .poster { width:min(88%,20rem); }
+        .title { font-size:2.8rem; }
+        .body :global(p) { width:100%; }
+      }
+      @media(max-width:500px){
+        .facts,
+        .body { width:calc(100% - 2rem); margin-inline:auto; }
+        .facts { text-align:left; }
+        .body { margin-top:1.5rem; }
+      }
+      @media(max-width:500px){
+        main.has-header { margin-top:-6rem; }
+      }
     </style>
   </head>
   <body>
-    <Header />
-    <main>
-      <p style="margin-bottom:1.5rem;">
-        <a href={localizedUrl(localeFromPath(Astro.url.pathname), 'works')} style="color:#9aa4ad;text-decoration:none;">← Kthehu te Veprat</a>
-      </p>
+    <Header overlay={!!headerImage} />
+    {headerImage && (
+      <div class="work-header">
+        <Image src={headerImage} alt="" width={1800} height={700} loading="eager" />
+      </div>
+    )}
 
+    <main class:list={{ 'has-header': !!headerImage }}>
+      <a class="works-back" href={worksUrl}>&larr; {backLabel}</a>
       <section class="hero">
         {poster ? <Image class="poster" src={poster} alt={title} width={720} height={1080} /> : <div class="poster"></div>}
-        <div>
+        <div class="hero__copy">
           <h1 class="title">{title}</h1>
           <div class="row">
-            <span class="badge">{type}</span>
             {year && <span class="badge">{year}</span>}
-            {typeof films === "number" && films > 0 && (
-              <span class="badge">Film: {films}</span>
-            )}
-            {Array.isArray(episodes) && episodes.length > 0 && (
-              <span class="badge">
-                {type === "film" ? `${episodes.length} pjesë` : `${episodes.length} episode`}
-              </span>
-            )}
+            <span class="badge">{type}</span>
+            {typeof films === "number" && films > 0 && <span class="badge">Film: {films}</span>}
+            {eps.length > 0 && <span class="badge">{isFilm ? `${eps.length} pjesë` : `${eps.length} episode`}</span>}
           </div>
 
-
-
-          {role && <p style="color:#cdd5db;margin:.25rem 0 1rem;">Roli: {role}</p>}
-          {director && <p style="color:#cdd5db;margin:.25rem 0 1rem;">Regjia: {director}</p>}
-          {venue && type === 'theatre' && <p style="color:#cdd5db;margin:.25rem 0 1rem;">Vendi: {venue}</p>}
-
-          <div class="body">
-            <slot />
+          <div class="facts">
+            {role && <p>Roli: {role}</p>}
+            {director && <p>Regjia: {director}</p>}
+            {venue && type === 'theatre' && <p>Vendi: {venue}</p>}
           </div>
+
+          <div class="body"><slot /></div>
         </div>
       </section>
 
-      <!-- placeholder only; content comes from [slug].astro -->
       <slot name="afterContent" />
 
       {eps.length > 0 && (
         <section class="section-gap">
-          <EpisodesGrid
-            episodes={eps}
-            perPage={24}
-            label={isFilm ? "Pjesët e filmit" : "Episodet"}
-          />
-
+          <EpisodesGrid episodes={eps} perPage={24} label={isFilm ? "Pjesët e filmit" : "Episodet"} />
         </section>
       )}
+      <a class="works-back works-back--bottom" href={worksUrl}>&larr; {backLabel}</a>
     </main>
     <Footer />
   </body>
 </html>
-
-<style>
-
-@media (max-width:900px){
-  .poster { 
-    width: 60% !important;  
-    max-width: 100%;
-    aspect-ratio: 2/3;
-    margin: 0 auto;  
-  }
-}
-@media (max-width:900px){
-  .poster { 
-      width: 80% !important;  
-    }
-}
-
-</style>

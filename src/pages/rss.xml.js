@@ -12,7 +12,7 @@ export async function GET(context) {
     items: works.map((work) => ({
       title: work.data.title,
       description: work.data.description ?? '',
-      link: `works/${work.data.slug ?? work.id}/`,
+      link: `veprat/${work.data.slug ?? work.id}/`,
       pubDate: new Date(work.data.year, 0, 1), // uses year as date
     })),
   });

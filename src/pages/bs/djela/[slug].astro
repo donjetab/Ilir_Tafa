@@ -1,0 +1,9 @@
+---
+import { getCollection } from 'astro:content';
+import Page from '../../works/[slug].astro';
+export async function getStaticPaths() {
+  const works = await getCollection('works');
+  return works.map((work) => ({ params:{ slug:work.data.slug ?? work.id }, props:work }));
+}
+---
+<Page {...Astro.props} />

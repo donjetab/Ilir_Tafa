@@ -8,16 +8,17 @@ interface Item {
 
 interface Props {
   items: Item[];
+  ariaLabel?: string;
 }
 
-const { items } = Astro.props;
+const { items, ariaLabel = 'Ilir Tafa biography' } = Astro.props;
 const src = (image?: ImageMetadata | string) => {
   if (!image) return "";
   return typeof image === "string" ? image : image.src;
 };
 ---
 
-<section class="about-timeline" aria-label="Biografia e Ilir Tafës">
+<section class="about-timeline" aria-label={ariaLabel}>
   <div class="about-timeline__inner">
     <div class="about-timeline__line" aria-hidden="true"></div>
     <div class="about-timeline__progress" aria-hidden="true"></div>

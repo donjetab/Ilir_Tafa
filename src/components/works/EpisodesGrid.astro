@@ -1,11 +1,14 @@
 ---
 // src/components/EpisodesGrid.astro
 interface Ep { n?: number; url: string; title?: string; }
-interface Props { episodes: Ep[]; perPage?: number; label?: string; }
-const { episodes = [], perPage = 24, label = "Episodet" } = Astro.props;
+import type { Locale } from '../../i18n';
+interface Props { episodes: Ep[]; perPage?: number; label?: string; locale?: Locale; }
+const { episodes = [], perPage = 24, label = "Episodet", locale = 'sq' } = Astro.props;
+const copy = { sq:{search:'Kërko…',more:'Më shumë',episode:'Episodi',part:'Pjesa',ep:'Ep',pt:'Pj'}, en:{search:'Search…',more:'Show more',episode:'Episode',part:'Part',ep:'Ep',pt:'Pt'}, bs:{search:'Pretraži…',more:'Prikaži više',episode:'Epizoda',part:'Dio',ep:'Ep',pt:'Dio'} }[locale];
 
-const singular = label.toLowerCase().includes("film") ? "Pjesa" : "Episodi";
-const chipAbbr = label.toLowerCase().includes("film") ? "Pj" : "Ep";
+const isFilm = label.toLowerCase().includes(locale === 'bs' ? 'filma' : 'film');
+const singular = isFilm ? copy.part : copy.episode;
+const chipAbbr = isFilm ? copy.pt : copy.ep;
 
 function getYouTubeId(input: string): string | null {
   try {
@@ -42,7 +45,7 @@ const normalized = episodes
   <div class="eps__head">
     <h2 class="eps__title">{label} <span class="eps__count">({normalized.length})</span></h2>
     <input id="eps-search" class="eps__search" type="search"
-           placeholder="Kërko…" aria-label={`Kërko ${label.toLowerCase()}`} />
+           placeholder={copy.search} aria-label={`${copy.search.replace('…','')} ${label.toLowerCase()}`} />
   </div>
 
   <div id="eps-grid" class="grid" data-per-page={String(perPage)}>
@@ -63,7 +66,7 @@ const normalized = episodes
       </a>
     ))}
   </div>
-  {normalized.length > perPage && <button id="eps-more" class="more" type="button">Më Shumë</button>}
+  {normalized.length > perPage && <button id="eps-more" class="more" type="button">{copy.more}</button>}
 </section>
 
 <style>

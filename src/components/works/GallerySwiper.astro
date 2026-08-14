@@ -1,16 +1,20 @@
 ﻿---
 import type { ImageMetadata } from "astro";
+import { localeFromPath, pageCopy } from '../../i18n';
 interface Item { src: ImageMetadata; alt?: string; caption?: string; }
 const { items = [] as Item[] } = Astro.props;
+const locale = localeFromPath(Astro.url.pathname);
+const copy = pageCopy[locale];
+const labels = {sq:{pages:'Faqet e galerisë',close:'Mbyll',previous:'E mëparshmja',next:'E ardhshmja'},en:{pages:'Gallery pages',close:'Close',previous:'Previous',next:'Next'},bs:{pages:'Stranice galerije',close:'Zatvori',previous:'Prethodna',next:'Sljedeća'}}[locale];
 ---
 {items.length > 0 && (
   <section class="work-gallery" data-gallery>
-    <h2 class="gallery_title">Galeria</h2>
+    <h2 class="gallery_title">{copy.gallerySection}</h2>
 
     <div class="gallery-shell relative">
       <div class="gallery-stage relative">
-        <button data-role="prev" type="button" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/60 p-2 text-white lightboxButton">❮</button>
-        <button data-role="next" type="button" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/60 p-2 text-white lightboxButton">❯</button>
+        <button data-role="prev" type="button" aria-label={labels.previous} class="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/60 p-2 text-white lightboxButton">❮</button>
+        <button data-role="next" type="button" aria-label={labels.next} class="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/60 p-2 text-white lightboxButton">❯</button>
 
         <div class="g-track flex overflow-x-auto scroll-smooth gap-4" style="scroll-snap-type:x mandatory;">
         {items.map((it: Item, i: number) => (
@@ -27,14 +31,14 @@ const { items = [] as Item[] } = Astro.props;
         ))}
         </div>
       </div>
-      <div class="g-pagination" aria-label="Faqet e galerisë"></div>
+      <div class="g-pagination" aria-label={labels.pages}></div>
     </div>
 
     <!-- Lightbox -->
     <div class="g-modal fixed inset-0 z-[60] hidden items-center justify-center bg-black/80 p-4">
-      <button data-role="close" class="absolute top-4 right-4 text-white text-2xl lightboxButton" aria-label="Mbyll">✕</button>
-      <button data-role="mprev" class="absolute left-4 top-1/2 -translate-y-1/2 text-white lightboxButton">❮</button>
-      <button data-role="mnext" class="absolute right-4 top-1/2 -translate-y-1/2 text-white lightboxButton">❯</button>
+      <button data-role="close" class="absolute top-4 right-4 text-white text-2xl lightboxButton" aria-label={labels.close}>✕</button>
+      <button data-role="mprev" aria-label={labels.previous} class="absolute left-4 top-1/2 -translate-y-1/2 text-white lightboxButton">❮</button>
+      <button data-role="mnext" aria-label={labels.next} class="absolute right-4 top-1/2 -translate-y-1/2 text-white lightboxButton">❯</button>
       <figure class="max-w-5xl w-full">
         <img class="g-image w-full h-auto rounded-xl border border-white/20" alt="" draggable="false" />
         <figcaption class="g-caption mt-3 text-center text-white/90"></figcaption>

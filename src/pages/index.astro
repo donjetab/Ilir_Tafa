@@ -6,9 +6,11 @@ import Filmstrip from "../components/homepage/Filmstrip.astro";
 import HomeAwards from "../components/homepage/HomeAwards.astro";
 import HomeGallery from "../components/homepage/HomeGallery.astro";
 import HomeNews from "../components/homepage/HomeNews.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import { SITE_TITLE } from "../consts";
+import { localeFromPath, pageCopy } from '../i18n';
+const locale = localeFromPath(Astro.url.pathname);
 ---
-<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<BaseLayout title={SITE_TITLE} description={pageCopy[locale].siteDescription}>
   <Hero />
   <HomeAbout />
   <Filmstrip />

@@ -5,7 +5,7 @@ year: 2011
 type: "tv"
 role: "Artan"
 poster: "../../assets/works/shtepia-ime.png"
-descritpion: ""
+description: ""
 director: "Sunaj Raca"
 venue: "Kosovë"
 episodes:

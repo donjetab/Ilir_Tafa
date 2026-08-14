@@ -20,10 +20,11 @@ import awardIcon3 from "../assets/award-icon-3.png";
 import awardIcon4 from "../assets/award-icon-4.png";
 
 interface Props {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
 }
-const { title, description } = Astro.props;
+const locale = localeFromPath(Astro.url.pathname);
+const supplied = Astro.props as Partial<Props>;
 
 const headerIntro = `Ilir Tafa, i lindur më 1974 në Lipjan, është një nga aktorët më të njohur nga Kosova, me një karrierë të ndërtuar në teatër, film, televizion dhe arsim të lartë. Veprimtaria e tij artistike është shtrirë përtej Kosovës, duke e bërë të njohur edhe në Bosnje e Hercegovinë, Kroaci dhe vende të tjera të rajonit.`;
 
@@ -70,10 +71,40 @@ const awards = [
   { icon: awardIcon4, title: "‘Aktori më i Mirë’", festival: "Festivali i Teatrove Shqiptare në Dibër të Maqedonisë" },
 ];
 
+const localized = {
+  sq: { title:'Biografia | Ilir Tafa', description:'Biografia, karriera dhe çmimet e aktorit Ilir Tafa', tagline:'një nga aktorët më të njohur në Ballkan', headerIntro, items, awards, awardsHeading:'Çmimet', quote:'Ta ndërtosh një teatër si ‘Faruk Begolli’ është si të ndërtosh një kishë a xhami, bile më vështirë... Ky njeri, Ilir Tafa, është patriot i ditëve të sotit.', quoteAuthor:'Enver Petrovci për Ilir Tafën' },
+  en: {
+    title:'Biography | Ilir Tafa', description:'The biography, career, and awards of actor Ilir Tafa', tagline:'one of the best-known actors in the Balkans',
+    headerIntro:'Born in Lipjan in 1974, Ilir Tafa is one of Kosovo’s best-known actors. His career spans theatre, film, television, and higher education, and his work has earned recognition in Bosnia and Herzegovina, Croatia, and elsewhere in the region.',
+    items:[
+      {icon:academicIcon,title:'Education and academic work',paragraphs:['Tafa’s interest in dramatic art developed at an early age. He studied acting at the Faculty of Arts of the University of Pristina from 1995 to 1998, continued his postgraduate studies, and completed a Master of Arts in acting in 2008.','Alongside his artistic career, he has taught practical acting subjects, including Diction and Interpretation, at AAB College in Pristina. He is also one of the institution’s founding figures and has served in a leadership role on the college’s Governing Council.']},
+      {icon:theatreIcon,title:'Theatre',paragraphs:['His professional career began on Kosovo’s theatre stage. His early appearances included Alo 038 and Studio 2 in 1995. He later performed in the monodrama Sonte jam vetëm and numerous other theatre productions.','In 2012 he appeared in Killing Me Softly at Dodona Theatre. In 2018 he performed in Burbuqe Berisha’s tragicomedy Bretkosa at AAB College’s Faruk Begolli Theatre, a production exploring the psychological and social aftermath of war and the difficulties of human communication.']},
+      {icon:filmIcon,title:'Film and television',paragraphs:['Tafa has built an extensive filmography across Kosovo and regional productions, including Atje ku nuk lind dielli, Shtëpia e tmerrit, Kamera me yjet, Kandidati për president, Kaçurrelët, and Zogjtë e luftës.','He became particularly well known across the region as Mentor Kosova in the Bosnian sitcom Lud, Zbunjen, Normalan between 2010 and 2016, reaching a wide audience in Bosnia and Herzegovina, Croatia, and Serbia.','In 2016 he played a leading role in Terorista, filmed in Sarajevo and Budapest. His later work includes Invisible, Žaba, The Life of Flowers, Kodi i jetës, Konak kod Hilmije, and the Kosovo series Tre Vllaznit.']},
+      {icon:cultureIcon,title:'Cultural diplomacy and representing Kosovo',paragraphs:['Tafa’s work in regional productions has had an impact beyond the arts. A 2022 academic analysis of Kosovo’s cultural diplomacy cites his role in Lud, Zbunjen, Normalan as an example of how art and culture can introduce Kosovo to international audiences.','Through Mentor Kosova, the series incorporated Albanian, music, and elements of Kosovo culture while being broadcast across several countries. His presence in one of the Balkans’ best-known series therefore also became a form of cultural communication with regional audiences.']}
+    ],
+    awards: awards.map(a=>({...a,title:'“Best Actor”',festival:{'Festivali i Filmit në Gjilan':'Gjilan Film Festival','Festivali i Komedisë Shqiptare në Preshevë':'Albanian Comedy Festival in Presheva','Festivali Ballkanik i Teatrit në Prishtinë':'Balkan Theatre Festival in Pristina','Festivali i Teatrove Shqiptare në Dibër të Maqedonisë':'Albanian Theatre Festival in Dibër, North Macedonia'}[a.festival] ?? a.festival})), awardsHeading:'Awards',
+    quote:'Building a theatre such as “Faruk Begolli” is like building a church or a mosque—perhaps even harder... This man, Ilir Tafa, is a patriot of our time.', quoteAuthor:'Enver Petrovci on Ilir Tafa'
+  },
+  bs: {
+    title:'Biografija | Ilir Tafa', description:'Biografija, karijera i nagrade glumca Ilira Tafe', tagline:'jedan od najpoznatijih glumaca na Balkanu',
+    headerIntro:'Ilir Tafa, rođen 1974. godine u Lipljanu, jedan je od najpoznatijih kosovskih glumaca. Karijeru je gradio u pozorištu, filmu, na televiziji i u visokom obrazovanju, a njegov rad je prepoznat u Bosni i Hercegovini, Hrvatskoj i drugim zemljama regiona.',
+    items:[
+      {icon:academicIcon,title:'Obrazovanje i akademski rad',paragraphs:['Tafino zanimanje za dramsku umjetnost razvilo se još u mladosti. Studirao je glumu na Fakultetu umjetnosti Univerziteta u Prištini od 1995. do 1998, nastavio postdiplomske studije i 2008. stekao zvanje magistra umjetnosti iz oblasti glume.','Uz umjetničku karijeru predavao je praktične glumačke predmete, uključujući dikciju i interpretaciju, na AAB koledžu u Prištini. Jedan je od osnivača ustanove i obavljao je rukovodeću dužnost u Upravnom vijeću koledža.']},
+      {icon:theatreIcon,title:'Pozorište',paragraphs:['Profesionalnu karijeru započeo je na kosovskoj pozorišnoj sceni. Među ranim nastupima su predstave Alo 038 i Studio 2 iz 1995. Kasnije je igrao u monodrami Sonte jam vetëm i brojnim drugim produkcijama.','Godine 2012. igrao je u komediji Killing Me Softly u teatru Dodona, a 2018. u tragikomediji Bretkosa rediteljice Burbuqe Berisha u teatru Faruk Begolli. Predstava govori o psihološkim i društvenim posljedicama rata i teškoćama ljudske komunikacije.']},
+      {icon:filmIcon,title:'Film i televizija',paragraphs:['Tafa je izgradio bogatu filmografiju u kosovskim i regionalnim produkcijama, među kojima su Atje ku nuk lind dielli, Shtëpia e tmerrit, Kamera me yjet, Kandidati për president, Kaçurrelët i Zogjtë e luftës.','Posebnu regionalnu popularnost stekao je kao Mentor Kosova u bosanskohercegovačkom sitcomu Lud, zbunjen, normalan, u kojem je igrao od 2010. do 2016. godine.','Godine 2016. igrao je jednu od glavnih uloga u filmu Terorista, snimanom u Sarajevu i Budimpešti. U njegovoj filmografiji su i Invisible, Žaba, The Life of Flowers, Kodi i jetës, Konak kod Hilmije i kosovska serija Tre Vllaznit.']},
+      {icon:cultureIcon,title:'Kulturna diplomatija i predstavljanje Kosova',paragraphs:['Tafin rad u regionalnim produkcijama imao je uticaj i izvan umjetnosti. Akademska analiza kulturne diplomatije Kosova iz 2022. navodi njegovu ulogu u seriji Lud, zbunjen, normalan kao primjer doprinosa umjetnosti predstavljanju Kosova međunarodnoj publici.','Kroz lik Mentora Kosove u seriju su uneseni albanski jezik, muzika i elementi kosovske kulture. Njegovo prisustvo u jednoj od najpoznatijih balkanskih serija postalo je i oblik kulturne komunikacije s publikom regiona.']}
+    ],
+    awards: awards.map(a=>({...a,title:'„Najbolji glumac“',festival:{'Festivali i Filmit në Gjilan':'Filmski festival u Gnjilanu','Festivali i Komedisë Shqiptare në Preshevë':'Festival albanske komedije u Preševu','Festivali Ballkanik i Teatrit në Prishtinë':'Balkanski pozorišni festival u Prištini','Festivali i Teatrove Shqiptare në Dibër të Maqedonisë':'Festival albanskih pozorišta u Debru, Sjeverna Makedonija'}[a.festival] ?? a.festival})), awardsHeading:'Nagrade',
+    quote:'Izgraditi teatar poput „Faruk Begollija“ isto je što i izgraditi crkvu ili džamiju, možda i teže... Ovaj čovjek, Ilir Tafa, patriota je današnjice.', quoteAuthor:'Enver Petrovci o Iliru Tafi'
+  }
+}[locale];
+const title = supplied.title ?? localized.title;
+const description = supplied.description ?? localized.description;
+
 
 ---
 <!doctype html>
-<html lang={localeFromPath(Astro.url.pathname)} class="scroll-smooth">
+<html lang={locale} class="scroll-smooth">
   <head>
 
     <BaseHead title={title} description={description} />
@@ -81,12 +112,12 @@ const awards = [
   <body class="about-page font-sans antialiased">
     <main id="main" class="min-h-screen">
         <Header overlay />
-        <AboutHero hero={hero} name="Ilir Tafa" intro={headerIntro} />
-        <AboutSplit items={items} />
-        <AboutAwards awards={awards} />
+        <AboutHero hero={hero} name="Ilir Tafa" tagline={localized.tagline} intro={localized.headerIntro} />
+        <AboutSplit items={localized.items} ariaLabel={localized.description} />
+        <AboutAwards heading={localized.awardsHeading} awards={localized.awards} />
         <AboutQuote
-          quote="Ta ndërtosh një teatër si ‘Faruk Begolli’ është si të ndërtosh një kishë a xhami, bile më vështirë... Ky njeri, Ilir Tafa, është patriot i ditëve të sotit."
-          author="Enver Petrovci për Ilir Tafën"
+          quote={localized.quote}
+          author={localized.quoteAuthor}
         />
         <div class="about-footer-separator" aria-hidden="true"></div>
     </main>

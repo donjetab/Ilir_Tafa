@@ -4,7 +4,7 @@ import { getCollection } from "astro:content";
 import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
-import { localeFromPath, localizedUrl } from '../../i18n';
+import { localeFromPath, localizedUrl, pageCopy } from '../../i18n';
 import sadSide from "../../assets/sad-side.png";
 import happySide from "../../assets/happy-side.png";
 const locale = localeFromPath(Astro.url.pathname);
@@ -22,13 +22,15 @@ const items = entries
   }))
   .sort((a, b) => b.year - a.year);
 
-const pageTitle = "Veprimtaria Artistike";
-const pageSubtitle = "Këtu mund të gjeni të gjithë veprimtarinë në film, televizion dhe teatër të aktorit Ilir Tafa";
+const copy = pageCopy[locale];
+const pageTitle = copy.worksTitle;
+const pageSubtitle = copy.worksSubtitle;
+const typeLabel = (type: 'film' | 'tv' | 'theatre') => copy[type];
 ---
 <!doctype html>
 <html lang={locale}>
   <head>
-   <BaseHead title={pageTitle + " | Ilir Tafa"} description="Filma, Seri, dhe Shfaqje Teatrale" /> 
+   <BaseHead title={pageTitle + " | Ilir Tafa"} description={pageSubtitle} />
    <style>
     :root { --works-gold: #d4b16a; }
     html, body { min-height: 100%; }
@@ -211,10 +213,10 @@ const pageSubtitle = "Këtu mund të gjeni të gjithë veprimtarinë në film, t
         <h1 class="title">{pageTitle}</h1>
         <p class="sub">{pageSubtitle}</p>
         <div class="filter">
-          <button type="button" class="chip active" data-type="all">Të Gjitha</button>
-          <button type="button" class="chip" data-type="film">Film</button>
-          <button type="button" class="chip" data-type="tv">TV</button>
-          <button type="button" class="chip" data-type="theatre">Teatër</button>
+          <button type="button" class="chip active" data-type="all">{copy.all}</button>
+          <button type="button" class="chip" data-type="film">{copy.film}</button>
+          <button type="button" class="chip" data-type="tv">{copy.tv}</button>
+          <button type="button" class="chip" data-type="theatre">{copy.theatre}</button>
         </div>
       </header>
 
@@ -234,7 +236,7 @@ const pageSubtitle = "Këtu mund të gjeni të gjithë veprimtarinë në film, t
                 : <div class="poster"></div>}
               <div class="meta">
                 <div class="row">
-                  <span class="badge">{it.type}</span>
+                  <span class="badge">{typeLabel(it.type)}</span>
                   <span class="badge">{it.year}</span>
                 </div>
                 <h3 class="title2">{it.title}</h3>
@@ -256,7 +258,7 @@ const pageSubtitle = "Këtu mund të gjeni të gjithë veprimtarinë në film, t
                 : <div class="poster"></div>}
               <div class="meta">
                 <div class="row">
-                  <span class="badge">{it.type}</span>
+                  <span class="badge">{typeLabel(it.type)}</span>
                   <span class="badge">{it.year}</span>
                 </div>
                 <h3 class="title2">{it.title}</h3>

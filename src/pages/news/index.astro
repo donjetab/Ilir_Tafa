@@ -5,14 +5,14 @@ import Footer from "../../components/Footer.astro";
 import NewsCard from "../../components/NewsCard.astro";
 import sadSide from "../../assets/sad-side.png";
 import happySide from "../../assets/happy-side.png";
-import { localeFromPath } from '../../i18n';
+import { localeFromPath, pageCopy } from '../../i18n';
 
 const locale = localeFromPath(Astro.url.pathname);
 const copy = locale === 'en'
-  ? { title:'NEWS', subtitle:'News and articles about actor Ilir Tafa from external sources', search:'Search news…', empty:'No news matched your search.' }
+  ? { title:'News', subtitle:'News and articles about actor Ilir Tafa from external sources', search:'Search news…', empty:'No news matched your search.' }
   : locale === 'bs'
-    ? { title:'VIJESTI', subtitle:'Vijesti i članci o glumcu Iliru Tafi iz vanjskih izvora', search:'Pretraži vijesti…', empty:'Nema rezultata za ovu pretragu.' }
-    : { title:'LAJME', subtitle:'Të gjitha lajmet dhe artikujt nga burime të jashtme për aktorin Tafa', search:'Kërko lajme…', empty:'Nuk u gjet asnjë lajm.' };
+    ? { title:'Vijesti', subtitle:'Vijesti i članci o glumcu Iliru Tafi iz vanjskih izvora', search:'Pretraži vijesti…', empty:'Nema rezultata za ovu pretragu.' }
+    : { title:'Lajme', subtitle:'Të gjitha lajmet dhe artikujt nga burime të jashtme për aktorin Tafa', search:'Kërko lajme…', empty:'Nuk u gjet asnjë lajm.' };
 const entries = import.meta.glob("../../content/news/*.json", { eager:true, import:"default" });
 const items = Object.values(entries).map((it:any)=>it).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
 ---
@@ -42,7 +42,7 @@ const items = Object.values(entries).map((it:any)=>it).sort((a,b)=>String(b.date
         ))}
       </section>
       <p id="news-empty" class="news-empty" hidden>{copy.empty}</p>
-      <nav id="news-pagination" class="news-pagination" aria-label="News pagination"></nav>
+      <nav id="news-pagination" class="news-pagination" aria-label={pageCopy[locale].newsPagination}></nav>
     </main>
     <Footer />
 

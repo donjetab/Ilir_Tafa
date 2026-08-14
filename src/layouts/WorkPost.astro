@@ -6,7 +6,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import EpisodesGrid from "../components/works/EpisodesGrid.astro";
-import { localeFromPath, localizedUrl } from '../i18n';
+import { localeFromPath, localizedUrl, pageCopy } from '../i18n';
 
 type WorksData = CollectionEntry<'works'>['data'];
 const {
@@ -17,7 +17,8 @@ const eps = Array.isArray(episodes) ? episodes : [];
 const isFilm = type === "film";
 const locale = localeFromPath(Astro.url.pathname);
 const worksUrl = localizedUrl(locale, "works");
-const backLabel = locale === "sq" ? "Kthehu te Veprat" : locale === "bs" ? "Nazad na djela" : "Back to Works";
+const copy = pageCopy[locale];
+const backLabel = copy.backToWorks;
 ---
 
 <html lang={locale}>
@@ -117,15 +118,15 @@ const backLabel = locale === "sq" ? "Kthehu te Veprat" : locale === "bs" ? "Naza
           <h1 class="title">{title}</h1>
           <div class="row">
             {year && <span class="badge">{year}</span>}
-            <span class="badge">{type}</span>
+            <span class="badge">{copy[type]}</span>
             {typeof films === "number" && films > 0 && <span class="badge">Film: {films}</span>}
-            {eps.length > 0 && <span class="badge">{isFilm ? `${eps.length} pjesë` : `${eps.length} episode`}</span>}
+            {eps.length > 0 && <span class="badge">{`${eps.length} ${isFilm ? copy.parts : copy.episodes}`}</span>}
           </div>
 
           <div class="facts">
-            {role && <p>Roli: {role}</p>}
-            {director && <p>Regjia: {director}</p>}
-            {venue && type === 'theatre' && <p>Vendi: {venue}</p>}
+            {role && <p>{copy.role}: {role}</p>}
+            {director && <p>{copy.director}: {director}</p>}
+            {venue && type === 'theatre' && <p>{copy.venue}: {venue}</p>}
           </div>
 
           <div class="body"><slot /></div>
@@ -136,7 +137,7 @@ const backLabel = locale === "sq" ? "Kthehu te Veprat" : locale === "bs" ? "Naza
 
       {eps.length > 0 && (
         <section class="section-gap">
-          <EpisodesGrid episodes={eps} perPage={24} label={isFilm ? "Pjesët e filmit" : "Episodet"} />
+          <EpisodesGrid episodes={eps} perPage={24} label={isFilm ? copy.filmParts : copy.episodes} locale={locale} />
         </section>
       )}
       <a class="works-back works-back--bottom" href={worksUrl}>&larr; {backLabel}</a>

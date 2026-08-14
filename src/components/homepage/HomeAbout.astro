@@ -11,22 +11,25 @@ const copy = {
   },
   en: {
     title: 'About Ilir Tafa', cta: 'BIOGRAPHY',
-    text: 'Ilir Tafa (born in 1974 in Lipjan) is one of Kosovo’s best-known actors, established both at home and across the region, especially in Bosnia and Croatia. His work spans film, television, and theatre, including Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit, and the Bosnian series Lud, Zbunjen, Normalan.'
+    text: 'Ilir Tafa (born in 1974 in Lipjan) is one of Kosovo’s best-known actors, established both at home and across the region, especially in Bosnia and Croatia. His work spans film, television, and theatre, including Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit, and the Bosnian series Lud, Zbunjen, Normalan.',
+    backgroundText: 'Ilir Tafa (born in 1974 in Lipjan) is one of Kosovo’s best-known actors, established both at home and across the region, especially in Bosnia and Croatia. He has performed in films, television series, and theatre productions, including Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit, and the Bosnian series Lud, Zbunjen, Normalan, which brought him widespread regional recognition. Ilir Tafa has received several major awards for his talent, including Best Actor at the Gjilan Film Festival, the Albanian Comedy Festival in Presheva, the Balkan Theatre Festival in Pristina, and the Albanian Theatre Festival in Dibër, North Macedonia. Alongside his artistic career, he holds the highest university qualification in acting and works as a lecturer in Pristina.'
   },
   bs: {
     title: 'O Iliru Tafi', cta: 'BIOGRAFIJA',
-    text: 'Ilir Tafa (rođen 1974. u Lipljanu) jedan je od najpoznatijih kosovskih glumaca, afirmisan na Kosovu i širom regiona, posebno u Bosni i Hrvatskoj. Igrao je u filmovima, televizijskim serijama i pozorišnim predstavama, među kojima su Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit i bosanskohercegovačka serija Lud, zbunjen, normalan.'
+    text: 'Ilir Tafa (rođen 1974. u Lipljanu) jedan je od najpoznatijih kosovskih glumaca, afirmisan na Kosovu i širom regiona, posebno u Bosni i Hrvatskoj. Igrao je u filmovima, televizijskim serijama i pozorišnim predstavama, među kojima su Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit i bosanskohercegovačka serija Lud, zbunjen, normalan.',
+    backgroundText: 'Ilir Tafa (rođen 1974. u Lipljanu) jedan je od najpoznatijih kosovskih glumaca, afirmisan na Kosovu i širom regiona, posebno u Bosni i Hrvatskoj. Igrao je u filmovima, televizijskim serijama i pozorišnim predstavama, među kojima su Sonte jam vetëm, Alo 038, Atje ku nuk lind dielli, Shtëpia e tmerrit i bosanskohercegovačka serija Lud, zbunjen, normalan, koja mu je donijela veliku regionalnu popularnost. Za svoj talent Ilir Tafa dobio je nekoliko značajnih priznanja, među kojima su nagrade za najboljeg glumca na Filmskom festivalu u Gnjilanu, Festivalu albanske komedije u Preševu, Balkanskom pozorišnom festivalu u Prištini i Festivalu albanskih pozorišta u Debru, Sjeverna Makedonija. Uz umjetničku karijeru, stekao je najviše univerzitetsko zvanje iz oblasti glume i radi kao predavač u Prištini.'
   },
 }[locale];
+const portraitAlt = {sq:'Portret i Ilir Tafës',en:'Portrait of Ilir Tafa',bs:'Portret Ilira Tafe'}[locale];
 ---
 
 <section class="about-home">
   <div class="about-home__inner">
     <div class="about-home__portrait reveal">
       <div class="about-home__script" aria-hidden="true">
-        <p>{'backgroundText' in copy ? copy.backgroundText : copy.text}</p>
+        <p>{copy.backgroundText}</p>
       </div>
-      <img src={aboutImg.src} alt="Portret i Ilir Tafës" loading="lazy" />
+      <img src={aboutImg.src} alt={portraitAlt} loading="lazy" />
     </div>
     <div class="about-home__copy reveal-near">
       <h2>{copy.title}</h2>

@@ -33,11 +33,23 @@ const links = [
         isActive(l.href, l.exact) ? "font-semibold text-[#d4b16a] underline underline-offset-4" : "opacity-90", ]} > {l.label} 
       </a> ))} 
       <details class="language-picker">
-        <summary aria-label={t.language}>{locale.toUpperCase()}<span aria-hidden="true">⌄</span></summary>
+        <summary aria-label={`${t.language}: ${localeNames[locale]}`}>
+          <svg class="language-picker__globe" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18M12 3c2.25 2.45 3.4 5.45 3.4 9S14.25 18.55 12 21M12 3C9.75 5.45 8.6 8.45 8.6 12S9.75 18.55 12 21"></path>
+          </svg>
+          <span class="language-picker__current">{locale.toUpperCase()}</span>
+          <svg class="language-picker__chevron" viewBox="0 0 12 8" aria-hidden="true"><path d="m1 1.25 5 5 5-5"></path></svg>
+        </summary>
         <div class="language-picker__menu">
-          {locales.filter((language) => language !== locale).map((language) => (
-            <a href={localizedUrl(language, path)} lang={language} hreflang={language} title={localeNames[language]}>
-              {language.toUpperCase()}
+          <span class="language-picker__label">{t.language}</span>
+          {locales.map((language) => (
+            <a href={localizedUrl(language, path)} lang={language} hreflang={language}
+              aria-current={language === locale ? 'true' : undefined}
+              class:list={{ 'is-current': language === locale }}>
+              <span class="language-picker__code">{language.toUpperCase()}</span>
+              <span>{localeNames[language]}</span>
+              {language === locale && <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8.2 3.1 3.1L13 4.7"></path></svg>}
             </a>
           ))}
         </div>
@@ -167,12 +179,22 @@ const links = [
   .navbar-links { align-items:center; gap:clamp(1rem,1.65vw,2rem); }
   .navbar-link { padding:.7rem 0; color:#fff; font-size:1rem; font-weight:500; letter-spacing:.01em; transition:color .2s ease; white-space:nowrap; }
   .navbar-link:hover { color:var(--color-gold-bright); }
-  .language-picker { position:relative; margin-left:.4rem; }
-  .language-picker summary { display:flex; align-items:center; gap:.3rem; padding:.28rem .45rem; border:1px solid rgba(255,255,255,.28); border-radius:.2rem; color:rgba(255,255,255,.9); font-size:.65rem; line-height:1; cursor:pointer; list-style:none; }
+  .language-picker { position:relative; margin-left:.55rem; }
+  .language-picker summary { display:flex; align-items:center; gap:.55rem; min-height:2.45rem; padding:.45rem .7rem; border:1px solid rgba(212,177,106,.38); border-radius:999px; color:rgba(255,255,255,.92); background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.018)); box-shadow:inset 0 1px 0 rgba(255,255,255,.07); font-size:.72rem; font-weight:600; line-height:1; letter-spacing:.09em; cursor:pointer; list-style:none; transition:border-color .2s ease,color .2s ease,background .2s ease,box-shadow .2s ease; }
+  .language-picker summary:hover,.language-picker[open] summary { border-color:rgba(212,177,106,.78); color:var(--color-gold-bright); background:rgba(212,177,106,.09); box-shadow:0 0 0 3px rgba(212,177,106,.07),inset 0 1px 0 rgba(255,255,255,.08); }
   .language-picker summary::-webkit-details-marker { display:none; }
-  .language-picker__menu { position:absolute; top:calc(100% + .35rem); right:0; min-width:100%; overflow:hidden; border:1px solid rgba(212,177,106,.45); border-radius:.2rem; background:rgba(7,11,16,.97); box-shadow:0 10px 28px rgba(0,0,0,.35); }
-  .language-picker__menu a { display:block; padding:.5rem .7rem; color:rgba(255,255,255,.78); font-size:.65rem; text-align:center; }
-  .language-picker__menu a:hover { color:var(--color-gold-bright); background:rgba(255,255,255,.05); }
+  .language-picker__globe { width:1rem; height:1rem; fill:none; stroke:currentColor; stroke-width:1.35; }
+  .language-picker__chevron { width:.6rem; height:.4rem; fill:none; stroke:currentColor; stroke-width:1.5; transition:transform .22s ease; }
+  .language-picker[open] .language-picker__chevron { transform:rotate(180deg); }
+  .language-picker__menu { position:absolute; top:calc(100% + .65rem); right:0; width:12rem; overflow:hidden; padding:.45rem; border:1px solid rgba(212,177,106,.34); border-radius:.85rem; background:rgba(8,13,18,.96); box-shadow:0 18px 45px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); transform-origin:top right; animation:language-menu-in .18s ease-out; }
+  .language-picker__menu::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 85% 0,rgba(212,177,106,.1),transparent 42%); }
+  .language-picker__label { position:relative; display:block; padding:.45rem .65rem .55rem; color:rgba(255,255,255,.4); font-size:.58rem; font-weight:600; letter-spacing:.13em; text-transform:uppercase; }
+  .language-picker__menu a { position:relative; display:grid; grid-template-columns:2.1rem 1fr 1rem; align-items:center; gap:.55rem; min-height:2.55rem; padding:.48rem .65rem; border-radius:.55rem; color:rgba(255,255,255,.72); font-size:.72rem; text-decoration:none; transition:color .18s ease,background .18s ease; }
+  .language-picker__menu a:hover { color:#fff; background:rgba(255,255,255,.065); }
+  .language-picker__menu a.is-current { color:var(--color-gold-bright); background:rgba(212,177,106,.1); }
+  .language-picker__code { color:inherit; font-size:.65rem; font-weight:700; letter-spacing:.08em; }
+  .language-picker__menu a > svg { width:.8rem; fill:none; stroke:currentColor; stroke-width:1.8; }
+  @keyframes language-menu-in { from { opacity:0; transform:translateY(-.35rem) scale(.97); } to { opacity:1; transform:none; } }
   #navlinks.visible {
     visibility: visible !important;
   }

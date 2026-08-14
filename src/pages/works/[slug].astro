@@ -3,6 +3,8 @@ import { getCollection, render, type CollectionEntry } from "astro:content";
 import WorkPost from "../../layouts/WorkPost.astro";
 import GallerySwiper from "../../components/works/GallerySwiper.astro";
 import type { ImageMetadata } from "astro";
+import { localeFromPath } from '../../i18n';
+import { getWorkTranslation } from '../../i18n/works';
 
 // helper first
 function youTubeId(u?: string) {
@@ -23,9 +25,14 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'works'>;
 const work = Astro.props as Props;
 const { Content } = await render(work);
+const locale = localeFromPath(Astro.url.pathname);
+const workSlug = work.data.slug ?? work.id.replace(/\.md$/, '');
+const translation = getWorkTranslation(workSlug, locale);
+const localizedData = translation ? { ...work.data, description: translation.description } : work.data;
 
 // counts and trailer
 const filmCount = typeof work.data.films === "number" ? work.data.films : null;
+const hasFilmCount = filmCount !== null && filmCount > 0;
 const episodeCount = Array.isArray(work.data.episodes) ? work.data.episodes.length : 0;
 const ytId = youTubeId(work.data.trailer);
 const trailerSrc = work.data.trailer ?? null;
@@ -54,13 +61,13 @@ const headerImage = selectedHeaderImage
   : null;
 
 ---
-<WorkPost {...work.data} headerImage={headerImage}>
-  <Content />
+<WorkPost {...localizedData} headerImage={headerImage}>
+  {translation?.body ? translation.body.map((paragraph) => <p>{paragraph}</p>) : <Content />}
 
   <div slot="afterContent">
     {false && (
         <div style="margin:1rem 0 1.25rem; display:flex; gap:.75rem; flex-wrap:wrap">
-          {typeof filmCount === "number" && filmCount > 0 && (
+          {hasFilmCount && (
             <span style="border:1px solid rgba(255,255,255,.15); padding:.35rem .6rem; border-radius:999px; font-size:.85rem; color:#cfd8e3">
               Film: {filmCount}
             </span>

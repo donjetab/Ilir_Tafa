@@ -4,10 +4,13 @@ import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
+const site = process.env.SITE_URL ?? 'https://donjetab.github.io/';
+const base = process.env.BASE_PATH ?? '/Ilir_Tafa/';
+
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://donjetab.github.io/',
-  base: '/Ilir_Tafa/',
+  site,
+  base,
   devToolbar: { enabled: false },
   i18n: {
     locales: ['sq', 'en', 'bs'],
@@ -15,7 +18,10 @@ export default defineConfig({
     routing: { prefixDefaultLocale: false },
   },
   integrations: [sitemap({
-    filter: (page) => !/\/Ilir_Tafa\/(?:about|works|news|gallery)(?:\/|$)|\/Ilir_Tafa\/en\/about(?:\/|$)|\/Ilir_Tafa\/bs\/(?:about|works|news|gallery)(?:\/|$)/.test(new URL(page).pathname),
+    filter: (page) => {
+      const path = new URL(page).pathname.replace(base, '/');
+      return !/^\/(?:about|works|news|gallery)(?:\/|$)|^\/en\/about(?:\/|$)|^\/bs\/(?:about|works|news|gallery)(?:\/|$)/.test(path);
+    },
     i18n: {
       defaultLocale: 'sq',
       locales: { sq: 'sq-AL', en: 'en', bs: 'bs-BA' },

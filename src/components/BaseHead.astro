@@ -12,10 +12,20 @@ interface Props {
 	image?: ImageMetadata | string;
 	type?: 'website' | 'article';
 	locale?: Locale;
+	datePublished?: string;
+	author?: string;
 }
 
 const siteRoot = new URL(import.meta.env.BASE_URL, Astro.site);
-const { title, description, image = FallbackImage, type = 'website', locale = localeFromPath(Astro.url.pathname) } = Astro.props;
+const {
+	title,
+	description,
+	image = FallbackImage,
+	type = 'website',
+	locale = localeFromPath(Astro.url.pathname),
+	datePublished,
+	author = 'Ilir Tafa',
+} = Astro.props;
 const socialImage = typeof image === 'string'
 	? new URL(image, siteRoot)
 	: new URL(image.src, Astro.site);
@@ -25,6 +35,67 @@ const canonicalURL = new URL(preferredPath, Astro.site);
 const currentPath = Astro.url.pathname.replace(/\/$/, '');
 const isLegacyRoute = currentPath !== preferredPath.replace(/\/$/, '');
 const htmlLocale = { sq: 'sq_AL', en: 'en_US', bs: 'bs_BA' }[locale];
+const verification = import.meta.env.GOOGLE_SITE_VERIFICATION;
+const isHome = languagePath === '';
+const personId = new URL('#person', siteRoot).href;
+const websiteId = new URL('#website', siteRoot).href;
+const breadcrumbNames: Record<string, string> = {
+	biografia: 'Biografia', biography: 'Biography', biografija: 'Biografija',
+	veprat: 'Veprat', works: 'Works', djela: 'Djela',
+	lajme: 'Lajme', news: 'News', vijesti: 'Vijesti',
+	galeria: 'Galeria', gallery: 'Gallery', galerija: 'Galerija',
+};
+const pathParts = preferredPath.replace(import.meta.env.BASE_URL, '').split('/').filter(Boolean);
+const breadcrumbItems = pathParts.map((part, index) => ({
+	'@type': 'ListItem',
+	position: index + 2,
+	name: breadcrumbNames[part] ?? decodeURIComponent(part).replace(/-/g, ' '),
+	item: new URL(`${pathParts.slice(0, index + 1).join('/')}/`, siteRoot).href,
+}));
+const graph: Record<string, unknown>[] = [];
+if (isHome) {
+	graph.push(
+		{
+			'@type': 'WebSite', '@id': websiteId, url: siteRoot.href,
+			name: SITE_TITLE, description, inLanguage: locale,
+		},
+		{
+			'@type': 'Person', '@id': personId, name: 'Ilir Tafa',
+			url: siteRoot.href, image: socialImage.href,
+			jobTitle: 'Actor', nationality: 'Kosovo',
+			sameAs: [
+				'https://sq.wikipedia.org/wiki/Ilir_Tafa',
+				'https://en.wikipedia.org/wiki/Ilir_Tafa',
+				'https://bs.wikipedia.org/wiki/Ilir_Tafa',
+			],
+		},
+		{
+			'@type': 'ProfilePage', '@id': canonicalURL.href,
+			url: canonicalURL.href, name: title, description,
+			mainEntity: { '@id': personId }, inLanguage: locale,
+		},
+	);
+}
+if (breadcrumbItems.length > 0) {
+	graph.push({
+		'@type': 'BreadcrumbList',
+		itemListElement: [
+			{ '@type': 'ListItem', position: 1, name: SITE_TITLE, item: siteRoot.href },
+			...breadcrumbItems,
+		],
+	});
+}
+if (type === 'article') {
+	graph.push({
+		'@type': 'Article', '@id': `${canonicalURL.href}#article`,
+		headline: title, description, image: socialImage.href,
+		url: canonicalURL.href, inLanguage: locale,
+		...(datePublished ? { datePublished } : {}),
+		author: author === 'Ilir Tafa' ? { '@id': personId } : { '@type': 'Person', name: author },
+		publisher: { '@id': personId },
+	});
+}
+const structuredData = { '@context': 'https://schema.org', '@graph': graph };
 ---
 
 <!-- Global Metadata -->
@@ -64,6 +135,7 @@ const htmlLocale = { sq: 'sq_AL', en: 'en_US', bs: 'bs_BA' }[locale];
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+{verification && <meta name="google-site-verification" content={verification} />}
 <meta property="og:type" content={type} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
@@ -82,3 +154,4 @@ const htmlLocale = { sq: 'sq_AL', en: 'en_US', bs: 'bs_BA' }[locale];
   <link rel="alternate" hreflang={language} href={new URL(localizedUrl(language, languagePath), Astro.site)} />
 ))}
 <link rel="alternate" hreflang="x-default" href={new URL(localizedUrl('sq', languagePath), Astro.site)} />
+{graph.length > 0 && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}

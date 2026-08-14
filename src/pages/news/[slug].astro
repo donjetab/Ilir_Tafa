@@ -34,7 +34,7 @@ const formattedDate = item.date
 ---
 
 <html lang={locale}>
-  <head><BaseHead title={`${pageTitle} | Ilir Tafa`} description={pageDesc} type="article" image={item.cover} /></head>
+  <head><BaseHead title={`${pageTitle} | Ilir Tafa`} description={pageDesc} type="article" image={item.cover} datePublished={item.date} author={item.author} /></head>
   <body>
     <Header />
     <main class="article-page">

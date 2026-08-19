@@ -7,6 +7,8 @@ poster: "../../assets/works/svetica-tame.jpg"
 description: "Një dramë teatrore që eksploron jetën shpirtërore dhe dilemat e brendshme të Nënë Terezës përmes reflektimeve mbi besimin, sakrificën dhe humanizmin."
 director: "Gradimir Gojer"
 venue: "CeKaTe – Centar za Kulturu Trešnjevka, Zagreb"
+trailer: "videos/svetica-u-tami.mp4"
+
 ---
 
 “Svetica Tame” është një dramë teatrore e shkruar nga Venko Andonovski dhe e vënë në skenë me regji të Gradimir Gojer, që trajton jetën e brendshme dhe dilemat shpirtërore të Nënë Terezës.
